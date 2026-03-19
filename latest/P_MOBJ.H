@@ -249,8 +249,9 @@ typedef enum
     // it is set temporarely when player follow the spirit
     MF_NOZCHECKING       = 32,
     // don't show it, is for player mobj only spirit is shown
-    MF_INVISIBLE         = 64
-
+    MF_INVISIBLE         = 64,
+	// this object is sprung,,, Nozomi 03-19-2026
+	MF_SPRUNG			 = 128
 } mobjeflag_t;
 
 // Map Object definition.

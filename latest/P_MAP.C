@@ -790,6 +790,7 @@ if(tmthing->player) // Is the moving/interacting object the player?
             tmthing->player->gliding = 0;
             tmthing->player->glidetime = 0;
             tmthing->player->climbing = 0;
+			tmthing->eflags |= MF_SPRUNG;
 		}
 
 		if((tmthing->player->mfjumped == 1) || (tmthing->player->mfspinning == 1) || (tmthing->player->powers[pw_invulnerability]) || (tmthing->player->powers[pw_super])) // Do you possess the ability to subdue the object?
