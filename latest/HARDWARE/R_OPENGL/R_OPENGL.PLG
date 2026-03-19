@@ -1,0 +1,38 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: r_opengl - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\EBAYSA~1\AppData\Local\Temp\RSP5A14.tmp" with contents
+[
+/nologo /MT /W3 /GX /Zi /O2 /D "__WIN32__" /D "_MBCS" /D "_USRDLL" /D "R_OPENGL_EXPORTS" /D "WIN32" /D "_WINDOWS" /D "__MSC__" /FR"..\..\..\objs\Release/" /Fp"..\..\..\objs\Release/r_opengl.pch" /YX /Fo"..\..\..\objs\Release/" /Fd"..\..\..\objs\Release/" /FD /c 
+"C:\Last130Code\legacy_130_src\hardware\r_opengl\ogl_win.c"
+"C:\Last130Code\legacy_130_src\hardware\r_opengl\r_opengl.c"
+]
+Creating command line "cl.exe @C:\Users\EBAYSA~1\AppData\Local\Temp\RSP5A14.tmp" 
+Creating temporary file "C:\Users\EBAYSA~1\AppData\Local\Temp\RSP5A15.tmp" with contents
+[
+opengl32.lib glu32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /dll /incremental:no /pdb:"..\..\..\objs\Release/srb2win.pdb" /machine:I386 /out:"C:\srb2-nozomi\srb2win.exe" /implib:"..\..\..\objs\Release/srb2win.lib" 
+\Last130Code\objs\Release\ogl_win.obj
+\Last130Code\objs\Release\r_opengl.obj
+]
+Creating command line "link.exe @C:\Users\EBAYSA~1\AppData\Local\Temp\RSP5A15.tmp"
+<h3>Output Window</h3>
+Compiling...
+ogl_win.c
+C:\Last130Code\legacy_130_src\hardware\r_opengl\ogl_win.c(273) : error C2065: 'GLF_NOZBUFREAD' : undeclared identifier
+r_opengl.c
+C:\Last130Code\legacy_130_src\hardware\r_opengl\r_opengl.c(898) : error C2065: 'oglflags' : undeclared identifier
+C:\Last130Code\legacy_130_src\hardware\r_opengl\r_opengl.c(898) : error C2065: 'GLF_NOZBUFREAD' : undeclared identifier
+Error executing cl.exe.
+
+
+
+<h3>Results</h3>
+srb2win.exe - 3 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
