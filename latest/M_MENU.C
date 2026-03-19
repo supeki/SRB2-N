@@ -638,7 +638,19 @@ void M_SwitchSplitscreen(void)
         MultiPlayerDef.lastOn=setupplayer1; 
 }
 
+static int scalex(x) 
+{
+	x *= (fixed_t)(((float)(vid.width / BASEVIDWIDTH))*FRACUNIT);
+	x /= FRACUNIT;
+	return x;
+}
 
+static int scaley(y)
+{
+	y *= (fixed_t)(((float)(vid.height / BASEVIDHEIGHT))*FRACUNIT);
+	y /= FRACUNIT;
+	return y;
+}
 
 //
 //  Draw the multi player setup menu, had some fun with player anim
@@ -711,14 +723,27 @@ void M_DrawSetupMultiPlayerMenu(void)
         colormap = (byte *) translationtables - 256 + (setupm_cvcolor->value<<8);
     // draw player sprite
 	{
+		int x, y, offx, offy;
 		fixed_t scale = (fixed_t)(atof(skins[R_SkinAvailable(setupm_cvskin->string)].spritescale) * FRACUNIT);
+
 		if (scale < 1)
 			scale = FRACUNIT;
-		V_DrawCustomScaledTranslationPatch(mx+98+(PLBOXW*4)+(FixedMul(patch->leftoffset<<FRACBITS, scale)>>FRACBITS),my+(PLBOXH*8)+(FixedMul(patch->topoffset<<FRACBITS, scale)>>FRACBITS), scale, 0, patch, colormap);
+
+		x = scalex(mx+95);
+		y = scaley(my+16);
+		offx = (scalex(patch->leftoffset)*scale)>>FRACBITS;
+		offy = (scaley(patch->topoffset)*scale)>>FRACBITS;
+
+		x += offx;
+		y += offy;
+
+		if (scale < 1)
+			scale = FRACUNIT;
+
+		V_DrawCustomScaledTranslationPatch(x, y, scale, V_NOSCALESTART, patch, colormap);
 		//V_DrawMappedPatch (mx+98+(PLBOXW*8/2),my+16+(PLBOXH*8)-8,0,patch,colormap);
 	}
 }
-
 
 //
 // Handle Setup MultiPlayer Menu
