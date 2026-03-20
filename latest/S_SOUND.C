@@ -351,7 +351,10 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
 	if (pitch > 255)
 		pitch = 255;
 
-	if (origin && origin->type == MT_PLAYER && origin->eflags & MF_UNDERWATER && cv_underwaterpitch.value) {
+	if (
+		((players[displayplayer].mo && players[displayplayer].mo->eflags & MF_UNDERWATER)
+		||(players[secondarydisplayplayer].mo && players[secondarydisplayplayer].mo->eflags & MF_UNDERWATER))
+		&& cv_underwaterpitch.value) {
 		pitch = pitch / 4 * 3;
 		volume = volume / 4 * 3;
 	}
