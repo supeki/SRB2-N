@@ -107,6 +107,7 @@ consvar_t cv_musicvolume = {"musicvolume","15",CV_SAVE,soundvolume_cons_t};
 
 // pitch change
 consvar_t cv_usepitch = {"usepitch", "1", CV_SAVE, CV_OnOff};
+consvar_t cv_ringpitch = {"ringpitchchange", "0", CV_SAVE, CV_OnOff};
 consvar_t cv_underwaterpitch = {"underwaterpitchchange", "1", CV_SAVE, CV_OnOff};
 
 // number of channels available
@@ -165,7 +166,10 @@ void S_RegisterSoundStuff (void)
     //added:11-04-98: stereoreverse
     CV_RegisterVar (&stereoreverse);
     CV_RegisterVar (&precachesound);
+
+	// pitch variables
 	CV_RegisterVar (&cv_usepitch);
+	CV_RegisterVar (&cv_ringpitch);
 	CV_RegisterVar (&cv_underwaterpitch);
 
 #ifdef SNDSERV

@@ -1561,7 +1561,8 @@ menuitem_t SoundOptionsMenu[]=
 menuitem_t PitchOptionsMenu[]=
 {
     {IT_STRING | IT_CVAR, "Enable Pitch Changes"  ,&cv_usepitch  ,0},
-	{IT_STRING | IT_CVAR, "Water Muffling", &cv_underwaterpitch, 20}
+	{IT_STRING | IT_CVAR, "Ring Collecting", &cv_ringpitch, 20},
+	{IT_STRING | IT_CVAR, "Water Muffling", &cv_underwaterpitch, 30}
 };
 
 menuitem_t SoundMenu[]=

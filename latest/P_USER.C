@@ -1537,7 +1537,7 @@ void P_MovePlayer (player_t* player)
 				player->dashspeed+=FRACUNIT;
 				if (leveltime & 1)
 				{
-					S_StartSoundAtVolumeAndPitch(player->mo, sfx_spndsh, 255, 127 + (player->dashspeed>>FRACBITS)*2); // Make the rev sound!
+					S_StartSound(player->mo, sfx_spndsh); // Make the rev sound!
 					// Now spawn the color thok circle.
 					{
 						mobj_t* thok;

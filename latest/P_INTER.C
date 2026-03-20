@@ -663,6 +663,7 @@ void P_TouchSpecialThing ( mobj_t*       special,
 			{
 				int score = 1000; // Make Tokens give 1000 score Nozomi 03-03-2026
 				P_SpawnMobj (special->x,special->y,special->z, MT_SPARK);
+				sound = sfx_chchng;
 				if (!mapheaders[gamemap].special) // Not in a special stage you don't! Nozomi 03-03-2026
 					player->token++; // I've got a token!
 				else
@@ -783,7 +784,10 @@ void P_TouchSpecialThing ( mobj_t*       special,
 
 	if (sound)
 		if (special->type == MT_MISC2 || special->type == MT_FLINGRING)
-			S_StartSoundAtVolumeAndPitch (player->mo, sound, 255, NORM_PITCH + ((player->ringtimer-1)*2));
+			if (cv_ringpitch.value)
+				S_StartSoundAtVolumeAndPitch (player->mo, sound, 255, NORM_PITCH + ((player->ringtimer-1)*2));
+			else
+				S_StartSound (player->mo, sound);
 		else
 			S_StartSound (player->mo, sound); // was NULL, but changed to player so you could hear others pick up rings Tails 01-11-2001
 
