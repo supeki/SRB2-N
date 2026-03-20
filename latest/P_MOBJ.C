@@ -1706,6 +1706,7 @@ void P_SpawnPlayer (mapthing_t* mthing)
     p->bonuscount = 0;
     p->extralight = 0;
     p->fixedcolormap = 0;
+	p->ringtimer = 0;
     p->viewheight = cv_viewheight.value<<FRACBITS;
     // added 2-12-98
     p->viewz = p->mo->z + p->viewheight;

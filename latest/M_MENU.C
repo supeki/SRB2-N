@@ -250,7 +250,7 @@ void M_OpenGLOption(int choice);
 //void M_SetupMultiOption(int choice); // Tails 03-26-2001
 
 menu_t MainDef,SinglePlayerDef,MultiPlayerDef,SetupMultiPlayerDef,
-       EpiDef,ModeDef,NewDef,TimeAttackDef,OptionsDef,VidModeDef,ControlDef,SoundDef,
+       EpiDef,ModeDef,NewDef,TimeAttackDef,OptionsDef,SoundOptionsDef,PitchOptionsDef,VidModeDef,ControlDef,SoundDef,
        ReadDef2,ReadDef1,SaveDef,LoadDef,ControlDef2,GameOptionDef,
        NetOptionDef,VideoOptionsDef,MouseOptionsDef;
 
@@ -1247,7 +1247,7 @@ menuitem_t OptionsMenu[]=
 	{IT_SUBMENU | IT_STRING,"Mouse Options..." ,&MouseOptionsDef,40},
     {IT_CALL    | IT_STRING,"Game Options..."  ,M_GameOption,50},
     {IT_SUBMENU | IT_STRING,"Video Options..." ,&VideoOptionsDef,60},
-	{IT_SUBMENU | IT_STRING,"Sound Volume..."  ,&SoundDef  ,70}
+	{IT_SUBMENU | IT_STRING,"Sound Options..." ,&SoundOptionsDef,70},
 };
 
 menu_t  OptionsDef =
@@ -1552,6 +1552,18 @@ enum
     sound_end
 } sound_e;
 
+menuitem_t SoundOptionsMenu[]=
+{
+    {IT_SUBMENU | IT_STRING,"Sound Volume..."  ,&SoundDef  ,0},
+	{IT_SUBMENU | IT_STRING,"Pitch Options..."  ,&PitchOptionsDef  ,20}
+};
+
+menuitem_t PitchOptionsMenu[]=
+{
+    {IT_STRING | IT_CVAR, "Enable Pitch Changes"  ,&cv_usepitch  ,0},
+	{IT_STRING | IT_CVAR, "Water Muffling", &cv_underwaterpitch, 20}
+};
+
 menuitem_t SoundMenu[]=
 {
     {IT_CVARMAX | IT_PATCH,"M_SFXVOL",&cv_soundvolume  ,'s'},
@@ -1562,17 +1574,40 @@ menuitem_t SoundMenu[]=
     {IT_BIGSPACE          ,NULL      ,NULL             ,0}
 };
 
+menu_t  SoundOptionsDef =
+{
+    "M_OPTTTL",
+    sizeof(SoundOptionsMenu)/sizeof(menuitem_t),
+    &OptionsDef,
+    SoundOptionsMenu,
+    M_DrawGenericMenu,
+    60,40,
+    0
+};
+
+menu_t  PitchOptionsDef =
+{
+    "M_OPTTTL",
+    sizeof(PitchOptionsMenu)/sizeof(menuitem_t),
+    &SoundOptionsDef,
+    PitchOptionsMenu,
+    M_DrawGenericMenu,
+    60,40,
+    0
+};
+
 menu_t  SoundDef =
 {
     "M_SVOL",
     sound_end,
-    &OptionsDef,
+    &SoundOptionsDef,
     SoundMenu,
     M_DrawSound,
     80,50,
     0
 };
 
+// {IT_SUBMENU | IT_STRING,"Sound Volume..."  ,&SoundDef  ,70}
 
 //
 // Change Sfx & Music volumes

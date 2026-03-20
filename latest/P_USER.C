@@ -1537,7 +1537,7 @@ void P_MovePlayer (player_t* player)
 				player->dashspeed+=FRACUNIT;
 				if (leveltime & 1)
 				{
-					S_StartSound (player->mo, sfx_spndsh); // Make the rev sound!
+					S_StartSoundAtVolumeAndPitch(player->mo, sfx_spndsh, 255, 127 + (player->dashspeed>>FRACBITS)*2); // Make the rev sound!
 					// Now spawn the color thok circle.
 					{
 						mobj_t* thok;
@@ -3067,6 +3067,12 @@ void P_PlayerThink (player_t* player)
 
     if (player->bonuscount)
         player->bonuscount--;
+
+	if (player->ringtimer && !(leveltime % 8))
+		player->ringtimer--;
+
+	if (player->ringtimer > 10)
+		player->ringtimer = 10;
 
     // Handling colormaps.
 	// DIEE!!!! Tails 01-06-2001
