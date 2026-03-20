@@ -368,6 +368,8 @@ void P_LineOpening (line_t* linedef)
       if(back->ffloors)
         for(rover = back->ffloors; rover; rover = rover->next)
         {
+		  if(!(rover->flags & FF_SOLID)) continue;
+
           delta1 = tmthing->z - (*rover->bottomheight + ((*rover->topheight - *rover->bottomheight)/2));
           delta2 = thingtop - (*rover->bottomheight + ((*rover->topheight - *rover->bottomheight)/2));
           if(*rover->bottomheight < lowestceiling && abs(delta1) >= abs(delta2))
