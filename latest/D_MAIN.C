@@ -176,6 +176,8 @@
 
 #include "time.h" // Tails 11-15-2001
 
+#include "m_easing.h"
+
 #ifdef HWRENDER
 #include "hardware/hw_main.h"   // 3D View Rendering
 #endif

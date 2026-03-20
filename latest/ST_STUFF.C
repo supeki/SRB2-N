@@ -56,6 +56,8 @@
 
 #include "stdlib.h" // Tails 06-06-2000
 
+#include "m_easing.h"
+
 #ifdef HWRENDER
 #include "hardware/hw_drv.h"
 #include "hardware/hw_main.h"
@@ -2108,8 +2110,9 @@ void ST_overlayDrawer (int playernum)
 				}
 			}
 
+#define titledrawtime 146
 			// draw level title Tails
-			if(leveltime < 110)
+			if(leveltime < titledrawtime)
 			{
 				static patch_t*  lvlttl;
 				static patch_t*  ttlnum;
@@ -2117,6 +2120,14 @@ void ST_overlayDrawer (int playernum)
 				int lvlttlxpos;
 				int ttlnumxpos;
 				int zonexpos;
+
+				int start_ttl_posy = 0;
+				int end_ttl_posy = 80;
+				int end_ttl_posy2 = 200;
+
+				int start_zone_posy = 200;
+				int end_zone_posy = 104;
+				int end_zone_posy2 = 0;
 
 				if (strlen(mapheaders[gamemap].ttlcardlump) > 0)
 					lvlttl = W_CachePatchName (mapheaders[gamemap].ttlcardlump, PU_STATIC);
@@ -2157,7 +2168,49 @@ void ST_overlayDrawer (int playernum)
 				lvlttlxpos = 160 - (lvlttl->width/2);
 				ttlnumxpos = 160 + (ttlzone->width/3*2);
 				zonexpos = 160 - (ttlzone->width/2);
-		
+
+				// Smooth Animation - Jisk 03-19-26
+#define anim1end 40 // OLD: 7
+#define anim2start 120 //OLD: 104
+#define anim2end 145 //OLD: 109
+
+				if (leveltime < anim1end)
+				{
+					int div = FixedDiv(leveltime*FRACUNIT, (anim1end+1)*FRACUNIT);
+					int lvlttlypos = Easing_OutQuint(div, 0, 80);
+					int ztypos = Easing_OutQuint(div, 200, 104);
+
+					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(lvlttlypos), FG | V_NOSCALESTART,lvlttl);
+					V_DrawScaledPatch (SCX(zonexpos),SCY(ztypos), FG | V_NOSCALESTART,ttlzone);
+					if (mapheaders[gamemap].act > 0)
+						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(ztypos), FG | V_NOSCALESTART,ttlnum); 
+				}
+				else if ((leveltime >= anim1end) && (leveltime < anim2start))
+				{
+					int lvlttlypos = 80;
+					int ztypos = 104;
+
+					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(lvlttlypos), FG | V_NOSCALESTART,lvlttl);
+					V_DrawScaledPatch (SCX(zonexpos),SCY(ztypos), FG | V_NOSCALESTART,ttlzone);
+					if (mapheaders[gamemap].act > 0)
+						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(ztypos), FG | V_NOSCALESTART,ttlnum);
+				}
+				else if (leveltime >= anim2start)
+				{
+					int div = FixedDiv((leveltime-anim2start)*FRACUNIT, (anim2end-anim2start)*FRACUNIT);
+					int lvlttlypos = Easing_InQuint(div, 80, 200);
+					int ztypos = Easing_InQuint(div, 104, 0);
+
+					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(lvlttlypos), FG | V_NOSCALESTART,lvlttl);
+					V_DrawScaledPatch (SCX(zonexpos),SCY(ztypos), FG | V_NOSCALESTART,ttlzone);
+					if (mapheaders[gamemap].act > 0)
+						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(ztypos), FG | V_NOSCALESTART,ttlnum); 
+				}
+#undef anim1end
+#undef anim2start
+#undef anim2end
+
+				/* OLD LEVEL TITLE CODE
 				if(leveltime == 1)
 				{
 					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(0), FG | V_NOSCALESTART,lvlttl); // Tails 11-01-2000
@@ -2249,8 +2302,11 @@ void ST_overlayDrawer (int playernum)
 					if (mapheaders[gamemap].act > 0)
 						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(0), FG | V_NOSCALESTART,ttlnum); // Tails 11-01-2000
 				}
+				*/
 			}
 			break;
 		}
 	}
 }
+
+#undef titledrawtime
