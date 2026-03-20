@@ -357,6 +357,14 @@ SOURCE=..\M_cheat.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\M_EASING.C
+# End Source File
+# Begin Source File
+
+SOURCE=..\M_EASING.H
+# End Source File
+# Begin Source File
+
 SOURCE=..\M_fixed.c
 # End Source File
 # Begin Source File
