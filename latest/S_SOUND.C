@@ -105,6 +105,10 @@ CV_PossibleValue_t soundvolume_cons_t[]={{0,"MIN"},{31,"MAX"},{0,NULL}};
 consvar_t cv_soundvolume = {"soundvolume","15",CV_SAVE,soundvolume_cons_t};
 consvar_t cv_musicvolume = {"musicvolume","15",CV_SAVE,soundvolume_cons_t};
 
+// pitch change
+consvar_t cv_usepitch = {"usepitch", "1", CV_SAVE, CV_OnOff};
+consvar_t cv_underwaterpitch = {"underwaterpitchchange", "1", CV_SAVE, CV_OnOff};
+
 // number of channels available
 void SetChannelsNum(void);
 consvar_t cv_numChannels = {"snd_channels","16",CV_SAVE | CV_CALL, CV_Unsigned,SetChannelsNum};
@@ -161,6 +165,8 @@ void S_RegisterSoundStuff (void)
     //added:11-04-98: stereoreverse
     CV_RegisterVar (&stereoreverse);
     CV_RegisterVar (&precachesound);
+	CV_RegisterVar (&cv_usepitch);
+	CV_RegisterVar (&cv_underwaterpitch);
 
 #ifdef SNDSERV
     CV_RegisterVar (&sndserver_cmd);
@@ -341,11 +347,13 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
 	if (pitch > 255)
 		pitch = 255;
 
-	if (origin && origin->type == MT_PLAYER && origin->eflags & MF_UNDERWATER) {
+	if (origin && origin->type == MT_PLAYER && origin->eflags & MF_UNDERWATER && cv_underwaterpitch.value) {
 		pitch = pitch / 4 * 3;
 		volume = volume / 4 * 3;
 	}
 
+	if (!cv_usepitch.value)
+		pitch = NORM_PITCH;
 
     // Check to see if it is audible,
     //  and if not, modify the params

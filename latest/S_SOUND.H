@@ -62,6 +62,8 @@ extern consvar_t stereoreverse;
 extern consvar_t cv_soundvolume;
 extern consvar_t cv_musicvolume;
 extern consvar_t cv_numChannels;
+extern consvar_t cv_usepitch;
+extern consvar_t cv_underwaterpitch;
 
 #ifdef SNDSERV
 extern consvar_t sndserver_cmd;
