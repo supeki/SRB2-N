@@ -98,5 +98,12 @@ extern  angle_t     tantoangle[SLOPERANGE+1];
 int SlopeDiv ( unsigned      num,
                unsigned      den);
 
+static angle_t InvAngle(angle_t a)
+{
+	return (ANGLE_MAX-a)+1;
+}
+
+angle_t FixedAngle(fixed_t fa);
+
 
 #endif

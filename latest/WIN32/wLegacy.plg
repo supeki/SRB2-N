@@ -6,199 +6,199 @@
 --------------------Configuration: DoomLegacy - Win32 Release--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\Users\EBAYSA~1\AppData\Local\Temp\RSPF753.tmp" with contents
+Creating temporary file "C:\Users\EBAYSA~1\AppData\Local\Temp\RSP5D58.tmp" with contents
 [
 /nologo /ML /W3 /GX /Zi /O2 /D "__WIN32__" /D "USEASM" /D "WIN32" /D "_WINDOWS" /D "__MSC__" /FR"..\..\objs\Release/" /Fp"..\..\objs\Release\DoomLegacy.pch" /YX /Fo"..\..\objs\Release/" /Fd"..\..\objs\Release/" /FD /c 
-"C:\Last130Code\latest\D_main.c"
-"C:\Last130Code\latest\P_map.c"
+"C:\Users\eBay Sale\Documents\GitHub\SRB2-N\latest\M_EASING.C"
 ]
-Creating command line "cl.exe @C:\Users\EBAYSA~1\AppData\Local\Temp\RSPF753.tmp" 
-Creating temporary file "C:\Users\EBAYSA~1\AppData\Local\Temp\RSPF754.tmp" with contents
+Creating command line "cl.exe @C:\Users\EBAYSA~1\AppData\Local\Temp\RSP5D58.tmp" 
+Creating temporary file "C:\Users\EBAYSA~1\AppData\Local\Temp\RSP5D59.tmp" with contents
 [
 dxguid.lib dinput.lib dsound.lib ddraw.lib winmm.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /incremental:no /pdb:"..\..\objs\Release/srb2win.pdb" /debug /machine:I386 /out:"C:\srb2-nozomi\srb2win.exe" 
-\Last130Code\objs\Release\dx_error.obj
-\Last130Code\objs\Release\fabdxlib.obj
-\Last130Code\objs\Release\Mid2strm.obj
-\Last130Code\objs\Release\win_cd.obj
-\Last130Code\objs\Release\win_dbg.obj
-\Last130Code\objs\Release\win_dll.obj
-\Last130Code\objs\Release\win_main.obj
-\Last130Code\objs\Release\win_net.obj
-\Last130Code\objs\Release\win_snd.obj
-\Last130Code\objs\Release\win_sys.obj
-\Last130Code\objs\Release\win_vid.obj
-\Last130Code\objs\Release\hw_bsp.obj
-\Last130Code\objs\Release\hw_cache.obj
-\Last130Code\objs\Release\hw_draw.obj
-\Last130Code\objs\Release\hw_light.obj
-\Last130Code\objs\Release\hw_main.obj
-\Last130Code\objs\Release\hw_md2.obj
-\Last130Code\objs\Release\D_clisrv.obj
-\Last130Code\objs\Release\D_items.obj
-\Last130Code\objs\Release\D_main.obj
-\Last130Code\objs\Release\D_net.obj
-\Last130Code\objs\Release\D_netcmd.obj
-\Last130Code\objs\Release\D_netfil.obj
-\Last130Code\objs\Release\M_argv.obj
-\Last130Code\objs\Release\M_bbox.obj
-\Last130Code\objs\Release\M_cheat.obj
-\Last130Code\objs\Release\M_fixed.obj
-\Last130Code\objs\Release\M_menu.obj
-\Last130Code\objs\Release\M_misc.obj
-\Last130Code\objs\Release\M_random.obj
-\Last130Code\objs\Release\M_swap.obj
-\Last130Code\objs\Release\P_ceilng.obj
-\Last130Code\objs\Release\P_doors.obj
-\Last130Code\objs\Release\P_enemy.obj
-\Last130Code\objs\Release\P_fab.obj
-\Last130Code\objs\Release\P_floor.obj
-\Last130Code\objs\Release\p_genlin.obj
-\Last130Code\objs\Release\P_inter.obj
-\Last130Code\objs\Release\P_lights.obj
-\Last130Code\objs\Release\P_map.obj
-\Last130Code\objs\Release\P_maputl.obj
-\Last130Code\objs\Release\P_mobj.obj
-\Last130Code\objs\Release\P_plats.obj
-\Last130Code\objs\Release\P_pspr.obj
-\Last130Code\objs\Release\P_saveg.obj
-\Last130Code\objs\Release\P_setup.obj
-\Last130Code\objs\Release\P_sight.obj
-\Last130Code\objs\Release\P_spec.obj
-\Last130Code\objs\Release\P_switch.obj
-\Last130Code\objs\Release\P_telept.obj
-\Last130Code\objs\Release\P_tick.obj
-\Last130Code\objs\Release\P_user.obj
-\Last130Code\objs\Release\R_bsp.obj
-\Last130Code\objs\Release\R_data.obj
-\Last130Code\objs\Release\R_draw.obj
-\Last130Code\objs\Release\R_main.obj
-\Last130Code\objs\Release\R_plane.obj
-\Last130Code\objs\Release\R_segs.obj
-\Last130Code\objs\Release\R_sky.obj
-\Last130Code\objs\Release\r_splats.obj
-\Last130Code\objs\Release\R_things.obj
-\Last130Code\objs\Release\Am_map.obj
-\Last130Code\objs\Release\Command.obj
-\Last130Code\objs\Release\Console.obj
-\Last130Code\objs\Release\Dehacked.obj
-\Last130Code\objs\Release\Dstrings.obj
-\Last130Code\objs\Release\F_finale.obj
-\Last130Code\objs\Release\F_wipe.obj
-\Last130Code\objs\Release\G_game.obj
-\Last130Code\objs\Release\G_input.obj
-\Last130Code\objs\Release\g_state.obj
-\Last130Code\objs\Release\Hu_stuff.obj
-\Last130Code\objs\Release\i_tcp.obj
-\Last130Code\objs\Release\Info.obj
-\Last130Code\objs\Release\Qmus2mid.obj
-\Last130Code\objs\Release\S_sound.obj
-\Last130Code\objs\Release\Screen.obj
-\Last130Code\objs\Release\Sounds.obj
-\Last130Code\objs\Release\St_lib.obj
-\Last130Code\objs\Release\St_stuff.obj
-\Last130Code\objs\Release\Tables.obj
-\Last130Code\objs\Release\V_video.obj
-\Last130Code\objs\Release\W_wad.obj
-\Last130Code\objs\Release\Wi_stuff.obj
-\Last130Code\objs\Release\Z_zone.obj
-\Last130Code\objs\Release\DoomLegacy.res
-\Last130Code\objs\Release\tmap.obj
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\dx_error.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\fabdxlib.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Mid2strm.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_cd.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_dbg.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_dll.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_main.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_net.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_snd.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_sys.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_vid.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\hw_bsp.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\hw_cache.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\hw_draw.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\hw_light.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\hw_main.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\hw_md2.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\D_clisrv.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\D_items.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\D_main.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\D_net.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\D_netcmd.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\D_netfil.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_argv.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_bbox.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_cheat.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_fixed.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_menu.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_misc.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_random.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_swap.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_ceilng.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_doors.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_enemy.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_fab.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_floor.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\p_genlin.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_inter.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_lights.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_map.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_maputl.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_mobj.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_plats.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_pspr.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_saveg.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_setup.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_sight.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_spec.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_switch.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_telept.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_tick.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_user.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_bsp.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_data.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_draw.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_main.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_plane.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_segs.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_sky.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\r_splats.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_things.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Am_map.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Command.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Console.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Dehacked.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Dstrings.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\F_finale.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\F_wipe.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\G_game.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\G_input.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\g_state.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Hu_stuff.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\i_tcp.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Info.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Qmus2mid.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\S_sound.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Screen.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Sounds.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\St_lib.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\St_stuff.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Tables.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\V_video.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\W_wad.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Wi_stuff.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Z_zone.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\DoomLegacy.res"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\tmap.obj"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_EASING.OBJ"
 ]
-Creating command line "link.exe @C:\Users\EBAYSA~1\AppData\Local\Temp\RSPF754.tmp"
+Creating command line "link.exe @C:\Users\EBAYSA~1\AppData\Local\Temp\RSP5D59.tmp"
 <h3>Output Window</h3>
 Compiling...
-D_main.c
-P_map.c
+M_EASING.C
 Linking...
-Creating temporary file "C:\Users\EBAYSA~1\AppData\Local\Temp\RSPFD11.tmp" with contents
+Creating temporary file "C:\Users\EBAYSA~1\AppData\Local\Temp\RSP6C2E.tmp" with contents
 [
 /nologo /o"..\..\objs\Release\DoomLegacy.bsc" 
-\Last130Code\objs\Release\dx_error.sbr
-\Last130Code\objs\Release\fabdxlib.sbr
-\Last130Code\objs\Release\Mid2strm.sbr
-\Last130Code\objs\Release\win_cd.sbr
-\Last130Code\objs\Release\win_dbg.sbr
-\Last130Code\objs\Release\win_dll.sbr
-\Last130Code\objs\Release\win_main.sbr
-\Last130Code\objs\Release\win_net.sbr
-\Last130Code\objs\Release\win_snd.sbr
-\Last130Code\objs\Release\win_sys.sbr
-\Last130Code\objs\Release\win_vid.sbr
-\Last130Code\objs\Release\hw_bsp.sbr
-\Last130Code\objs\Release\hw_cache.sbr
-\Last130Code\objs\Release\hw_draw.sbr
-\Last130Code\objs\Release\hw_light.sbr
-\Last130Code\objs\Release\hw_main.sbr
-\Last130Code\objs\Release\hw_md2.sbr
-\Last130Code\objs\Release\D_clisrv.sbr
-\Last130Code\objs\Release\D_items.sbr
-\Last130Code\objs\Release\D_main.sbr
-\Last130Code\objs\Release\D_net.sbr
-\Last130Code\objs\Release\D_netcmd.sbr
-\Last130Code\objs\Release\D_netfil.sbr
-\Last130Code\objs\Release\M_argv.sbr
-\Last130Code\objs\Release\M_bbox.sbr
-\Last130Code\objs\Release\M_cheat.sbr
-\Last130Code\objs\Release\M_fixed.sbr
-\Last130Code\objs\Release\M_menu.sbr
-\Last130Code\objs\Release\M_misc.sbr
-\Last130Code\objs\Release\M_random.sbr
-\Last130Code\objs\Release\M_swap.sbr
-\Last130Code\objs\Release\P_ceilng.sbr
-\Last130Code\objs\Release\P_doors.sbr
-\Last130Code\objs\Release\P_enemy.sbr
-\Last130Code\objs\Release\P_fab.sbr
-\Last130Code\objs\Release\P_floor.sbr
-\Last130Code\objs\Release\p_genlin.sbr
-\Last130Code\objs\Release\P_inter.sbr
-\Last130Code\objs\Release\P_lights.sbr
-\Last130Code\objs\Release\P_map.sbr
-\Last130Code\objs\Release\P_maputl.sbr
-\Last130Code\objs\Release\P_mobj.sbr
-\Last130Code\objs\Release\P_plats.sbr
-\Last130Code\objs\Release\P_pspr.sbr
-\Last130Code\objs\Release\P_saveg.sbr
-\Last130Code\objs\Release\P_setup.sbr
-\Last130Code\objs\Release\P_sight.sbr
-\Last130Code\objs\Release\P_spec.sbr
-\Last130Code\objs\Release\P_switch.sbr
-\Last130Code\objs\Release\P_telept.sbr
-\Last130Code\objs\Release\P_tick.sbr
-\Last130Code\objs\Release\P_user.sbr
-\Last130Code\objs\Release\R_bsp.sbr
-\Last130Code\objs\Release\R_data.sbr
-\Last130Code\objs\Release\R_draw.sbr
-\Last130Code\objs\Release\R_main.sbr
-\Last130Code\objs\Release\R_plane.sbr
-\Last130Code\objs\Release\R_segs.sbr
-\Last130Code\objs\Release\R_sky.sbr
-\Last130Code\objs\Release\r_splats.sbr
-\Last130Code\objs\Release\R_things.sbr
-\Last130Code\objs\Release\Am_map.sbr
-\Last130Code\objs\Release\Command.sbr
-\Last130Code\objs\Release\Console.sbr
-\Last130Code\objs\Release\Dehacked.sbr
-\Last130Code\objs\Release\Dstrings.sbr
-\Last130Code\objs\Release\F_finale.sbr
-\Last130Code\objs\Release\F_wipe.sbr
-\Last130Code\objs\Release\G_game.sbr
-\Last130Code\objs\Release\G_input.sbr
-\Last130Code\objs\Release\g_state.sbr
-\Last130Code\objs\Release\Hu_stuff.sbr
-\Last130Code\objs\Release\i_tcp.sbr
-\Last130Code\objs\Release\Info.sbr
-\Last130Code\objs\Release\Qmus2mid.sbr
-\Last130Code\objs\Release\S_sound.sbr
-\Last130Code\objs\Release\Screen.sbr
-\Last130Code\objs\Release\Sounds.sbr
-\Last130Code\objs\Release\St_lib.sbr
-\Last130Code\objs\Release\St_stuff.sbr
-\Last130Code\objs\Release\Tables.sbr
-\Last130Code\objs\Release\V_video.sbr
-\Last130Code\objs\Release\W_wad.sbr
-\Last130Code\objs\Release\Wi_stuff.sbr
-\Last130Code\objs\Release\Z_zone.sbr]
-Creating command line "bscmake.exe @C:\Users\EBAYSA~1\AppData\Local\Temp\RSPFD11.tmp"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\dx_error.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\fabdxlib.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Mid2strm.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_cd.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_dbg.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_dll.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_main.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_net.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_snd.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_sys.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\win_vid.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\hw_bsp.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\hw_cache.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\hw_draw.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\hw_light.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\hw_main.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\hw_md2.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\D_clisrv.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\D_items.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\D_main.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\D_net.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\D_netcmd.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\D_netfil.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_argv.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_bbox.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_cheat.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_fixed.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_menu.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_misc.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_random.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_swap.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_ceilng.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_doors.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_enemy.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_fab.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_floor.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\p_genlin.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_inter.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_lights.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_map.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_maputl.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_mobj.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_plats.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_pspr.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_saveg.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_setup.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_sight.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_spec.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_switch.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_telept.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_tick.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\P_user.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_bsp.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_data.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_draw.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_main.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_plane.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_segs.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_sky.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\r_splats.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\R_things.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Am_map.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Command.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Console.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Dehacked.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Dstrings.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\F_finale.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\F_wipe.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\G_game.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\G_input.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\g_state.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Hu_stuff.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\i_tcp.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Info.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Qmus2mid.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\S_sound.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Screen.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Sounds.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\St_lib.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\St_stuff.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Tables.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\V_video.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\W_wad.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Wi_stuff.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\Z_zone.sbr"
+"\Users\eBay Sale\Documents\GitHub\SRB2-N\objs\Release\M_EASING.SBR"]
+Creating command line "bscmake.exe @C:\Users\EBAYSA~1\AppData\Local\Temp\RSP6C2E.tmp"
 Creating browse info file...
 <h3>Output Window</h3>
 

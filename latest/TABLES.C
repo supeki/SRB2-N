@@ -2165,3 +2165,65 @@ angle_t tantoangle[2049] =
     535533216,535700704,535868128,536035456,536202720,536369888,536536992,536704000,
     536870912
 };
+
+static angle_t AngleAdj(const fixed_t fa, const fixed_t wf,
+                                 angle_t ra)
+{
+	const angle_t adj = 0x77;
+	const boolean fan = fa < 0;
+	const fixed_t sl = FixedDiv(fa, wf*2);
+	const fixed_t lb = fa % (wf*2);
+	const fixed_t lo = (wf*2)-lb;
+
+	if (ra == 0)
+	{
+		if (lb == 0)
+		{
+			ra = FixedMul(FRACUNIT/512, sl);
+			if (ra > FRACUNIT/64)
+				return InvAngle(ra);
+			return ra;
+		}
+		else if (lb > 0)
+			return InvAngle(FixedMul(lo*FRACUNIT, adj));
+		else
+			return InvAngle(FixedMul(lo*FRACUNIT, adj));
+	}
+
+	if (fan)
+		return InvAngle(ra);
+	else
+		return ra;
+}
+
+angle_t FixedAngle(fixed_t fa)
+{
+	angle_t wa = ANGLE_180;
+	fixed_t wf = 180*FRACUNIT;
+	angle_t ra = 0;
+	const fixed_t cfa = fa;
+	const fixed_t cwf = wf;
+
+	if (fa == 0)
+		return 0;
+
+	// -2,147,483,648 has no absolute value in a 32 bit signed integer
+	// so this code _would_ infinite loop if passed it
+	if (fa == INT32_MIN)
+		return 0;
+
+	fa = abs(fa);
+
+	while (fa)
+	{
+		while (fa < wf)
+		{
+			wa /= 2;
+			wf /= 2;
+		}
+		ra = ra + wa;
+		fa = fa - wf;
+	}
+
+	return AngleAdj(cfa, cwf, ra);
+}
