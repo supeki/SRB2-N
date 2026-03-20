@@ -361,10 +361,46 @@ typedef struct mobj_s
     int			waterz; // Water height Tails
 } mobj_t;
 
+typedef struct precipmobj_s
+{
+	thinker_t thinker; // List: thinker links.
+	state_t* state;
+
+	// More list: links in sector (if needed)
+	struct precipmobj_s* snext;
+	struct precipmobj_s* sprev;
+
+	struct mprecipsecnode_s* touching_sectorlist; // linked list of sectors where this appears
+	struct subsector_s* subsector;
+
+	// More drawing info: to determine current sprite.
+	spritenum_t sprite; // used to find patch_t and flip value
+
+	// Info for drawing: position.
+	fixed_t x, y, z;
+
+	// The closest interval over all contacted sectors (or things).
+	fixed_t floorz;
+
+	// Precipitation has a fixed radius of 2*FRACUNIT
+	// and a fixed height of 4*FRACUNIT
+
+	// Momentums, used to update position.
+	fixed_t momz;
+
+	int frame; // frame number, plus bits see p_pspr.h
+	int tics; // state tic counter
+	int flags;
+} precipmobj_t;
+
 // check mobj against water content, before movement code
 void P_MobjCheckWater (mobj_t* mobj);
 
 void P_SpawnMapThing (mapthing_t*    mthing);
 void P_SpawnPlayer (mapthing_t* mthing);
+void P_SpawnPrecipitation(void);
+void P_SnowThinker(precipmobj_t* mobj);
+void P_RainThinker(precipmobj_t* mobj);
+void P_RemovePrecipMobj(precipmobj_t* mobj);
 
 #endif

@@ -53,6 +53,8 @@
 #include "doomdef.h"
 #include "g_game.h"
 #include "p_local.h"
+//#include "p_spec.h"
+#include "r_main.h"
 #include "r_state.h"
 #include "z_zone.h"
 #include "w_wad.h"
@@ -315,6 +317,29 @@ void P_UnArchiveThinkers (void)
 //
 void P_ArchiveSpecials (void)
 {
+	int i, z;
+
+	// itemrespawn queue for deathmatch
+	i = iquetail;
+	while(iquehead != i)
+	{
+		for(z = 0; z < nummapthings; z++)
+		{
+			if(&mapthings[z] == itemrespawnque[i])
+			{
+				WRITELONG(save_p, z);
+				break;
+			}
+		}
+		WRITELONG(save_p, itemrespawntime[i]);
+		i = (i + 1) & (ITEMQUESIZE-1);
+	}
+
+	// end delimiter
+	WRITELONG(save_p, 0xffffffff);
+
+	// Current global weather type
+	WRITEBYTE(save_p, globalweather);
 }
 
 
@@ -323,4 +348,35 @@ void P_ArchiveSpecials (void)
 //
 void P_UnArchiveSpecials (void)
 {
+	int i;
+
+	// BP: added save itemrespawn queue for deathmatch
+	iquetail = iquehead = 0 ;
+	while((i = READLONG(save_p)) != (int)0xffffffff)
+	{
+		itemrespawnque[iquehead] = &mapthings[i];
+		itemrespawntime[iquehead++] = READLONG(save_p);
+	}
+
+	globalweather = READBYTE(save_p);
+
+	switch(globalweather)
+	{
+		case 1:
+			cv_storm.value = 0;
+			P_SwitchWeather(globalweather);
+			break;
+		case 2:
+			cv_snow.value = 0;
+			P_SwitchWeather(globalweather);
+			break;
+		case 3:
+			cv_rain.value = 0;
+			P_SwitchWeather(globalweather);
+			break;
+		default: // 0
+			if((cv_snow.value || cv_rain.value || cv_storm.value))
+				P_SwitchWeather(globalweather);
+			break;
+	}
 }

@@ -70,6 +70,7 @@
 //
 //-----------------------------------------------------------------------------
 
+#include "console.h"
 #include "doomdef.h"
 #include "d_main.h"
 
@@ -978,7 +979,11 @@ boolean P_SetupLevel (int           episode,
                       char*         wadname)      // for wad files
 {
     int         i;
+	int loadprecip = 1;
 	int numplayers; // Tails 08-11-2001
+
+	CON_Drawer(); // let the user know what we are going to do
+	I_FinishUpdate(); // page flip or blit buffer
 
     //Initialize sector node list.
     P_Initsecnode();
@@ -1049,6 +1054,12 @@ boolean P_SetupLevel (int           episode,
 
     // if working with a devlopment map, reload it
     W_Reload ();
+
+	if(wadname && wadname[0] == '\2')
+	{
+		wadname = NULL;
+		loadprecip = 0;
+	}
 
     //
     //  load the map from internal game resource or external wad file
@@ -1149,6 +1160,11 @@ boolean P_SetupLevel (int           episode,
 
     // set up world state
     P_SpawnSpecials ();
+
+	if(loadprecip) //  ugly hack for P_NetUnArchiveMisc (and P_LoadNetGame)
+		P_SpawnPrecipitation();
+
+	globalweather = mapheaders[gamemap].weather;
 
 	// credit to save_as for recommending i move this here to prevent requiring a tagged sector Nozomi 03-03-2026
 	if (mapheaders[gamemap].sp_time > 0)

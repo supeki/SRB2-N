@@ -237,7 +237,8 @@ typedef enum
 	SPR_SPIK, // Spike Ball Tails 12-18-2001
 	SPR_CCOM, // Crawla Commander Tails 12-30-2001
 	SPR_MARL, // maril unfinished sprite for whatever Nozomi 03-13-2026
-    NUMSPRITES
+    SPR_RAIN,
+	NUMSPRITES
 
 } spritenum_t;
 
@@ -1197,6 +1198,8 @@ typedef enum
 	S_AIRPARTICLE8,
 	S_MARILUNFINISHED,
 	S_DUMMY_STND,
+	S_RAIN1,
+	S_RAINRETURN,
     NUMSTATES
 } statenum_t;
 
@@ -1405,6 +1408,7 @@ typedef enum {
 	MT_AIRPARTICLE3,
 	MT_AIRPARTICLE4,
 	MT_MARILUNFINISHED,
+	MT_RAIN,
     NUMMOBJTYPES
 
 } mobjtype_t;

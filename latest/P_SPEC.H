@@ -72,6 +72,8 @@ void    P_SpawnSpecials (void);
 // every tic
 void    P_UpdateSpecials (void);
 
+void P_SwitchWeather(int weathernum);
+
 // when needed
 boolean
 P_UseSpecialLine
@@ -227,7 +229,9 @@ void    T_FireFlicker (fireflicker_t* flick);
 void    P_SpawnFireFlicker (sector_t* sector);
 void    T_LightFlash (lightflash_t* flash);
 void    P_SpawnLightFlash (sector_t* sector);
+void T_LightningFlash(lightflash_t* flash);
 void    T_StrobeFlash (strobe_t* flash);
+void P_SpawnLightningFlash(sector_t* sector);
 
 void
 P_SpawnStrobeFlash

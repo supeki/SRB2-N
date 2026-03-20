@@ -65,6 +65,7 @@
 #include "s_sound.h"
 #include "z_zone.h"
 #include "m_random.h"
+#include "info.h"
 #include "d_clisrv.h"
 #include "r_splats.h"   //faB: in dev.
 
@@ -139,6 +140,22 @@ boolean P_SetMobjState ( mobj_t*       mobj,
   return ret;
 }
 
+static boolean P_SetPrecipMobjState(precipmobj_t* mobj, statenum_t state)
+{
+	state_t* st;
+
+	if(state == S_NULL)
+	{ // Remove mobj
+		P_RemovePrecipMobj(mobj);
+		return false;
+	}
+	st = &states[state];
+	mobj->state = st;
+	mobj->tics = st->tics;
+	mobj->sprite = st->sprite;
+	mobj->frame = st->frame;
+	return true;
+}
 
 //
 // P_ExplodeMissile
@@ -1291,6 +1308,93 @@ mobj->z = mobj->waterz;
 
 }
 
+static void CalculatePrecipFloor(precipmobj_t* mobj)
+{
+	// recalculate floorz each time
+	mobj->floorz = mobj->subsector->sector->floorheight;
+	if(mobj->subsector->sector->ffloors)
+	{
+		ffloor_t* rover;
+
+		for(rover = mobj->subsector->sector->ffloors; rover; rover = rover->next)
+		{
+			// If it exists, it'll get rained on.
+			if(!(rover->flags & FF_EXISTS))
+				continue;
+
+			if(*rover->topheight > mobj->floorz)
+				mobj->floorz = *rover->topheight;
+		}
+	}
+}
+
+void P_RecalcPrecipInSector(sector_t* sector)
+{
+	/// \todo Why doesn't this work?!
+/*	precipmobj_t* precipthing;
+
+	for(precipthing = sector->preciplist; precipthing; precipthing = precipthing->snext)
+	{
+		CalculatePrecipFloor(precipthing);
+	}*/
+	sector = NULL; // warning C4100: 'sector' : unreferenced formal parameter
+}
+
+void P_SnowThinker(precipmobj_t* mobj)
+{
+	// adjust height
+	mobj->z += mobj->momz;
+
+	if(mobj->z <= mobj->floorz)
+		mobj->z = mobj->subsector->sector->ceilingheight;
+
+	return;
+}
+
+void P_RainThinker(precipmobj_t* mobj)
+{
+	// adjust height
+	mobj->z += mobj->momz;
+
+	if(mobj->state != &states[S_RAIN1])
+	{
+		// cycle through states,
+		// calling action functions at transitions
+		if(mobj->tics != -1)
+		{
+			mobj->tics--;
+
+			// you can cycle through multiple states in a tic
+			if(!mobj->tics)
+				if(!P_SetPrecipMobjState(mobj, mobj->state->nextstate))
+					return; // freed itself
+		}
+
+		if(mobj->state == &states[S_RAINRETURN])
+		{
+			mobj->z = mobj->subsector->sector->ceilingheight;
+			mobj->momz = mobjinfo[MT_RAIN].speed;
+			P_SetPrecipMobjState(mobj, S_RAIN1);
+		}
+	}
+	else if(mobj->z <= mobj->floorz && mobj->momz)
+	{
+		// no splashes on sky or bottomless pits
+		if(mobj->z <= mobj->subsector->sector->floorheight
+			&& (mobj->subsector->sector->special == 5 || mobj->subsector->sector->special == 16
+			|| mobj->subsector->sector->floorpic == skyflatnum))
+			mobj->z = mobj->subsector->sector->ceilingheight;
+		else
+		{
+			mobj->momz = 0;
+			mobj->z = mobj->floorz;
+			P_SetPrecipMobjState(mobj, S_SPLASH1);
+		}
+	}
+
+	return;
+}
+
 void P_MobjNullThinker (mobj_t* mobj)
 {}
 
@@ -1421,6 +1525,81 @@ mobj_t* P_SpawnMobj ( fixed_t       x,
     return mobj;
 }
 
+static inline precipmobj_t* P_SpawnRainMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type)
+{
+	precipmobj_t* mobj;
+	state_t* st;
+
+	mobj = Z_Malloc(sizeof(*mobj), PU_LEVEL, NULL);
+	memset(mobj, 0, sizeof(*mobj));
+
+	mobj->x = x;
+	mobj->y = y;
+	mobj->flags = mobjinfo[type].flags;
+
+	// do not set the state with P_SetMobjState,
+	// because action routines can not be called yet
+	st = &states[mobjinfo[type].spawnstate];
+
+	mobj->state = st;
+	mobj->tics = st->tics;
+	mobj->sprite = st->sprite;
+	mobj->frame = st->frame; // FF_FRAMEMASK for frame, and other bits..
+	mobj->touching_sectorlist = NULL;
+
+	// set subsector and/or block links
+	P_SetPrecipitationThingPosition(mobj);
+
+	mobj->floorz = mobj->subsector->sector->floorheight;
+
+	mobj->z = z;
+	mobj->momz = mobjinfo[type].speed;
+
+	mobj->thinker.function.acp1 = (actionf_p1)P_RainThinker;
+	P_AddThinker(&mobj->thinker);
+
+	CalculatePrecipFloor(mobj);
+
+	return mobj;
+}
+
+static precipmobj_t* P_SpawnSnowMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t type)
+{
+	precipmobj_t* mobj;
+	state_t* st;
+
+	mobj = Z_Malloc(sizeof(*mobj), PU_LEVEL, NULL);
+	memset(mobj, 0, sizeof(*mobj));
+
+	mobj->x = x;
+	mobj->y = y;
+	mobj->flags = mobjinfo[type].flags;
+
+	// do not set the state with P_SetMobjState,
+	// because action routines can not be called yet
+	st = &states[mobjinfo[type].spawnstate];
+
+	mobj->state = st;
+	mobj->tics = st->tics;
+	mobj->sprite = st->sprite;
+	mobj->frame = st->frame; // FF_FRAMEMASK for frame, and other bits..
+	mobj->touching_sectorlist = NULL;
+
+	// set subsector and/or block links
+	P_SetPrecipitationThingPosition(mobj);
+
+	mobj->floorz = mobj->subsector->sector->floorheight;
+
+	mobj->z = z;
+	mobj->momz = mobjinfo[type].speed;
+
+	mobj->thinker.function.acp1 = (actionf_p1)P_SnowThinker;
+	P_AddThinker(&mobj->thinker);
+
+	CalculatePrecipFloor(mobj);
+
+	return mobj;
+}
 
 //
 // P_RemoveMobj
@@ -1492,6 +1671,90 @@ void P_RemoveMobj (mobj_t* mobj)
     P_RemoveThinker ((thinker_t*)mobj);
 }
 
+void P_RemovePrecipMobj(precipmobj_t* mobj)
+{
+	// unlink from sector and block lists
+	P_UnsetPrecipThingPosition(mobj);
+
+	if(precipsector_list)
+	{
+		P_DelPrecipSeclist(precipsector_list);
+		precipsector_list = NULL;
+	}
+
+	// free block
+	P_RemoveThinker((thinker_t*)mobj);
+}
+
+void P_SpawnPrecipitation(void)
+{
+	int i;
+	fixed_t x, y, height;
+
+	if(cv_snow.value)
+	{
+		int z;
+		subsector_t* snowsector;
+		z = 0;
+
+		for(i = 0; i < 1048576 / cv_numsnow.value; i++)
+		{
+			x = ((rand() * (65536 / (int)RAND_MAX)) - 32768) << FRACBITS;
+			y = ((rand() * (65536 / (int)RAND_MAX)) - 32768) << FRACBITS;
+			height = ((rand() * (65536 / (int)RAND_MAX)) - 32768) << FRACBITS;
+
+			snowsector = R_IsPointInSubsector(x, y);
+
+			if(!snowsector)
+				continue;
+
+			{
+				if(snowsector->sector->ceilingpic == skyflatnum &&
+					snowsector->sector->floorheight <= snowsector->sector->ceilingheight - 32)
+					// don't do it if sector height is less than 32
+				{
+					while(height < snowsector->sector->floorheight ||
+						height >= snowsector->sector->ceilingheight)
+						height = ((rand() * (65536 / (int)RAND_MAX)) - 32768) << FRACBITS;
+
+					z = rand() % 256;
+					if(z < 64)
+						P_SetPrecipMobjState(P_SpawnSnowMobj(x, y, height, MT_SNOWFLAKE), S_SNOW3);
+					else if(z < 144)
+						P_SetPrecipMobjState(P_SpawnSnowMobj(x, y, height, MT_SNOWFLAKE), S_SNOW2);
+					else
+						P_SpawnSnowMobj(x, y, height, MT_SNOWFLAKE);
+				}
+			}
+		}
+	}
+	else if(cv_storm.value || cv_rain.value)
+	{
+
+		subsector_t* rainsector;
+
+		for(i = 0; i < 1048576 / cv_raindensity.value; i++)
+		{
+			x = ((rand() * (65536 / (int)RAND_MAX)) - 32768) << FRACBITS;
+			y = ((rand() * (65536 / (int)RAND_MAX)) - 32768) << FRACBITS;
+			height = ((rand() * (65536 / (int)RAND_MAX)) - 32768) << FRACBITS;
+
+			rainsector = R_IsPointInSubsector(x, y);
+
+			if(!rainsector)
+				continue;
+
+			if(rainsector->sector->ceilingpic == skyflatnum && rainsector->sector->floorheight < rainsector->sector->ceilingheight)
+			{
+				while(!(height < rainsector->sector->ceilingheight &&
+					height > rainsector->sector->floorheight))
+					height = ((rand() * (65536 / (int)RAND_MAX)) - 32768) << FRACBITS;
+
+				P_SpawnRainMobj(x, y, height, MT_RAIN);
+			}
+		}
+	}
+}
 
 consvar_t cv_itemrespawntime={"respawnitemtime","30",CV_NETVAR,CV_Unsigned};
 consvar_t cv_itemrespawn    ={"respawnitem"    , "0",CV_NETVAR,CV_OnOff};
@@ -1511,6 +1774,93 @@ void P_RespawnSpecials (void)
     mapthing_t*         mthing;
 
     int                 i;
+
+	// Rain spawning
+	if(cv_storm.value || cv_rain.value)
+	{
+		int volume;
+
+		volume = 255;
+
+		if(players[displayplayer].mo->subsector->sector->ceilingpic == skyflatnum);
+		else
+		{
+			fixed_t x, y, yl, yh, xl, xh;
+			fixed_t closex, closey, closedist, newdist, adx, ady;
+
+			// Essentially check in a 1024 unit radius of the player for an outdoor area.
+			yl = players[displayplayer].mo->y - 1024*FRACUNIT;
+			yh = players[displayplayer].mo->y + 1024*FRACUNIT;
+			xl = players[displayplayer].mo->x - 1024*FRACUNIT;
+			xh = players[displayplayer].mo->x + 1024*FRACUNIT;
+			closex = players[displayplayer].mo->x + 2048*FRACUNIT;
+			closey = players[displayplayer].mo->y + 2048*FRACUNIT;
+			closedist = 2048*FRACUNIT;
+			for(y = yl; y <= yh; y += FRACUNIT*64)
+				for(x = xl; x <= xh; x += FRACUNIT*64)
+				{
+					if(R_PointInSubsector(x, y)->sector->ceilingpic == skyflatnum) // Found the outdoors!
+					{
+						adx = abs(players[displayplayer].mo->x - x);
+						ady = abs(players[displayplayer].mo->y - y);
+						newdist = adx + ady - ((adx < ady ? adx : ady)>>1);
+						if(newdist < closedist)
+						{
+							closex = x;
+							closey = y;
+							closedist = newdist;
+						}
+					}
+				}
+			volume = 255 - (closedist>>FRACBITS)/4;
+		}
+		if(volume < 0)
+			volume = 0;
+		else if(volume > 255)
+			volume = 255;
+
+		if(!leveltime || leveltime % 80 == 1)
+			S_StartSoundAtVolume(players[displayplayer].mo, sfx_rainin, volume);
+
+		if(cv_storm.value)
+		{
+			if(netgame ? (P_Random() < 2) : (M_Random() < 2))
+			{
+				sector_t* ss;
+				int i;
+				ss = sectors;
+
+				for(i = 0; i < numsectors; i++, ss++)
+					if(ss->ceilingpic == skyflatnum) // Only for the sky.
+						P_SpawnLightningFlash(ss); // Spawn a quick flash thinker
+
+				i = rand() % 256; // This doesn't need to use P_Random().
+
+				if(i < 128 && leveltime & 1)
+					S_StartSoundAtVolume(players[displayplayer].mo, sfx_litng1, volume);
+				else if(i < 128)
+					S_StartSoundAtVolume(players[displayplayer].mo, sfx_litng2, volume);
+				else if(leveltime & 1)
+					S_StartSoundAtVolume(players[displayplayer].mo, sfx_litng3, volume);
+				else
+					S_StartSoundAtVolume(players[displayplayer].mo, sfx_litng4, volume);
+			}
+			else if(leveltime & 1)
+			{
+				int random;
+
+				random = rand() % 256; // This doesn't need to use P_Random().
+
+				if(random > 253)
+				{
+					if(random & 1)
+						S_StartSoundAtVolume(players[displayplayer].mo, sfx_athun1, volume);
+					else
+						S_StartSoundAtVolume(players[displayplayer].mo, sfx_athun2, volume);
+				}
+			}
+		}
+	}
 
     // only respawn items in deathmatch
     if (!cv_itemrespawn.value || !netgame)

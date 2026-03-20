@@ -185,6 +185,8 @@ P_SpawnMobj
   fixed_t       z,
   mobjtype_t    type );
 
+void P_RecalcPrecipInSector(sector_t* sector);
+
 void    P_RemoveMobj (mobj_t* th);
 boolean P_SetMobjState (mobj_t* mobj, statenum_t state);
 void    P_MobjThinker (mobj_t* mobj);
@@ -247,6 +249,7 @@ extern  line_t*         ceilingline;
 extern  line_t*         blockingline;
 //SoM: 3/6/2000
 extern  msecnode_t*     sector_list;
+extern  mprecipsecnode_t* precipsector_list;
 
 boolean P_CheckPosition (mobj_t *thing, fixed_t x, fixed_t y);
 //SoM: 4/10/2000
@@ -262,6 +265,7 @@ boolean P_ChangeSector (sector_t* sector, boolean crunch);
 
 //Som: 4/6/2000: Extra functions.
 void    P_DelSeclist(msecnode_t *);
+void    P_DelPrecipSeclist(mprecipsecnode_t*);
 void    P_CreateSecNodeList(mobj_t*,fixed_t,fixed_t);
 int     P_GetMoveFactor(mobj_t* mo);
 void    P_Initsecnode( void );

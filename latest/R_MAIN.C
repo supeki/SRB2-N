@@ -187,15 +187,23 @@ lighttable_t*           zlight[LIGHTLEVELS][MAXLIGHTZ];
 int                     num_extra_colormaps;
 lighttable_t*           extra_colormaps[MAXCOLORMAPS];
 
+static CV_PossibleValue_t precipdensity_cons_t[] = {{1, "Thick"}, {2, "Heavy"}, {3, "Moderate"}, {4, "Light"}, {0, NULL}};
+
 // bumped light from gun blasts
 int                     extralight;
 
 consvar_t cv_chasecam = {"chasecam","1",0,CV_OnOff}; // Tails
 consvar_t cv_homing = {"homing","0",CV_NETVAR,CV_OnOff}; // Tails 07-02-2001
 consvar_t cv_numsnow = {"numsnow","16",CV_SAVE,CV_Unsigned}; // Tails 12-25-2001
+consvar_t cv_raindensity = {"raindensity", "Heavy", CV_SAVE, precipdensity_cons_t};
+consvar_t cv_storm = {"storm", "Off", 0, CV_OnOff};
+consvar_t cv_rain = {"rain", "Off", 0, CV_OnOff};
+consvar_t cv_snow = {"snow", "Off", 0, CV_OnOff};
+
 consvar_t cv_nights = {"nights","0",0,CV_OnOff}; // Tails 07-02-2001
 consvar_t cv_allowmlook = {"allowmlook","1",CV_NETVAR,CV_YesNo};
 
+consvar_t cv_precipdist = {"precipdist", "1024", CV_SAVE, CV_Unsigned};
 consvar_t cv_psprites = {"playersprites","0",0,CV_OnOff}; // Tails
 consvar_t cv_perspcorr = {"perspectivecrunch","0",0,CV_OnOff};
 consvar_t cv_tiltview = {"tiltview","0",0,CV_OnOff};
@@ -1312,6 +1320,13 @@ void R_RegisterEngineStuff (void)
 	CV_RegisterVar (&cv_nights); // Tails 07-02-2001
 	CV_RegisterVar (&cv_numsnow); // Tails 12-25-2001
     CV_RegisterVar (&cv_allowmlook);
+
+	CV_RegisterVar(&cv_storm);
+	CV_RegisterVar(&cv_rain);
+	CV_RegisterVar(&cv_snow);
+	CV_RegisterVar(&cv_precipdist);
+	CV_RegisterVar(&cv_raindensity);
+
     CV_RegisterVar (&cv_cam_dist );
     CV_RegisterVar (&cv_cam_still ); // Tails 07-02-2001
     CV_RegisterVar (&cv_cam_height);

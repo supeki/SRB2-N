@@ -317,6 +317,13 @@ typedef enum
 	sfx_steam1, // Tails 06-19-2001
 	sfx_steam2, // Tails 06-19-2001
 	sfx_cgot, // Got Emerald! Tails 09-02-2001
+	sfx_litng1,
+	sfx_litng2,
+	sfx_litng3,
+	sfx_litng4,
+	sfx_athun1,
+	sfx_athun2,
+	sfx_rainin,
 
     // free slots for S_AddSoundFx() at run-time --------------------
     sfx_freeslot0,

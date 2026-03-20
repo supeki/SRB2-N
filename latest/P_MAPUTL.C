@@ -45,6 +45,7 @@
 #include "p_local.h"
 #include "r_main.h"
 #include "p_maputl.h"
+
 mobj_t* blockthing; // Tails 9-15-99 Spin Attack
 
 //
@@ -461,6 +462,30 @@ void P_UnsetThingPosition (mobj_t* thing)
     }
 }
 
+void P_UnsetPrecipThingPosition (precipmobj_t* thing)
+{
+	if(!thing)
+		return;
+
+	if(!thing->subsector || !thing->subsector->sector)
+		return;
+
+    // inert things don't need to be in blockmap?
+    // unlink from subsector
+    if(thing->snext)
+        thing->snext->sprev = thing->sprev;
+
+    if(thing->sprev)
+        thing->sprev->snext = thing->snext;
+    else
+        thing->subsector->sector->preciplist = thing->snext;
+
+    thing->sprev = NULL;
+    thing->snext = NULL;
+
+    precipsector_list = thing->touching_sectorlist;
+    thing->touching_sectorlist = NULL; //to be restored by P_SetThingPosition
+}
 
 //
 // P_SetThingPosition
@@ -541,7 +566,31 @@ void P_SetThingPosition (mobj_t* thing)
     }
 }
 
+// Special function for precipitation Tails 08-19-2002
+void P_SetPrecipitationThingPosition (precipmobj_t* thing)
+{
+    subsector_t*        ss;
+    sector_t*           sec;
 
+    // link into subsector
+    ss = R_PointInSubsector (thing->x,thing->y);
+    thing->subsector = ss;
+
+    // invisible things don't go into the sector links
+    sec = ss->sector;
+
+    thing->sprev = NULL;
+    thing->snext = sec->preciplist;
+
+    if(sec->preciplist)
+        sec->preciplist->sprev = thing;
+
+    sec->preciplist = thing;
+
+    P_CreatePrecipSecNodeList(thing,thing->x,thing->y);
+    thing->touching_sectorlist = precipsector_list; // Attach to Thing's mobj_t
+    precipsector_list = NULL; // clear for next time
+}
 
 //
 // BLOCK MAP ITERATORS

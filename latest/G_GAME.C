@@ -152,7 +152,7 @@ byte            demoversion=VERSION;
 byte            gameepisode;
 int             gamemap;
 char            gamemapname[MAX_WADPATH];      // an external wad filename
-
+int globalweather = 0;
 
 gamemode_t      gamemode = indetermined;       // Game Mode - identify IWAD as shareware, retail etc.
 gamemission_t   gamemission = doom;
@@ -2144,6 +2144,7 @@ players[i].sp_score = 0;
         strncpy (gamemapname, mapname, MAX_WADPATH);
         gameepisode = 1;
         gamemap = 1;
+		globalweather = mapheaders[0].weather;
     }
     else
     {
@@ -2161,6 +2162,7 @@ players[i].sp_score = 0;
         gamemapname[0] = 0;
         gamemap = (short)M_MapNumber(mapname[3], mapname[4]);  // get xx out of MAPxx
         gameepisode = 1;
+		globalweather = mapheaders[gamemap].weather;
     }
 
     gameskill     = skill;

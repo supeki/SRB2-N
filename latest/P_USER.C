@@ -217,7 +217,8 @@ void P_CalcHeight (player_t* player)
 extern int ticruned,ticmiss;
 
 extern consvar_t cv_homing; // Tails 07-02-2001
-extern consvar_t cv_numsnow; // Tails 12-25-2001
+extern consvar_t cv_numsnow; // Tails 12-25-200
+
 //
 // P_MovePlayer
 //

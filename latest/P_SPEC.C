@@ -2051,7 +2051,111 @@ P_CrossSpecialLine
     }
 }
 
+//
+// P_SwitchWeather
+//
+// Switches the weather!
+//
+void P_SwitchWeather(int weathernum)
+{
+	boolean purge = false;
 
+	switch(weathernum)
+	{
+		case 0: // None
+			if(cv_snow.value == 0
+				&& cv_rain.value == 0
+				&& cv_storm.value == 0)
+				return; // Nothing to do.
+			purge = true;
+			break;
+		case 1: // Storm
+		case 3: // Rain
+			if(cv_snow.value)
+				purge = true;
+			break;
+		case 2: // Snow
+			if(cv_snow.value == 1)
+				return; // Nothing to do.
+			if(cv_rain.value || cv_storm.value)
+				purge = true; // Need to delete the other precips.
+			break;
+		default:
+			CONS_Printf("Unknown weather type %i.\n", weathernum);
+			break;
+	}
+
+	if(purge)
+	{
+		thinker_t* think;
+		precipmobj_t* precipmobj;
+
+		for(think = thinkercap.next; think != &thinkercap; think = think->next)
+		{
+			if((think->function.acp1 != (actionf_p1)P_SnowThinker)
+				&& (think->function.acp1 != (actionf_p1)P_RainThinker))
+				continue; // not a precipmobj thinker
+
+			precipmobj = (precipmobj_t*)think;
+
+			P_RemovePrecipMobj(precipmobj);
+		}
+	}
+
+	if(weathernum == 2) // snow
+	{
+		cv_snow.value = 1;
+		CV_SetValue(&cv_snow, true);
+		cv_storm.value = 0;
+		CV_SetValue(&cv_storm, false);
+		cv_rain.value = 0;
+		CV_SetValue(&cv_rain, false);
+		P_SpawnPrecipitation();
+	}
+	else if(weathernum == 3) // rain
+	{
+		boolean dontspawn = false;
+
+		if(cv_rain.value || cv_storm.value)
+			dontspawn = true;
+
+		cv_rain.value = 1;
+		CV_SetValue(&cv_rain, true);
+		cv_storm.value = 0;
+		CV_SetValue(&cv_storm, false);
+		cv_snow.value = 0;
+		CV_SetValue(&cv_snow, false);
+		
+		if(!dontspawn)
+			P_SpawnPrecipitation();
+	}
+	else if(weathernum == 1) // storm
+	{
+		boolean dontspawn = false;
+
+		if(cv_rain.value || cv_storm.value)
+			dontspawn = true;
+
+		cv_storm.value = 1;
+		CV_SetValue(&cv_storm, true);
+		cv_snow.value = 0;
+		CV_SetValue(&cv_snow, false);
+		cv_rain.value = 0;
+		CV_SetValue(&cv_rain, false);
+
+		if(!dontspawn)
+			P_SpawnPrecipitation();
+	}
+	else
+	{
+		cv_storm.value = 0;
+		cv_snow.value = 0;
+		cv_rain.value = 0;
+		CV_SetValue(&cv_snow, false);
+		CV_SetValue(&cv_storm, false);
+		CV_SetValue(&cv_rain, false);
+	}
+}
 
 //
 // P_ShootSpecialLine - IMPACT SPECIALS
@@ -2973,6 +3077,43 @@ void P_SpawnSpecials (void)
             break;
         }
     }
+
+	if(xmasmode || mapheaders[gamemap].weather == 2) // snow
+	{
+		cv_snow.value = 1;
+		CV_SetValue(&cv_snow, true);
+		cv_storm.value = 0;
+		CV_SetValue(&cv_storm, false);
+		cv_rain.value = 0;
+		CV_SetValue(&cv_rain, false);
+	}
+	else if(mapheaders[gamemap].weather == 3) // rain
+	{
+		cv_rain.value = 1;
+		CV_SetValue(&cv_rain, true);
+		cv_storm.value = 0;
+		CV_SetValue(&cv_storm, false);
+		cv_snow.value = 0;
+		CV_SetValue(&cv_snow, false);
+	}
+	else if(mapheaders[gamemap].weather == 1) // storm
+	{
+		cv_storm.value = 1;
+		CV_SetValue(&cv_storm, true);
+		cv_snow.value = 0;
+		CV_SetValue(&cv_snow, false);
+		cv_rain.value = 0;
+		CV_SetValue(&cv_rain, false);
+	}
+	else
+	{
+		cv_storm.value = 0;
+		cv_snow.value = 0;
+		cv_rain.value = 0;
+		CV_SetValue(&cv_snow, false);
+		CV_SetValue(&cv_storm, false);
+		CV_SetValue(&cv_rain, false);
+	}
 
     //SoM: 3/8/2000: Boom level init functions
     P_RemoveAllActiveCeilings();

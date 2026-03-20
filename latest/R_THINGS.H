@@ -150,6 +150,7 @@ typedef struct
 	char ta_name[33];
 	int ta_time;
 	char picname[9];
+	int weather;
 } mapheader_t;
 
 extern mapheader_t mapheaders[NUMMAPHEADERS+1];

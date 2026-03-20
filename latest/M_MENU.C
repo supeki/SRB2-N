@@ -1295,19 +1295,11 @@ void M_DrawSlider (int x, int y, int range)
 //added:10-02-98: note: alphaKey member is the y offset
 menuitem_t VideoOptionsMenu[]=
 {
-    {IT_STRING | IT_SUBMENU, "Video Modes..."   , &VidModeDef       , 0},
-    //{IT_STRING | IT_CVAR,    "Fullscreen"       , &cv_fullscreen    , 10}, 
-    {IT_STRING | IT_CVAR
-     | IT_CV_SLIDER     ,    "Brightness"       , &cv_usegamma      ,20},
-//    {IT_STRING | IT_CVAR
-//     | IT_CV_SLIDER     ,    "Screen Size"      , &cv_viewsize      ,30},
-//    {IT_STRING | IT_CVAR,    "Translucency"     , &cv_translucency  ,40},
-//    {IT_STRING | IT_CVAR,    "Splats"           , &cv_splats        ,50}, // Tails
-//    {IT_STRING | IT_CVAR,    "Screens Link"     , &cv_screenslink   ,60},
-#ifdef HWRENDER
-    //17/10/99: added by Hurdler
-//    {IT_CALL|IT_WHITESTRING, "OpenGL Options...", M_OpenGLOption    ,90},
-#endif
+    {IT_STRING | IT_SUBMENU,             "Video Modes...",      &VidModeDef,     0}, 
+    {IT_STRING | IT_CVAR | IT_CV_SLIDER, "Brightness",          &cv_usegamma,    20},
+	{IT_STRING | IT_CVAR,                "Snow Density",        &cv_numsnow,     70}, // Changed all to normal string Tails 11-30-2000
+	{IT_STRING | IT_CVAR,                "Rain Density",        &cv_raindensity, 80}, // Changed all to normal string Tails 11-30-2000
+	{IT_STRING | IT_CVAR,                "Rain/Snow Draw Dist", &cv_precipdist,  90}, // Changed all to normal string Tails 11-30-2000
 };
 
 menu_t  VideoOptionsDef =
@@ -1358,7 +1350,6 @@ menuitem_t GameOptionsMenu[]=
 {
 //    {IT_STRING | IT_CVAR,"Item Respawn"        ,&cv_itemrespawn        ,0},
 //    {IT_STRING | IT_CVAR,"Item Respawn time"   ,&cv_itemrespawntime    ,10},
-	{IT_STRING | IT_CVAR,"Amount of Snow" ,&cv_numsnow   ,10},
     {IT_STRING | IT_CVAR,"Enemy Respawn"     ,&cv_respawnmonsters    ,20}, // Tails
     {IT_STRING | IT_CVAR,"Enemy Respawn time",&cv_respawnmonsterstime,30}, // Tails
     {IT_STRING | IT_CVAR,"Fast Enemies"       ,&cv_fastmonsters       ,40}, // Tails

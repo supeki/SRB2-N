@@ -83,6 +83,9 @@ int     P_PointOnDivlineSide (fixed_t x, fixed_t y, divline_t* line);
 void    P_MakeDivline (line_t* li, divline_t* dl);
 fixed_t P_InterceptVector (divline_t* v2, divline_t* v1);
 int     P_BoxOnLineSide (fixed_t* tmbox, line_t* ld);
+void    P_UnsetPrecipThingPosition(precipmobj_t* thing);
+void    P_SetPrecipitationThingPosition(precipmobj_t* thing);
+void    P_CreatePrecipSecNodeList(precipmobj_t* thing,fixed_t x,fixed_t y);
 
 extern fixed_t          opentop;
 extern fixed_t          openbottom;

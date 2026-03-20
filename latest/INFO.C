@@ -72,7 +72,7 @@ char *sprnames[NUMSPRITES+1] = {
 	"RRNG","TTAG","STEM","RFLG","BFLG","GFLG","TOKE","CEMG","CEMO","CEMP",
 	"CEMB","CEMR","CEML","CEMY","JETB","JETG","JBUL","MOUS","DETN","XPLD",
 	"REDX","CHAN","CAPE","SNO1","SANT","EMER","EMES","EMET","SBLL","SPIK",
-	"CCOM","MARL",// Tails 03-13-2001
+	"CCOM","MARL","RAIN",// Tails 03-13-2001
     NULL /* shit! 19990907 by Kin */
 };
 
@@ -774,7 +774,7 @@ state_t states[NUMSTATES] = {
     //water splash test
     {SPR_SPLA,    0,  8,{NULL}           ,S_SPLASH2      }, // S_SPLASH1
     {SPR_SPLA,    1,  8,{NULL}           ,S_SPLASH3      }, // S_SPLASH2
-    {SPR_SPLA,    2,  8,{NULL}           ,S_NULL         }, // S_SPLASH3
+    {SPR_SPLA,    2,  8,{NULL}           ,S_RAINRETURN         }, // S_SPLASH3
     {SPR_TNT1,    0, -1,{NULL},          S_TNT1          },  // S_TNT1    //SoM: 3/8/2000
 
     // Birdie freed! Tails 10-20-99
@@ -1270,6 +1270,9 @@ state_t states[NUMSTATES] = {
 
 	{SPR_MARL,0,-1,{NULL},S_MARILUNFINISHED}, // S_MARILUNFINISHED
 	{SPR_PLAY,0,-1,{NULL},S_DUMMY_STND}, // S_DUMMY_STND
+	{SPR_RAIN, 32768, -1, {NULL}, S_NULL}, // S_RAIN1
+	{SPR_RAIN, 32768, 1, {NULL}, S_RAIN1}, // S_RAINRETURN
+
 };
 
 mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
@@ -6147,6 +6150,31 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
         sfx_None,               // activesound
         MF_NOCLIP|MF_NOGRAVITY,                // flags //Tails 12-05-99
         S_NULL          // raisestate	
+	},
+	{           // MT_RAIN
+		-1,             // doomednum
+		S_RAIN1,        // spawnstate
+		1000,           // spawnhealth
+		S_NULL,         // seestate
+		sfx_None,       // seesound
+		8,              // reactiontime
+		sfx_None,       // attacksound
+		S_NULL,         // painstate
+		0,              // painchance
+		sfx_None,       // painsound
+		S_NULL,         // meleestate
+		S_NULL,         // missilestate
+		S_NULL,         // deathstate
+		S_NULL,         // xdeathstate
+		sfx_None,       // deathsound
+		-24*FRACUNIT,   // speed
+		1*FRACUNIT,     // radius
+		8*FRACUNIT,     // height
+		4,              // mass
+		0,              // damage
+		sfx_None,       // activesound
+		MF_NOBLOCKMAP,  // flags
+		S_NULL          // raisestate
 	}
 
 // end air particles Nozomi 03-13-2026

@@ -44,6 +44,17 @@
 #include "z_zone.h"
 #include "m_random.h"
 
+static void P_RemoveLighting(sector_t* sector)
+{
+	if(sector->lightingdata)
+	{
+		// The thinker is the first member in all the lighting action structs,
+		// so just let the thinker get freed, and that will free the whole
+		// structure.
+		P_RemoveThinker(&((elevator_t*)sector->lightingdata)->thinker);
+		sector->lightingdata = NULL;
+	}
+}
 
 // =========================================================================
 //                           FIRELIGHT FLICKER
@@ -151,7 +162,65 @@ void P_SpawnLightFlash (sector_t*       sector)
     flash->count = (P_Random()&flash->maxtime)+1;
 }
 
+//
+// LIGHTNING FLASH EFFECT
+//
 
+/** Thinker function for a lightning flash storm effect.
+  *
+  * \param flash The effect being considered.
+  * \sa P_SpawnLightningFlash
+  */
+void T_LightningFlash(lightflash_t* flash)
+{
+	flash->sector->lightlevel -= 4;
+
+	if(flash->sector->lightlevel <= flash->minlight)
+	{
+		flash->sector->lightlevel = (short)flash->minlight;
+		P_RemoveLighting(flash->sector);
+	}
+}
+
+/** Spawns a one-time lightning flash.
+  *
+  * \param sector Sector to light up.
+  * \sa T_LightningFlash
+  */
+void P_SpawnLightningFlash(sector_t* sector)
+{
+	int minlight;
+	lightflash_t* flash;
+
+	minlight = sector->lightlevel;
+
+	if(sector->lightingdata)
+	{
+		if(((lightflash_t*)sector->lightingdata)->thinker.function.acp1
+			== (actionf_p1)T_LightningFlash)
+		{
+			// lightning was already flashing in this sector
+			// save the original light level value
+			minlight = ((lightflash_t*)sector->lightingdata)->minlight;
+		}
+
+		P_RemoveThinker(&((elevator_t*)sector->lightingdata)->thinker);
+	}
+
+	sector->lightingdata = NULL;
+
+	flash = Z_Malloc(sizeof(*flash), PU_LEVSPEC, 0);
+
+	P_AddThinker(&flash->thinker);
+
+	flash->thinker.function.acp1 = (actionf_p1)T_LightningFlash;
+	flash->sector = sector;
+	flash->maxlight = 255;
+	flash->minlight = minlight;
+	sector->lightlevel = (short)flash->maxlight;
+
+	sector->lightingdata = flash;
+}
 
 //
 // STROBE LIGHT FLASHING

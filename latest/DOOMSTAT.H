@@ -118,7 +118,8 @@ extern  language_t   language;
 // Selected by user.
 extern  skill_t         gameskill;
 extern  byte            gameepisode;
-extern  int            gamemap;
+extern  int             gamemap;
+extern  int             globalweather;
 
 // Nightmare mode flag, single player.
 // extern  boolean         respawnmonsters;

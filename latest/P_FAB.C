@@ -245,6 +245,7 @@ void P_SetTranslucencies (void)
 	R_SetTrans (S_AIRPARTICLE3, S_AIRPARTICLE4, tr_transmed);
 	R_SetTrans (S_AIRPARTICLE5, S_AIRPARTICLE6, tr_transmed);
 	R_SetTrans (S_AIRPARTICLE7, S_AIRPARTICLE8, tr_transmed);
+	R_SetTrans(S_RAIN1, 0, tr_transmed);
 }
 
 void Translucency_OnChange(void)

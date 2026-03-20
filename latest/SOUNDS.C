@@ -232,10 +232,18 @@ sfxinfo_t S_sfx[NUMSFX] =
   { "amwtr8"   , false,  64, 0, -1, -1, 0, -1},
   { "amwtr9"   , false,  64, 0, -1, -1, 0, -1},
   { "splish"   , false,  64, 0, -1, -1, 0, -1}, // Splish Tails 12-08-2000
-  { "wslap\0"   , false,  64, 0, -1, -1, 0, -1}, // Water Slap Tails 12-13-2000
+  { "wslap\0"   , false, 64, 0, -1, -1, 0, -1}, // Water Slap Tails 12-13-2000
   { "steam1"   , false,  64, 0, -1, -1, 0, -1}, // Tails 06-19-2001
   { "steam2"   , false,  64, 0, -1, -1, 0, -1}, // Tails 06-19-2001
-  { "cgot\0\0"   , true,  120, 0, -1, -1, 0, -1}, // Got Emerald! Tails 09-02-2001
+  { "cgot\0\0" , true,  120, 0, -1, -1, 0, -1}, // Got Emerald! Tails 09-02-2001
+  { "litng1"   , false, 126, 0, -1, -1, 0, -1},
+  { "litng2"   , false, 126, 0, -1, -1, 0, -1},
+  { "litng3"   , false, 126, 0, -1, -1, 0, -1},
+  { "litng4"   , false, 126, 0, -1, -1, 0, -1},
+  { "athun1"   , false, 126, 0, -1, -1, 0, -1},
+  { "athun2"   , false, 126, 0, -1, -1, 0, -1},
+  { "rainin"   , true,  127, 0, -1, -1, 0, -1},
+  
   // skin sounds free slots to add sounds at run time (Boris HACK!!!)
   // initialized to NULL
 };

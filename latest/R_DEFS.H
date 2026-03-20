@@ -293,6 +293,10 @@ typedef struct sector_s
     lighttable_t*              extra_colormap;
     lightlist_t*               lightlist;
     int                        numlights;
+
+	// list of precipitation mobjs in sector
+	precipmobj_t* preciplist;
+	struct mprecipsecnode_s* touching_preciplist;
 } sector_t;
 
 
@@ -434,6 +438,16 @@ typedef struct msecnode_s
   boolean visited; // killough 4/4/98, 4/7/98: used in search algorithms
 } msecnode_t;
 
+typedef struct mprecipsecnode_s
+{
+	sector_t*                m_sector; // a sector containing this object
+	struct precipmobj_s*     m_thing;  // this object
+	struct mprecipsecnode_s* m_tprev;  // prev msecnode_t for this thing
+	struct mprecipsecnode_s* m_tnext;  // next msecnode_t for this thing
+	struct mprecipsecnode_s* m_sprev;  // prev msecnode_t for this sector
+	struct mprecipsecnode_s* m_snext;  // next msecnode_t for this sector
+	boolean visited; // used in search algorithms
+} mprecipsecnode_t;
 
 //Hurdler: 04/12/2000: for now, only used in hardware mode
 //                     maybe later for software as well?
@@ -673,6 +687,8 @@ typedef struct vissprite_s
 
     fixed_t             sz;
     fixed_t             szt;
+
+	boolean precip;
 } vissprite_t;
 
 

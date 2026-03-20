@@ -821,6 +821,10 @@ static void R_ProjectSprite (mobj_t* thing)
 		if (strlen(skins[thing->player->skin].spritescale) > 0) {
 			skinscale = (fixed_t)(atof(skins[thing->player->skin].spritescale) * FRACUNIT);
 		}
+	} else if (thing->skin && strlen(thing->skin) > 0) {
+		if (strlen(skins[R_SkinAvailable(thing->skin)].spritescale) > 0) {
+			skinscale = (fixed_t)(atof(skins[R_SkinAvailable(thing->skin)].spritescale) * FRACUNIT);
+		}
 	}
 
     xscale = FixedDiv(projection, tz);
@@ -1003,8 +1007,132 @@ static void R_ProjectSprite (mobj_t* thing)
     }
 }
 
+static void R_ProjectPrecipitationSprite(precipmobj_t* thing)
+{
+	fixed_t tr_x, tr_y;
+	fixed_t gxt, gyt;
+	fixed_t tx, tz;
+	fixed_t xscale, yscale; //added:02-02-98:aaargll..if I were a math-guy!!!
 
+	int x1, x2;
 
+	spritedef_t* sprdef;
+	spriteframe_t* sprframe;
+	int lump;
+
+	vissprite_t* vis;
+
+	fixed_t iscale;
+
+	//SoM: 3/17/2000
+	fixed_t gzt;
+	//int light = 0;
+
+	// transform the origin point
+	tr_x = thing->x - viewx;
+	tr_y = thing->y - viewy;
+
+	gxt = FixedMul(tr_x,viewcos);
+	gyt = -FixedMul(tr_y,viewsin);
+
+	tz = gxt-gyt;
+
+	// thing is behind view plane?
+	if(tz < MINZ)
+		return;
+
+	// aspect ratio stuff :
+	xscale = FixedDiv(projection, tz);
+	yscale = FixedDiv(projectiony, tz);
+
+	gxt = -FixedMul(tr_x,viewsin);
+	gyt = FixedMul(tr_y,viewcos);
+	tx = -(gyt+gxt);
+
+	// too far off the side?
+	if(abs(tx)>(tz<<2))
+		return;
+
+	// decide which patch to use for sprite relative to player
+#ifdef RANGECHECK
+	if((unsigned)thing->sprite >= numsprites)
+		I_Error("R_ProjectSprite: invalid sprite number %i ",
+			thing->sprite);
+#endif
+
+	sprdef = &sprites[thing->sprite];
+
+#ifdef RANGECHECK
+	if((thing->frame&FF_FRAMEMASK) >= sprdef->numframes)
+		I_Error("R_ProjectSprite: invalid sprite frame %i : %i for %s",
+			thing->sprite, thing->frame, sprnames[thing->sprite]);
+#endif
+	sprframe = &sprdef->spriteframes[thing->frame & FF_FRAMEMASK];
+
+#ifdef PARANOIA
+	//heretic hack
+	if(!sprframe)
+		I_Error("sprframes NULL for sprite %d\n", thing->sprite);
+#endif
+
+	// use single rotation for all views
+	lump = sprframe->lumpid[0];     //Fab: see note above
+
+	// calculate edges of the shape
+	tx -= spriteoffset[lump];
+	x1 = (centerxfrac + FixedMul (tx,xscale) ) >>FRACBITS;
+
+	// off the right side?
+	if(x1 > viewwidth)
+		return;
+
+	tx += spritewidth[lump];
+	x2 = ((centerxfrac + FixedMul (tx,xscale)) >>FRACBITS) - 1;
+
+	// off the left side
+	if(x2 < 0)
+		return;
+
+	//SoM: 3/17/2000: Disreguard sprites that are out of view..
+	gzt = thing->z + spritetopoffset[lump];
+
+	// store information in a vissprite
+	vis = R_NewVisSprite();
+	vis->scale = yscale;           //<<detailshift;
+	vis->gx = thing->x;
+	vis->gy = thing->y;
+	vis->gz = gzt - spriteheight[lump];
+	vis->gzt = gzt;
+	vis->thingheight = 4*FRACUNIT;
+	vis->texturemid = vis->gzt - viewz;
+
+	vis->x1 = x1 < 0 ? 0 : x1;
+	vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;
+	vis->xscale = xscale; //SoM: 4/17/2000
+	vis->sector = thing->subsector->sector;
+	vis->szt = (centeryfrac - FixedMul(vis->gzt - viewz, yscale)) >> FRACBITS;
+	vis->sz = (centeryfrac - FixedMul(vis->gz - viewz, yscale)) >> FRACBITS;
+
+	iscale = FixedDiv(FRACUNIT, xscale);
+
+	vis->startfrac = 0;
+	vis->xiscale = iscale;
+
+	if(vis->x1 > x1)
+		vis->startfrac += vis->xiscale*(vis->x1-x1);
+
+	//Fab: lumppat is the lump number of the patch to use, this is different
+	//     than lumpid for sprites-in-pwad : the graphics are patched
+	vis->patch = sprframe->lumppat[0];
+
+	// specific translucency
+	if(thing->frame & FF_TRANSMASK)
+		vis->transmap = (thing->frame & FF_TRANSMASK) - 0x10000 + transtables;
+
+	// Fullbright
+	vis->colormap = colormaps;
+	vis->precip = true;
+}
 
 //
 // R_AddSprites
@@ -1013,7 +1141,9 @@ static void R_ProjectSprite (mobj_t* thing)
 void R_AddSprites (sector_t* sec, int lightlevel)
 {
     mobj_t*             thing;
+	precipmobj_t* precipthing;
     int                 lightnum;
+	fixed_t adx, ady, approx_dist;
 
     if (rendermode != render_soft)
         return;
@@ -1046,6 +1176,34 @@ void R_AddSprites (sector_t* sec, int lightlevel)
     for (thing = sec->thinglist ; thing ; thing = thing->snext)
         if((thing->eflags & MF_INVISIBLE)==0)
             R_ProjectSprite (thing);
+
+	// Special function for precipitation Tails 08-18-2002
+	for(precipthing = sec->preciplist; precipthing; precipthing = precipthing->snext)
+	{
+		if(!precipthing)
+			continue;
+
+		adx = abs(players[displayplayer].mo->x - precipthing->x);
+		ady = abs(players[displayplayer].mo->y - precipthing->y);
+
+		// From _GG1_ p.428. Approx. eucledian distance fast.
+		approx_dist = adx + ady - ((adx < ady ? adx : ady)>>1);
+
+		// Only draw the precipitation oh-so-far from the player.
+		if(approx_dist < (cv_precipdist.value << FRACBITS))
+			R_ProjectPrecipitationSprite(precipthing);
+		else if(cv_splitscreen.value && players[secondarydisplayplayer].mo)
+		{
+			adx = abs(players[secondarydisplayplayer].mo->x - precipthing->x);
+			ady = abs(players[secondarydisplayplayer].mo->y - precipthing->y);
+
+			// From _GG1_ p.428. Approx. eucledian distance fast.
+			approx_dist = adx + ady - ((adx < ady ? adx : ady)>>1);
+
+			if(approx_dist < (cv_precipdist.value << FRACBITS))
+				R_ProjectPrecipitationSprite (precipthing);
+		}
+	}
 }
 
 
@@ -2196,6 +2354,12 @@ void R_AddMapHeader (int wadnum)
                 strncpy (mapheaders[levelnum].sky, value, 8);
                 strupr (mapheaders[levelnum].sky);
             }
+
+			if (!stricmp(token,"weather"))
+			{
+				// Weather! Nozomi 03-05-2026
+				mapheaders[levelnum].weather = atoi(value);
+			}
 
 			if (!stricmp(token,"next"))
 			{
