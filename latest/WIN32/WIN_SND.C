@@ -37,6 +37,7 @@
 //
 //-----------------------------------------------------------------------------
 
+#include "../doomdef.h"
 
 #include "win_main.h"
 #include <mmsystem.h>
@@ -58,6 +59,7 @@
 #include "../qmus2mid.h"
 #include "mid2strm.h"
 
+#include "win_dll.h"
 
 //#define TESTCODE            // remove this for release version
 
@@ -225,7 +227,8 @@ static LPDIRECTSOUNDBUFFER raw2DS(unsigned char *dsdata, int len)
                       DSBCAPS_CTRLVOLUME |
                       DSBCAPS_STICKYFOCUS |
                       //DSBCAPS_LOCSOFTWARE |
-                      DSBCAPS_STATIC;
+                      DSBCAPS_STATIC |
+					  DSBCAPS_CTRLFREQUENCY;
     dsbdesc.dwBufferBytes = len-8;
     dsbdesc.lpwfxFormat = &wfm;             // pointer to WAVEFORMATEX structure
 
@@ -339,12 +342,6 @@ static void I_UpdateSoundPanning (LPDIRECTSOUNDBUFFER lpSnd, int sep)
     //    CONS_Printf ("SetPan FAILED for sep %d pan %d\n", sep, (sep * DSBPAN_RANGE)/SEP_RANGE - DSBPAN_RIGHT);
 }
 
-static void I_UpdateSoundFrequency (LPDIRECTSOUNDBUFFER lpSnd, int freq)
-{
-	HRESULT hr;
-	hr = lpSnd->lpVtbl->SetFrequency(lpSnd, freq);
-}
-
 // search a free slot in the stack, free it if needed
 static int GetFreeStackNum(int  newpriority)
 {
@@ -394,6 +391,12 @@ static int GetFreeStackNum(int  newpriority)
     return -1;
 }
 
+static float recalc_pitch(int doom_pitch)
+{
+    return doom_pitch < NORM_PITCH ?
+        (float)(doom_pitch + NORM_PITCH) / (NORM_PITCH * 2)
+        :(float)doom_pitch / (float)NORM_PITCH;
+}
 
 // --------------------------------------------------------------------------
 // Start the given S_sfx[id] sound with given properties (panning, volume..)
@@ -411,6 +414,7 @@ int I_StartSound (int            id,
     DWORD       dwStatus;
     int         handle;
     int         i;
+	DWORD       freq;
 
     if (nosound)
         return -1;
@@ -448,6 +452,12 @@ int I_StartSound (int            id,
         dsbuffer->lpVtbl->Stop (dsbuffer);
     }
 
+	IDirectSoundBuffer_SetFrequency(dsbuffer, DSBFREQUENCY_ORIGINAL);
+    IDirectSoundBuffer_GetFrequency(dsbuffer, &freq);
+
+	freq = freq * recalc_pitch(pitch);
+    IDirectSoundBuffer_SetFrequency(dsbuffer, freq);
+
     // store information on the playing sound
     StackSounds[handle].lpSndBuf = dsbuffer;
     StackSounds[handle].priority = priority;
@@ -459,7 +469,6 @@ int I_StartSound (int            id,
 
     I_UpdateSoundVolume (dsbuffer, vol);
     I_UpdateSoundPanning (dsbuffer, sep);
-	//I_UpdateSoundFrequency (dsbuffer, pitch); // Added this but dunno if it does anything... Nozomi 03-19-2026
 
     dsbuffer->lpVtbl->SetCurrentPosition (dsbuffer, 0);
     hr = dsbuffer->lpVtbl->Play (dsbuffer, 0, 0, 0);
@@ -476,7 +485,9 @@ int I_StartSound (int            id,
             if (lumpnum<0)
                 lumpnum = S_GetSfxLumpNum (&S_sfx[id]);
             dsdata = W_CacheLumpNum (lumpnum, PU_CACHE);
-            CopySoundData (dsbuffer, (byte*)dsdata + 8, W_LumpLength (S_sfx[id].lumpnum));
+
+            // Well... Data lenght must be -8!!!
+            CopySoundData (dsbuffer, (byte*)dsdata + 8, W_LumpLength (S_sfx[id].lumpnum) - 8);
             
             // play
             hr = dsbuffer->lpVtbl->Play (dsbuffer, 0, 0, 0);

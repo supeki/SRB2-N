@@ -652,8 +652,10 @@ void P_TouchSpecialThing ( mobj_t*       special,
 			player->health++;               // can go over 100%
 			if (player->health > 999) // go up to 999 rings Tails 11-01-99
 				player->health = 999; // go up to 999 rings Tails 11-01-99
+
 			player->mo->health = player->health;
-				player->totalring++;
+			player->totalring++;
+			player->ringtimer += 1;
 			break;
 
 			// Special Stage Token Tails 08-11-2001
@@ -779,10 +781,13 @@ void P_TouchSpecialThing ( mobj_t*       special,
 		}
 	}
 
-    P_SetMobjState(special, S_DISS);
-
 	if (sound)
-        S_StartSound (player->mo, sound); // was NULL, but changed to player so you could hear others pick up rings Tails 01-11-2001
+		if (special->type == MT_MISC2 || special->type == MT_FLINGRING)
+			S_StartSoundAtVolumeAndPitch (player->mo, sound, 255, NORM_PITCH + ((player->ringtimer-1)*2));
+		else
+			S_StartSound (player->mo, sound); // was NULL, but changed to player so you could hear others pick up rings Tails 01-11-2001
+
+	P_SetMobjState(special, S_DISS);
 }
 
 

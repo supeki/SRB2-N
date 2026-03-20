@@ -995,6 +995,19 @@ SOURCE=.\elme.txt
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\..\..\..\..\Last130Code\latest\P_INTER.C
+
+!IF  "$(CFG)" == "DoomLegacy - Win32 Release"
+
+# PROP Exclude_From_Build 1
+
+!ELSEIF  "$(CFG)" == "DoomLegacy - Win32 Debug"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
 SOURCE=.\srb2.ico
 # End Source File
 # End Target

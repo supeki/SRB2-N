@@ -267,6 +267,7 @@ typedef struct player_s
 	// srb2-nozomi additions
 	int homingtimer; // A homing timer to prevent softlocks with the Homing Thok.
 	int autobrake; // Mid-air autobrake to prevent overshooting.
+	int ringtimer; // A timer that tics down, used for pitch scaling rings.
 
 	////////////////////////////
 	// Conveyor Belt Movement //

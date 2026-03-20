@@ -123,6 +123,13 @@ S_StartSoundAtVolume
   int           sound_id,
   int           volume );
 
+void
+S_StartSoundAtVolumeAndPitch
+( void*         origin,
+  int           sound_id,
+  int           volume, 
+  int			pitch );
+
 
 // Stop sound for thing at <origin>
 void S_StopSound(void* origin);
@@ -151,6 +158,37 @@ void S_UpdateSounds(void);
 
 void S_SetMusicVolume(int volume);
 void S_SetSfxVolume(int volume);
+
+// Moving these from S_Sound.c Nozomi 03-19-2026
+#define S_MAX_VOLUME            127
+
+// when to clip out sounds
+// Does not fit the large outdoor areas.
+// added 2-2-98 in 8 bit volume control (befort  (1200*0x10000))
+#define S_CLIPPING_DIST         (1200*0x10000)
+
+// Distance tp origin when sounds should be maxed out.
+// This should relate to movement clipping resolution
+// (see BLOCKMAP handling).
+// Originally: (200*0x10000).
+// added 2-2-98 in 8 bit volume control (befort  (160*0x10000))
+#define S_CLOSE_DIST            (160*0x10000)
+
+// added 2-2-98 in 8 bit volume control (befort  remove the +4)
+#define S_ATTENUATOR            ((S_CLIPPING_DIST-S_CLOSE_DIST)>>(FRACBITS+4))
+
+// Adjustable by menu.
+#define NORM_VOLUME             snd_MaxVolume
+
+#define NORM_PITCH              127
+#define NORM_PRIORITY           64
+#define NORM_SEP                128
+
+#define S_PITCH_PERTURB         1
+#define S_STEREO_SWING          (96*0x10000)
+
+// percent attenuation from front to back
+#define S_IFRACVOL              30
 
 
 #endif
