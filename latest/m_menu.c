@@ -678,7 +678,7 @@ void M_DrawSetupMultiPlayerMenu(void)
 	// draw color string
 	{
 		int i;
-		char* colorname = "";
+		char colorname[15] = ""; // Tried changing it to a character buffer to fix an issue. Please work!! Save 21-03-2026
 		strcpy(colorname, setupm_cvcolor->string);
 		for (i=0; i<((int)strlen(colorname)); i++)
 			if (colorname[i] == '_')
@@ -2579,7 +2579,7 @@ void M_DrawTextBox (int x, int y, int width, int lines)
         //cy += 8;
         //V_DrawScaledPatch (cx, cy, 0, p);
 
-        //p = W_CachePatchName ("brdr_mm",PU_CACHE); //middle ombr‚ dessus
+        //p = W_CachePatchName ("brdr_mm",PU_CACHE); //middle ombrï¿½ dessus
         //for (n = 1; n < lines; n++)
         //{
         //    cy += 8;
