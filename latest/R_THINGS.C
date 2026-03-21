@@ -702,9 +702,9 @@ static void R_DrawVisSprite ( vissprite_t*          vis,
 	frac = vis->startfrac;
 	windowtop = windowbottom = sprbotscreen = MAXINT;
 
-	if (vis->mobj && vis->mobj->player) {
-		if (strlen(skins[vis->mobj->player->skin].spritescale) > 0) {
-			scale = (fixed_t)(atof(skins[vis->mobj->player->skin].spritescale) * FRACUNIT);
+	if (vis->mobj && vis->mobj->skin) {
+		if (skins[R_SkinAvailable(vis->mobj->skin)].spritescale && strlen(skins[R_SkinAvailable(vis->mobj->skin)].spritescale) > 0) {
+			scale = (fixed_t)(atof(skins[R_SkinAvailable(vis->mobj->skin)].spritescale) * FRACUNIT);
 		}
 	}
 
