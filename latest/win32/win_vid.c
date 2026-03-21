@@ -195,15 +195,17 @@ void I_ShutdownGraphics (void)
         bmiMain = NULL;
     }
 
+#ifdef HWRENDER
     if ( rendermode != render_soft )
     {
-        // Hurdler: swap des deux lignes comme ça on close
-        //          l'environnement OpenGL/glide après avoir 
-        //          vidé la cache ce qui est bcp plus propre
+        // Hurdler: swap des deux lignes comme ï¿½a on close
+        //          l'environnement OpenGL/glide aprï¿½s avoir 
+        //          vidï¿½ la cache ce qui est bcp plus propre
         HWR_Shutdown ();      //free stuff from the hardware renderer
         HWD.pfnShutdown ();   //close 3d card display
         Shutdown3DDriver ();  //free the driver DLL
     }
+#endif
 
     // free the last video mode screen buffers
     if (vid.buffer) {
@@ -287,6 +289,7 @@ void I_FinishUpdate (void)
                 for(k=0;k<SCALE*vid.dupx;k++)
                     PUTDOT(i*SCALE*vid.dupx+k, vid.height-1-(fpsgraph[i]*SCALE*vid.dupy),0xff);
         }
+#ifdef HWRENDER
         else
         {
             fline_t p;
@@ -313,6 +316,7 @@ void I_FinishUpdate (void)
                 HWR_drawAMline(&p, 0xff);
             }
         }
+#endif
     }
 
     //
@@ -329,11 +333,13 @@ void I_FinishUpdate (void)
                            vid.buffer, bmiMain, DIB_RGB_COLORS);
     }
     else
+#ifdef HWRENDER
     if (rendermode != render_soft) {
         HWD.pfnFinishUpdate ( cv_vidwait.value );
     }
     else
     {
+#endif
         // DIRECT DRAW
         // copy virtual screen to real screen
         // 26-12-99 BP: can fail when not active (alt-tab)
@@ -350,7 +356,9 @@ void I_FinishUpdate (void)
 
         // swap screens
         ScreenFlip(cv_vidwait.value);
+#ifdef HWRENDER
     }
+#endif
     }
 }
 
@@ -443,6 +451,7 @@ void I_SetPalette (byte* palette)
             mainpal[i].peBlue = c;
         }
 
+#ifdef HWRENDER
         if (rendermode != render_soft)
         {
             //Hurdler 16/10/99: added for OpenGL gamma correction
@@ -452,6 +461,7 @@ void I_SetPalette (byte* palette)
             HWD.pfnSetPalette (mainpal, &gamma_correction); // for palettized textures
         }
         else
+#endif
             SetDDPalette (mainpal);         // set DirectDraw palette
     }
 }
@@ -664,6 +674,7 @@ void VID_Init (void)
     bDIBMode = TRUE;
     bAppFullScreen = FALSE;
 
+#ifdef HWRENDER
     // initialize the appropriate display device
     if ( rendermode != render_soft )
     {
@@ -707,14 +718,16 @@ void VID_Init (void)
             rendermode = render_soft;
         }
     }
-
 	if (rendermode == render_soft)
     {
+#endif
         if (!CreateDirectDrawInstance ())
             I_Error ("Error initializing DirectDraw");
         // get available display modes for the device
         VID_GetExtraModes ();
+#ifdef HWRENDER
     }
+#endif
 
     // the game boots in 320x200 standard VGA, but
     // we need a highcolor mode to run the game in highcolor
@@ -935,11 +948,13 @@ int VID_SetMode (int modenum)  //, unsigned char *palette)
         // we switch to fullscreen
         bAppFullScreen = TRUE;
         bDIBMode = FALSE;
+#ifdef HWRENDER
         if ( rendermode != render_soft ) {
             // purge all patch graphics stored in software format
             //Z_FreeTags ( PU_PURGELEVEL, PU_PURGELEVEL+100 );
             HWR_Startup ();
         }
+#endif
     }
 
     return 1;

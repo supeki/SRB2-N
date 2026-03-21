@@ -68,6 +68,17 @@
 //
 //-----------------------------------------------------------------------------
 
+#include "doomdef.h"
+#include "r_local.h"
+#include "st_stuff.h"   //added:24-01-98:need ST_HEIGHT
+#include "i_video.h"
+#include "v_video.h"
+#include "w_wad.h"
+#include "z_zone.h"
+
+#ifdef HWRENDER
+#include "hardware/hw_main.h"
+#endif
 
 // ==========================================================================
 // COLUMNS

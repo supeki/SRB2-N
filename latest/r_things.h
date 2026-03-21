@@ -157,4 +157,4 @@ char custom_ttlmusic[9];
 
 void    R_AddMapHeader (int wadnum);
 
-#endif __R_THINGS__
+#endif

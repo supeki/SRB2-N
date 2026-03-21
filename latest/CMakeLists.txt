@@ -52,7 +52,6 @@ add_executable(${PROJECT_NAME}
     p_tick.c
     p_user.c
     qmus2mid.c
-    qmus2mid_sdl.c
     r_bsp.c
     r_data.c
     r_draw16.c
@@ -74,4 +73,42 @@ add_executable(${PROJECT_NAME}
     wi_stuff.c
     w_wad.c
     z_zone.c
+	
+	win32/dx_error.c 
+	win32/fabdxlib.c
+	win32/mid2strm.c	
+	win32/win_cd.c
+	win32/win_dbg.c  
+	win32/win_dll.c 
+	win32/win_main.c	
+	win32/win_net.c  
+	win32/win_snd.c
+	win32/win_sys.c
+	win32/win_vid.c
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE 
+	fmod
+	dinput
+	dxguid 
+	dsound 
+	ddraw 
+	gdi32
+	winmm 
+	wsock32
+)
+
+target_compile_options(${PROJECT_NAME} PRIVATE
+    #-DLINUX
+    #-DHAVE_SDL
+    #-DHAVE_SDL_MIXER
+	-DNEWBUILD
+    -fPIE
+    -Wno-int-conversion
+    #-fpermissive
+    -g
+    #-m486
+    -O0
+    -ffast-math
+    -fomit-frame-pointer
 )

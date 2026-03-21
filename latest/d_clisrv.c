@@ -125,7 +125,7 @@ static byte          nodewaiting[MAXNETNODES];
 static ULONG         firstticstosend;          // min of the nettics
 static short         consistancy[BACKUPTICS];
 static ULONG         tictoclear=0;             // optimize d_cleartic
-static ULONG         maketic;
+ULONG         maketic;                  // Made non-static to satisfy GCC Save 21-03-2026
 boolean       dedicated;                // dedicate server
 
 

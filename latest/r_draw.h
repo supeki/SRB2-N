@@ -128,6 +128,15 @@ extern int viewborderlump[8];
 // r_draw.c COMMON ROUTINES FOR BOTH 8bpp and 16bpp
 // ------------------------------------------------
 
+//
+// Spectre/Invisibility.
+//
+#define FUZZTABLE     50
+#define FUZZOFF       (1)
+
+extern int fuzzoffset[FUZZTABLE];
+extern int fuzzpos;
+
 //added:26-01-98: called by SCR_Recalc() when video mode changes
 void    R_RecalcFuzzOffsets (void);
 // Initialize color translation tables, for player rendering etc.

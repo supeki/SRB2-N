@@ -170,8 +170,10 @@ static void ShowModuleInfo(HANDLE LogFile, HINSTANCE ModuleHandle)
     HANDLE ModuleFile;
         char TimeBuffer[100] = "";
         DWORD FileSize = 0;
+#ifndef NEWBUILD
     __try
         {
+#endif
                 if (GetModuleFileName(ModuleHandle, ModName, sizeof(ModName)) > 0)
                 {
                         // If GetModuleFileName returns greater than zero then this must
@@ -204,11 +206,13 @@ static void ShowModuleInfo(HANDLE LogFile, HINSTANCE ModuleHandle)
                                          ModName, ModuleHandle, FileSize,
                                          NTHeader->FileHeader.TimeDateStamp, TimeBuffer);
                 }
+#ifndef NEWBUILD
         }
         // Handle any exceptions by continuing from this point.
         __except(EXCEPTION_EXECUTE_HANDLER)
         {
         }
+#endif
 }
 
 // --------------------------------------------------------------------------
@@ -318,6 +322,9 @@ static void RecordSystemInformation(HANDLE fileHandle)
 // --------------------------------------------------------------------------
 int __cdecl RecordExceptionInfo (PEXCEPTION_POINTERS data, const char *Message, LPSTR lpCmdLine)
 {
+// This function sucks in GCC. We can do debugging our own way later!
+// Save 21-03-2026
+#ifndef NEWBUILD
     PEXCEPTION_RECORD   Exception = data->ExceptionRecord;
     PCONTEXT            Context = data->ContextRecord;
     char                ModuleName[MAX_PATH];
@@ -511,6 +518,7 @@ int __cdecl RecordExceptionInfo (PEXCEPTION_POINTERS data, const char *Message, 
     // normal.
     //BP: should put message for end user to send this file to fix any bug
     return EXCEPTION_CONTINUE_SEARCH;
+#endif
 }
 
 

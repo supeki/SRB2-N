@@ -125,7 +125,11 @@
 
 // =========================================================================
 #ifdef __WIN32__
+// Don't do hardware rendering on GCC! Just save me the trouble...
+// Save 21-03-2026
+#ifndef NEWBUILD
 #define HWRENDER
+#endif
 #define ASMCALL __cdecl
 #pragma warning (disable :  4244 4146 4761) // 4244 4146 4761 4018
 // warning C4146: unary minus operator applied to unsigned type, result still unsigned

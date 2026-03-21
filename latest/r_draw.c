@@ -164,13 +164,7 @@ byte*                   ds_source;      // start of a 64*64 tile image
 //                        OLD DOOM FUZZY EFFECT
 // ==========================================================================
 
-//
-// Spectre/Invisibility.
-//
-#define FUZZTABLE     50
-#define FUZZOFF       (1)
-
-static  int fuzzoffset[FUZZTABLE] =
+int fuzzoffset[FUZZTABLE] =
 {
     FUZZOFF,-FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,
     FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,
@@ -181,7 +175,7 @@ static  int fuzzoffset[FUZZTABLE] =
     FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF
 };
 
-static  int fuzzpos = 0;     // move through the fuzz table
+int fuzzpos = 0;     // move through the fuzz table
 
 
 //  fuzzoffsets are dependend of vid width, for optimising purpose
@@ -341,7 +335,7 @@ void R_InitTranslationTables (void)
 	translationtables [0x7b+256] = 106;
 	translationtables [0x7c+256] = 108;
 	translationtables [0x7d+256] = 111;
-	translationtables [0x7e+256] = 6;
+	translationtables [0x7e + 256] = 6; // Added spaces to shut GCC up
 	translationtables [0x7f+256] = 0;
 
 	// Purple
@@ -360,7 +354,7 @@ void R_InitTranslationTables (void)
 	translationtables [0x7b+SKINCOLOR_PURPLE*256] = 254;
 	translationtables [0x7c+SKINCOLOR_PURPLE*256] = 109;
 	translationtables [0x7d+SKINCOLOR_PURPLE*256] = 79;
-	translationtables [0x7e+SKINCOLOR_PURPLE*256] = 7;
+	translationtables [0x7e + SKINCOLOR_PURPLE*256] = 7; // Added spaces to shut GCC up
 	translationtables [0x7f+SKINCOLOR_PURPLE*256] = 0;
 }
 
@@ -606,17 +600,3 @@ void R_DrawViewBorder (void)
     // useless, old dirty rectangle stuff
     //V_MarkRect (0,0,vid.width, vid.height-ST_HEIGHT);
 }
-
-
-// ==========================================================================
-//                   INCLUDE 8bpp DRAWING CODE HERE
-// ==========================================================================
-
-#include "r_draw8.c"
-
-
-// ==========================================================================
-//                   INCLUDE 16bpp DRAWING CODE HERE
-// ==========================================================================
-
-#include "r_draw16.c"

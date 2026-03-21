@@ -30,6 +30,7 @@
 //-----------------------------------------------------------------------------
 
 
+#ifdef HWRENDER
 #include "../hardware/hw_drv.h"        // get the standard 3D Driver DLL exports prototypes
 #include "win_dll.h"
 #include "win_main.h"       // I_GetLastErrorMsgBox()
@@ -123,3 +124,4 @@ void UnloadDLL (HINSTANCE* pInstance)
     else
         I_GetLastErrorMsgBox ();
 }
+#endif

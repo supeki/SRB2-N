@@ -403,15 +403,20 @@ int WINAPI WinMain (HINSTANCE hInstance,
                     int          nCmdShow)
 {
     int Result = -1;
+// Disable these strange try-catch things when building with GCC as they trip it up
+#ifndef NEWBUILD
     __try
     {
+#endif
         Result = HandledWinMain (hInstance, hPrevInstance, lpCmdLine, nCmdShow);
+#ifndef NEWBUILD
     }
 
     __except ( RecordExceptionInfo( GetExceptionInformation(), "main thread", lpCmdLine) )
     {
         //Do nothing here.
     }
+#endif
 
     return Result;
 }

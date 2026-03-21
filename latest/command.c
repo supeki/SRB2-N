@@ -720,7 +720,8 @@ void VS_Print (vsbuf_t *buf, char *data)
 //
 // =========================================================================
 
-static consvar_t  *consvar_vars;       // list of registered console variables
+// Made non-static to satisfy GCC Save 21-03-2026
+consvar_t  *consvar_vars;       // list of registered console variables
 static char       *cv_null_string = "";
 
 
