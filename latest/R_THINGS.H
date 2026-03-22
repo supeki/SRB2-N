@@ -109,10 +109,11 @@ typedef struct
     spritedef_t spritedef;
     int         ability; // ability definition Tails 11-15-2000 changed to int by Nozomi
 	char		speed[9]; // speed definition Tails 11-15-2000
+	int 		runspeed; // runspeed Nozomi
 	char		face[9];
 	char		hudname[9];
-	char		spritescale[9];
-	char		facescale[9];
+	char		spritescale[9]; // spritescale Nozomi
+	char		facescale[9]; // facescale Nozomi
 
     // specific sounds per skin
     short       soundsid[NUMSKINSOUNDS]; // sound # in S_sfx table

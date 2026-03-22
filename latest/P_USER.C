@@ -240,6 +240,7 @@ void P_MovePlayer (player_t* player)
 	int waterspeed;
 	int flyspeed;
 	int topspeed;
+	int runspeed;
 	msecnode_t *node;
 	sector_t *sec;
     fixed_t   movepushforward=0,movepushside=0;
@@ -319,6 +320,7 @@ void P_MovePlayer (player_t* player)
 	snormalspeed = normalspeed/3*5;
 	swaterspeed = waterspeed/3*5;
 	sflyspeed = flyspeed/3*5;
+	runspeed = skins[player->skin].runspeed;
 
 	// So... why wasn't SSNTails handling it this way before...?
 	// That... I do not know. Nozomi 03-18-2026
@@ -338,16 +340,18 @@ void P_MovePlayer (player_t* player)
 		else
 			topspeed = normalspeed;
 	}
-	
+
+	if (!runspeed)
+		runspeed = topspeed/3*2;
 	
 	// Custom acceleration calculation! Nozomi 03-18-2026
 	if (player->speed)
-		if (player->speed < normalspeed/2)
-			player->acceleration = 128 + (1024/(normalspeed/2) * player->speed);
+		if (player->speed < topspeed/2)
+			player->acceleration = 96 + (512/(topspeed/2) * player->speed);
 		else
-			player->acceleration = 1024;
+			player->acceleration = 512;
 	else
-		player->acceleration = 128;
+		player->acceleration = 96;
 
 	if (player->mo->eflags & MF_UNDERWATER || player->mo->eflags & MF_TOUCHWATER)
 		player->acceleration /= 2;
@@ -511,9 +515,7 @@ void P_MovePlayer (player_t* player)
 		{
 	// If the player is moving fast enough,
 	// break into a run!
-			if((player->speed > normalspeed+1) && player->walking && player->charspeed == 1 && (onground))
-				P_SetMobjState (player->mo, S_PLAY_SPD1);
-			else if((player->speed > normalspeed/3*2) && player->walking && player->charspeed != 1 && (onground))
+			if((player->speed > runspeed) && player->walking && (onground))
 				P_SetMobjState (player->mo, S_PLAY_SPD1);
 
 	// Otherwise, just walk.
@@ -581,9 +583,7 @@ void P_MovePlayer (player_t* player)
 
 		// If your running animation is playing, and you're
 		// going too slow, switch back to the walking frames.
-		if (player->running && player->charspeed == 1 && !(player->speed > normalspeed+1))
-			P_SetMobjState (player->mo, S_PLAY_RUN1);
-		else if (player->running && !(player->speed > normalspeed/3*2) && player->charspeed != 1)
+		if (player->running && !(player->speed >= runspeed))
 			P_SetMobjState (player->mo, S_PLAY_RUN1);
 
 		// If Springing, but travelling DOWNWARD, change back!

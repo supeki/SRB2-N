@@ -1901,6 +1901,7 @@ void Sk_SetDefaultValue(skin_t *skin)
     strcpy (skin->name, DEFAULTSKIN);
 	strcpy (skin->face, "");
 	strcpy (skin->hudname, "");
+	skin->runspeed = 0;
     for (i=0;i<sfx_freeslot0;i++)
         if (S_sfx[i].skinsound!=-1)
         {
@@ -2131,6 +2132,11 @@ void R_AddSkins (int wadnum)
             {
                 strncpy (skins[numskins].speed, value, 8);
                 strupr (skins[numskins].speed);
+            }
+			else
+            if (!stricmp(token,"runspeed"))
+            {
+                skins[numskins].runspeed = atoi(value);
             }
 // end character type identification Tails 03-01-2000
             else
