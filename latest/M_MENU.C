@@ -225,6 +225,10 @@ short     whichSkull;                   // which skull to draw
 // graphic name of skulls
 char      skullName[2][9] = {"M_SKULL1","M_SKULL2"};
 
+
+// Animated Menu Vars
+int	menu_anim = 0;
+
 //
 // PROTOTYPES
 //
@@ -352,7 +356,7 @@ void M_DrawGenericMenu(void)
     if (((currentMenu->menuitems[itemOn].status & IT_DISPLAY)==IT_PATCH)
       ||((currentMenu->menuitems[itemOn].status & IT_DISPLAY)==IT_NOTHING) )
     {
-        V_DrawScaledPatch(currentMenu->x - 32,
+        V_DrawScaledPatch(currentMenu->x - 32 - menu_anim,
                           currentMenu->y + itemOn*LINEHEIGHT,
                           0,
                           W_CachePatchName("M_CURSOR", PU_CACHE) );
@@ -369,7 +373,7 @@ void M_DrawGenericMenu(void)
                           0,
                           W_CachePatchName( "STCFN042" ,PU_CACHE),
                           whitemap);*/
-		  V_DrawScaledPatch(currentMenu->x - 24, y, 0, W_CachePatchName("M_CURSOR", PU_CACHE));
+		  V_DrawScaledPatch(currentMenu->x - 24 - menu_anim, y, 0, W_CachePatchName("M_CURSOR", PU_CACHE));
                V_DrawStringWhite (currentMenu->x,y,
                                     currentMenu->menuitems[itemOn].name);
     }
@@ -3117,6 +3121,7 @@ boolean M_Responder (event_t* ev)
             else itemOn++;
         } while((currentMenu->menuitems[itemOn].status & IT_TYPE)==IT_SPACE);
         S_StartSound(NULL,sfx_menu1); // was pstop Tails 11-30-2000
+		menu_anim = 4;
         return true;
 
       case KEY_UPARROW:
@@ -3127,6 +3132,7 @@ boolean M_Responder (event_t* ev)
             else itemOn--;
         } while((currentMenu->menuitems[itemOn].status & IT_TYPE)==IT_SPACE);
         S_StartSound(NULL,sfx_menu1); // was pstop Tails 11-30-2000
+		menu_anim = 4;
         return true;
 
       case KEY_LEFTARROW:
@@ -3135,6 +3141,7 @@ boolean M_Responder (event_t* ev)
             ||(currentMenu->menuitems[itemOn].status & IT_TYPE) == IT_CVAR   ))
         {
             S_StartSound(NULL,sfx_menu1); // Tails 11-30-2000
+			menu_anim = 4;
             routine(0);
         }
         return true;
@@ -3145,6 +3152,7 @@ boolean M_Responder (event_t* ev)
             ||(currentMenu->menuitems[itemOn].status & IT_TYPE) == IT_CVAR   ))
         {
             S_StartSound(NULL,sfx_menu1); // Tails 11-30-2000
+			menu_anim = 4;
             routine(1);
         }
         return true;
@@ -3262,6 +3270,9 @@ void M_Drawer (void)
     //added:18-02-98: it should always be 0 for non-menu scaled graphics.
     scaledofs = 0;
 
+	// Jisk 03-21-26
+	if (menu_anim)
+		--menu_anim;
 }
 
 //
