@@ -1941,6 +1941,9 @@ int R_SkinAvailable (char* name)
 {
     int  i;
 
+	if (name == NULL)
+		return 0;
+
     for (i=0;i<numskins;i++)
     {
         if (stricmp(skins[i].name,name)==0)
