@@ -8,12 +8,12 @@ CFG=DoomLegacy - Win32 Debug
 !MESSAGE This is not a valid makefile. To build this project using NMAKE,
 !MESSAGE use the Export Makefile command and run
 !MESSAGE 
-!MESSAGE NMAKE /f "wLegacy.mak".
+!MESSAGE NMAKE /f "wlegacy.mak".
 !MESSAGE 
 !MESSAGE You can specify a configuration when running NMAKE
 !MESSAGE by defining the macro CFG on the command line. For example:
 !MESSAGE 
-!MESSAGE NMAKE /f "wLegacy.mak" CFG="DoomLegacy - Win32 Debug"
+!MESSAGE NMAKE /f "wlegacy.mak" CFG="DoomLegacy - Win32 Debug"
 !MESSAGE 
 !MESSAGE Possible choices for configuration are:
 !MESSAGE 
@@ -115,11 +115,11 @@ SOURCE=.\fabdxlib.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\Mid2strm.c
+SOURCE=.\mid2strm.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\Mid2strm.h
+SOURCE=.\mid2strm.h
 # End Source File
 # Begin Source File
 
@@ -566,12 +566,28 @@ SOURCE=..\R_draw.h
 # Begin Source File
 
 SOURCE=..\R_draw16.c
+
+!IF  "$(CFG)" == "DoomLegacy - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "DoomLegacy - Win32 Debug"
+
 # PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
 SOURCE=..\R_draw8.c
+
+!IF  "$(CFG)" == "DoomLegacy - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "DoomLegacy - Win32 Debug"
+
 # PROP Exclude_From_Build 1
+
+!ENDIF 
+
 # End Source File
 # Begin Source File
 
