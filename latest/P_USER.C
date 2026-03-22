@@ -470,7 +470,7 @@ void P_MovePlayer (player_t* player)
 	if (newMagnitude > topspeed*FRACUNIT)
 	{
 		fixed_t tempmomx, tempmomy;
-		if (oldMagnitude > topspeed*FRACUNIT && !(player->mfspinning))
+		if (oldMagnitude > topspeed*FRACUNIT)
 		{
 			if (newMagnitude > oldMagnitude)
 			{
