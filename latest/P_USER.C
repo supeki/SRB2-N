@@ -315,12 +315,15 @@ void P_MovePlayer (player_t* player)
 	}
 
 	normalspeed = player->charspeed;
-	waterspeed = normalspeed/5*3;
+	waterspeed = 3 * normalspeed / 5;
 	flyspeed = waterspeed;
-	snormalspeed = normalspeed/3*5;
-	swaterspeed = waterspeed/3*5;
-	sflyspeed = flyspeed/3*5;
+	snormalspeed = 5 * normalspeed / 3;
+	swaterspeed = 5 * waterspeed / 3;
+	sflyspeed = 5 * flyspeed / 3;
 	runspeed = skins[player->skin].runspeed;
+
+	if (!runspeed)
+		runspeed = normalspeed/3*2;
 
 	// So... why wasn't SSNTails handling it this way before...?
 	// That... I do not know. Nozomi 03-18-2026
@@ -340,9 +343,6 @@ void P_MovePlayer (player_t* player)
 		else
 			topspeed = normalspeed;
 	}
-
-	if (!runspeed)
-		runspeed = topspeed/3*2;
 	
 	// Custom acceleration calculation! Nozomi 03-18-2026
 	if (player->speed)
@@ -355,6 +355,9 @@ void P_MovePlayer (player_t* player)
 
 	if (player->mo->eflags & MF_UNDERWATER || player->mo->eflags & MF_TOUCHWATER)
 		player->acceleration /= 2;
+
+	if (player->powers[pw_strength] || player->powers[pw_super])
+		player->acceleration *= 2;
 
 	if (onground || (player->mo->state == &states[S_PLAY_PAIN] && player->powers[pw_invisibility])) {
 		player->mo->eflags &= ~MF_SPRUNG;
