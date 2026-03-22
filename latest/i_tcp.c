@@ -60,6 +60,7 @@
 //
 //-----------------------------------------------------------------------------
 
+#ifndef NOZOMI_SDL
 
 #include <stdlib.h>
 #include <string.h>
@@ -681,3 +682,9 @@ int I_InitTcpNetwork( int bypass )
 
     return ret;
 }
+#else
+// MAJOR TODO: Netgames are pretty important, make sure they're actually implemented on SDL2
+int I_InitTcpNetwork( int bypass ){
+    return 0;
+}
+#endif

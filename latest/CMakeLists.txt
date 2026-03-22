@@ -2,9 +2,11 @@ cmake_minimum_required(VERSION 3.10)
 
 project(srb2-nozomi C)
 
-set(BACKEND "Win32")
- 
-add_executable(${PROJECT_NAME}
+# "SDL2" - The SDL2 backend, newer but more experimental and incomplete
+# "Win32" - The Win32/DD backend, tried and true however its support for many things is not the greatest and it's from 1998
+set(BACKEND "SDL2")
+
+list(APPEND SOURCES
     am_map.c
     command.c
     console.c
@@ -76,35 +78,70 @@ add_executable(${PROJECT_NAME}
     wi_stuff.c
     w_wad.c
     z_zone.c
+)
+
+# Add appropriate files and libaries depending on the backend
+if(BACKEND STREQUAL "Win32")
+	list(APPEND SOURCES
+		win32/dx_error.c 
+		win32/fabdxlib.c
+		win32/mid2strm.c	
+		win32/win_cd.c
+		win32/win_dbg.c  
+		win32/win_dll.c 
+		win32/win_main.c	
+		win32/win_net.c  
+		win32/win_snd.c
+		win32/win_sys.c
+		win32/win_vid.c
+	)
 	
-	win32/dx_error.c 
-	win32/fabdxlib.c
-	win32/mid2strm.c	
-	win32/win_cd.c
-	win32/win_dbg.c  
-	win32/win_dll.c 
-	win32/win_main.c	
-	win32/win_net.c  
-	win32/win_snd.c
-	win32/win_sys.c
-	win32/win_vid.c
+	#set(LIBRARIES
+	#	fmod
+	#	dinput
+	#	dxguid 
+	#	dsound 
+	#	ddraw 
+	#	gdi32
+	#	winmm 
+	#	wsock32
+	#)
+endif()
+
+if(BACKEND STREQUAL "SDL2")
+	list(APPEND SOURCES
+		sdl2/i_cdmus.c
+		sdl2/i_main.c
+		sdl2/i_net.c
+		sdl2/i_sound.c
+		sdl2/i_system.c
+		sdl2/i_video.c
+	)
+	
+	#set(LIBRARIES
+	#	SDL2
+	#	SDL2main
+	#)
+endif()
+
+# Add the source files and libraries defined earlier
+
+add_executable(${PROJECT_NAME}
+	${SOURCES}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
-	fmod
-	dinput
-	dxguid 
-	dsound 
-	ddraw 
-	gdi32
-	winmm 
-	wsock32
+	SDL2
+	SDL2main
 )
 
-target_compile_options(${PROJECT_NAME} PRIVATE
-    #-DLINUX
-    #-DHAVE_SDL
-    #-DHAVE_SDL_MIXER
+if(BACKEND STREQUAL "SDL2")
+	list(APPEND CFLAGS
+		-DNOZOMI_SDL
+	)
+endif()
+
+list(APPEND CFLAGS
 	-DNEWBUILD
     -fPIE
     -Wno-int-conversion
@@ -114,4 +151,8 @@ target_compile_options(${PROJECT_NAME} PRIVATE
     -O0
     -ffast-math
     -fomit-frame-pointer
+)
+
+target_compile_options(${PROJECT_NAME} PRIVATE
+	${CFLAGS}
 )

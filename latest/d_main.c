@@ -656,7 +656,9 @@ p = M_CheckParm ("-name");
 	if (M_CheckParm ("-nowintitle"))
 		window_title = false;
 
-#ifdef __WIN32__
+// Don't run this if we're using the SDL2 backend
+// Save 22-03-2026
+#if defined(__WIN32__) && !defined(NOZOMI_SDL)
     if ( hWndMain!=NULL )
     {
         SetFocus(hWndMain);
@@ -669,7 +671,9 @@ p = M_CheckParm ("-name");
     CONS_Printf ("I_StartupKeyboard...\n");
     I_StartupKeyboard ();
 
-#ifdef __WIN32__
+// Don't run this if we're using the SDL2 backend
+// Save 22-03-2026
+#if defined(__WIN32__) && !defined(NOZOMI_SDL)
     CONS_Printf ("I_StartupMouse...\n");
     I_DoStartupMouse ();
 #endif

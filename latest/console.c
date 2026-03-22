@@ -559,7 +559,7 @@ boolean CON_Responder (event_t *ev)
 static boolean shiftdown;
 
 
-// sequential completions … la 4dos
+// sequential completions ï¿½ la 4dos
 static char    completion[80];
 static int     comskips,varskips;
 
@@ -632,7 +632,7 @@ static int     comskips,varskips;
         //
         // sequential command completion forward and backward
 
-        // remember typing for several completions (…-la-4dos)
+        // remember typing for several completions (ï¿½-la-4dos)
         if (inputlines[inputline][input_cx-1] != ' ')
         {
             if (strlen (inputlines[inputline]+1)<80)
@@ -969,7 +969,7 @@ void CONS_Printf (char *fmt, ...)
 //
 void CONS_Error (char *msg)
 {
-#ifdef WIN32
+#ifndef NOZOMI_SDL
     extern  HWND    hWndMain;
     if(!graphics_started)
     {

@@ -153,19 +153,12 @@ int  I_mkdir(const char *dirname, int unixright);
 
 boolean window_title;
 
-// save_as recommended not calling Win32 calls directly which is kinda true,, Nozomi 03-09-2026
-#if WIN32
+// Why is this an error HERE? This should be accounted for on a backend-by-backend basis
+// and if the backend doesn't have it... oh well! Do we need to stop all compiles of
+// non-Win32 builds just because a couple features don't work on them? Come on now.
+// Save 22-03-2026
 void I_SetWindowTitle(char *WNDTTL);
-#elif
-#error Non-Win32 builds of srb2-nozomi do not natively support setting the window title! Either comment this out or consider adding support yourself!
-#endif
-
-// LocalTime for cool features! Nozomi 03-12-2026
-#ifdef WIN32
 localtime_t I_GetLocalTime(void);
-#else
-#error Non-Win32 builds of srb2-nozomi do not natively support getting local time! Either comment this out or consider adding support yourself!
-#endif
 
 #ifdef LINUX
 void I_LocateWad(void);
