@@ -480,7 +480,7 @@ found:
         transfer[i].currentfile=fopen(f->filename,"rb");
         if(!transfer[i].currentfile)
             I_Error("File %s not exist",f->filename);
-#ifdef (LINUX)
+#ifdef LINUX
         fseeko(transfer[i].currentfile, 0, SEEK_END);
         size64 = ftello(transfer[i].currentfile);
         fseeko(transfer[i].currentfile, 0, SEEK_SET);
