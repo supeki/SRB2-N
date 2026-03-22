@@ -97,6 +97,10 @@
 #include <io.h>
 #endif
 
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
 #ifdef PC_DOS
 #include <conio.h>
 #endif
@@ -166,7 +170,7 @@ extern byte     demoversion;
 #define TICRATE         35
 
 // Special Stage level # definitions Tails 08-11-2001
-int SSSTAGE1;
+extern int SSSTAGE1;
 #define NUMMAPHEADERS                999
 
 #define RING_DIST	512*FRACUNIT	// Used for ring shield. Change this to affect

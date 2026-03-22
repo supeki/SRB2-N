@@ -2291,12 +2291,13 @@ void R_AddMapHeader (int wadnum)
 			if (!stricmp(token,"sp_start"))
 			{
 				char tmp[1999];
+                int SSSTAGE1;
 
 				if (isdigit(value[0]))
 					sprintf(tmp, "%02d", atoi(value));
 				else
 					sprintf(tmp, "%s", value);
-
+                
                 SSSTAGE1 = M_MapNumber(tmp[0], tmp[1]);
             }
 

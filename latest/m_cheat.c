@@ -140,7 +140,7 @@ void cht_GetParam ( cheatseq_t*   cht,
 
 }
 
-player_t *plyr;
+extern player_t *plyr;
 
 boolean cht_Responder (event_t* ev)
 {

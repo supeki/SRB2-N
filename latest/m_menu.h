@@ -51,10 +51,10 @@
 // Does all the real work of the menu interaction.
 boolean M_Responder (event_t *ev);
 
-consvar_t* setupm_cvname;
-consvar_t* setupm_cvcolor;
+extern consvar_t* setupm_cvname;
+extern consvar_t* setupm_cvcolor;
 
-int menu_anim;
+extern int menu_anim;
 
 // Called by main loop,
 // only used for menu (skull cursor) animation.

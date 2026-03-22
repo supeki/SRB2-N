@@ -52,7 +52,7 @@ void I_StartupSound();
 
 // ... update sound buffer and audio device at runtime...
 #ifndef SNDSERV
-void I_UpdateSound(void);
+extern void I_UpdateSound(void);
 #endif
 void I_SubmitSound(void);
 

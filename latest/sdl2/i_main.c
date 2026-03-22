@@ -32,13 +32,13 @@ int SDL_main(int argc, char** argv)
 #endif
 }
 
-void I_FPrintf(HANDLE fileHandle, LPCTSTR lpFmt, ...)
+void I_FPrintf(FILE *fileHandle, const char *lpFmt, ...)
 {
 	char    str[1999];
 	va_list arglist;
 
 	va_start(arglist, lpFmt);
-	wvsprintf(str, lpFmt, arglist);
+	vsprintf(str, lpFmt, arglist);
 	va_end(arglist);
 
 	SDL_RWwrite(logstream, &str, sizeof(char), strlen(str));

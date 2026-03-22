@@ -47,6 +47,13 @@ typedef unsigned long ULONG;
 typedef unsigned short USHORT;
 #endif // _OS2EMX_H
 
+#ifdef LINUX
+#include <stdint.h>
+#define UINT32 uint32_t
+#define UINT64 uint64_t
+#define INT32 int32_t
+#endif
+
 #ifdef __WIN32__
 #define INT64  __int64
 #else

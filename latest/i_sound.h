@@ -56,8 +56,8 @@ void  I_FreeSfx (sfxinfo_t* sfx);
 void I_StartupSound();
 
 // ... update sound buffer and audio device at runtime...
-void I_UpdateSound(void);
-void I_SubmitSound(void);
+extern void I_UpdateSound(void);
+extern void I_SubmitSound(void);
 
 // ... shut down and relase at program termination.
 void I_ShutdownSound(void);

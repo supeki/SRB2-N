@@ -10,6 +10,7 @@ byte cdaudio_started = 0;
 
 consvar_t cd_volume = {"cd_volume","31",CV_SAVE,soundvolume_cons_t, NULL, 0, NULL, NULL};
 consvar_t cdUpdate  = {"cd_update","1",CV_SAVE, NULL, NULL, 0, NULL, NULL};
+consvar_t cv_jigglecdvol = {"jigglecdvolume", "0", CV_SAVE};
 
 
 void I_InitCD(void){}

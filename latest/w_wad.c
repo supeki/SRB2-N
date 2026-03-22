@@ -96,6 +96,10 @@
 #include "hardware/hw_main.h"
 #endif
 
+#ifdef LINUX
+#include "dosstr.h"
+#endif
+
 
 //===========================================================================
 //                                                                    GLOBALS

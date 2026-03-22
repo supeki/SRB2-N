@@ -1764,6 +1764,7 @@ void G_DoCompleted (void)
 			{
 				if(players[i].token)
 				{
+                    int SSSTAGE1;
 					if(!players[i].emerald1)
 						wminfo.next = SSSTAGE1-1; // Special Stage 1
 					else if(!players[i].emerald2)

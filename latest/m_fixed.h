@@ -48,6 +48,10 @@
 
 #include "doomtype.h"
 
+#ifdef LINUX
+#include <stdlib.h>
+#endif
+
 //
 // Fixed point, 32bit as 16.16.
 //

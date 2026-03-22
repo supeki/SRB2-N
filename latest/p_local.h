@@ -169,8 +169,8 @@ void   P_MoveSpirit (player_t* player,ticcmd_t *cmd);
 // WARING MUST be a power of 2
 #define ITEMQUESIZE     128
 
-mapthing_t     *itemrespawnque[ITEMQUESIZE];
-int             itemrespawntime[ITEMQUESIZE];
+extern mapthing_t     *itemrespawnque[ITEMQUESIZE];
+extern int             itemrespawntime[ITEMQUESIZE];
 extern int              iquehead;
 extern int              iquetail;
 

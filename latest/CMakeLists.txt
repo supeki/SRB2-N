@@ -110,6 +110,7 @@ endif()
 
 if(BACKEND STREQUAL "SDL2")
 	list(APPEND SOURCES
+        sdl2/dosstr.c
 		sdl2/i_cdmus.c
 		sdl2/i_main.c
 		sdl2/i_net.c
@@ -124,6 +125,24 @@ if(BACKEND STREQUAL "SDL2")
 	#)
 endif()
 
+MACRO(EXTRALIB NAME)
+	FIND_LIBRARY(${NAME}_LIBRARY NAMES ${NAME})
+	IF(${NAME}_LIBRARY)
+		MESSAGE(STATUS "Found lib${NAME}: ${${NAME}_LIBRARY}")
+		SET(EXTRA_LIBRARIES ${EXTRA_LIBRARIES} ${${NAME}_LIBRARY})
+	ELSE(${NAME}_LIBRARY)
+		MESSAGE(FATAL_ERROR "Could not find lib${NAME}!")
+	ENDIF(${NAME}_LIBRARY)
+ENDMACRO(EXTRALIB)
+
+IF(${CMAKE_SYSTEM} MATCHES "Linux")
+	ADD_DEFINITIONS(-DUNIXCOMMON -DLINUX)
+	EXTRALIB(m)
+	EXTRALIB(rt)
+ELSE()
+	MESSAGE(WARNING "No specific settings for you system, it may be not supported!")
+ENDIF(${CMAKE_SYSTEM} MATCHES "Linux")
+
 # Add the source files and libraries defined earlier
 
 add_executable(${PROJECT_NAME}
@@ -133,6 +152,7 @@ add_executable(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME} PRIVATE 
 	SDL2
 	SDL2main
+    ${EXTRA_LIBRARIES}
 )
 
 if(BACKEND STREQUAL "SDL2")

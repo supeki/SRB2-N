@@ -60,7 +60,7 @@ void P_ExplodeMissile(); // Tails 08-26-2001
 consvar_t cv_solidcorpse = {"solidcorpse","0",CV_NETVAR,CV_OnOff};
 consvar_t cv_fastmonsters = {"fastmonsters","0",CV_NETVAR | CV_CALL,CV_OnOff,FastMonster_OnChange};
 
-player_t *plyr; // Tails
+extern player_t *plyr; // Tails
 
 void I_PlayCD(); // proto! Tails
 
