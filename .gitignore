@@ -1,3 +1,7 @@
 objs
 assets/srb2win.exe
 assets/config.cfg
+assets/srb2win_debug.exe
+assets/errlog.txt
+*.ilk
+*.plg

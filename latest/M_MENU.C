@@ -682,7 +682,7 @@ void M_DrawSetupMultiPlayerMenu(void)
 	// draw color string
 	{
 		int i;
-		char* colorname = "";
+		char colorname[15] = ""; // Tried changing it to a character buffer to fix an issue. Save 22-03-2026
 		strcpy(colorname, setupm_cvcolor->string);
 		for (i=0; i<((int)strlen(colorname)); i++)
 			if (colorname[i] == '_')
