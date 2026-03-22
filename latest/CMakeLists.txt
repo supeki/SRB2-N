@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(srb2-nozomi C)
 
+set(BACKEND "Win32")
+ 
 add_executable(${PROJECT_NAME}
     am_map.c
     command.c
@@ -25,6 +27,7 @@ add_executable(${PROJECT_NAME}
     m_argv.c
     m_bbox.c
     m_cheat.c
+	m_easing.c
     m_fixed.c
     m_menu.c
     m_misc.c
