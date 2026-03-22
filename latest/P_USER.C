@@ -232,15 +232,20 @@ void P_MovePlayer (player_t* player)
 	fixed_t tempx; // Tails 06-14-2001
 	fixed_t tempy; // Tails 06-14-2001
 	angle_t tempangle; // Tails 06-14-2001
+	angle_t dangle;
 	int snormalspeed;
 	int swaterspeed;
 	int sflyspeed;
 	int normalspeed;
 	int waterspeed;
 	int flyspeed;
+	int topspeed;
 	msecnode_t *node;
 	sector_t *sec;
     fixed_t   movepushforward=0,movepushside=0;
+	fixed_t oldMagnitude, newMagnitude;
+
+	oldMagnitude = R_PointToDist2(player->mo->momx - player->cmomx, player->mo->momy - player->cmomy, 0, 0);
 
     cmd = &player->cmd;
 
@@ -249,28 +254,19 @@ void P_MovePlayer (player_t* player)
 //////////////////////
 
 	if(cv_analog.value && camera.mo)
-	{
 		movepushangle = camera.mo->angle;
-		movepushsideangle = camera.mo->angle-ANG90;
-	}
 	else
-	{
 		movepushangle = player->mo->angle;
-		movepushsideangle = player->mo->angle-ANG90;
-	}
+
+	movepushsideangle = movepushangle-ANG90;
 
 	if(!cv_analog.value || (player->mfspinning)) // Analog Test Tails 06-10-2001
 	{
-		#ifndef ABSOLUTEANGLE
-			player->mo->angle += (cmd->angleturn<<16);
-		#else
-			if(!player->climbing)
+		if(!player->climbing)
 					player->mo->angle = (cmd->angleturn<<16);
-		#endif
 	}
 
 // Start lots of cmomx/y stuff Tails 04-18-2001
-// CMOMx stands for the conveyor belt speed.
 	if(player->specialsector == 984)
 	{
 		if(player->mo->z > player->mo->waterz)
@@ -285,54 +281,22 @@ void P_MovePlayer (player_t* player)
 
 	player->rmomx = player->mo->momx - player->cmomx;
 	player->rmomy = player->mo->momy - player->cmomy;
-// End lots of cmomx/y stuff Tails 04-18-2001
 
-// Start various movement calculations Tails 10-08-2000
-// This determines if the player is facing the direction they are travelling or not.
-// Didn't you teacher say to pay attention in Geometry/Trigonometry class? ;)
-
-// Calculates player's speed based on distance-of-a-line formula
+	// Calculates player's speed based on distance-of-a-line formula
 	player->speed = P_AproxDistance(player->rmomx, player->rmomy) >> FRACBITS; // Player's Speed Tails 08-22-2000
 
-// forward
-	if ((player->rmomx > 0 && player->rmomy > 0) && (player->mo->angle >= 0 && player->mo->angle < ANG90)) // Quadrant 1
-		player->mforward = 1;
-	else if ((player->rmomx < 0 && player->rmomy > 0) && (player->mo->angle >= ANG90 && player->mo->angle < ANG180)) // Quadrant 2
-		player->mforward = 1;
-	else if ((player->rmomx < 0 && player->rmomy < 0) && (player->mo->angle >= ANG180 && player->mo->angle < ANG270)) // Quadrant 3
-		player->mforward = 1;
-	else if ((player->rmomx > 0 && player->rmomy < 0) && ((player->mo->angle >= ANG270 && (player->mo->angle <= 65535 << FRACBITS)) || (player->mo->angle >= 0 && player->mo->angle <= ANG45))) // Quadrant 4
-		player->mforward = 1;
-	else if (player->rmomx > 0 && ((player->mo->angle >= ANG270+ANG45 && player->mo->angle <= 65535 << FRACBITS)))
-		player->mforward = 1;
-	else if (player->rmomx < 0 && (player->mo->angle >= ANG90+ANG45 && player->mo->angle <= ANG180+ANG45))
-		player->mforward = 1;
-	else if (player->rmomy > 0 && (player->mo->angle >= ANG45 && player->mo->angle <= ANG90+ANG45))
-		player->mforward = 1;
-	else if (player->rmomy < 0 && (player->mo->angle >= ANG180+ANG45 && player->mo->angle <= ANG270+ANG45))
-		player->mforward = 1;
-	else
-		player->mforward = 0;
-// backward
-	if ((player->rmomx > 0 && player->rmomy > 0) && (player->mo->angle >= ANG180 && player->mo->angle < ANG270)) // Quadrant 3
-		player->mbackward = 1;
-	else if ((player->rmomx < 0 && player->rmomy > 0) && (player->mo->angle >= ANG270 && (player->mo->angle <= 65535 << FRACBITS))) // Quadrant 4
-		player->mbackward = 1;
-	else if ((player->rmomx < 0 && player->rmomy < 0) && (player->mo->angle >= 0 && player->mo->angle < ANG90)) // Quadrant 1
-		player->mbackward = 1;
-	else if ((player->rmomx > 0 && player->rmomy < 0) && (player->mo->angle >= ANG90 && player->mo->angle < ANG180)) // Quadrant 2
-		player->mbackward = 1;
-	else if (player->rmomx < 0 && ((player->mo->angle >= ANG270+ANG45 && player->mo->angle <= 65535 << FRACBITS) || (player->mo->angle >= 0 && player->mo->angle <= ANG45)))
-		player->mbackward = 1;
-	else if (player->rmomx > 0 && (player->mo->angle >= ANG90+ANG45 && player->mo->angle <= ANG180+ANG45))
-		player->mbackward = 1;
-	else if (player->rmomy < 0 && (player->mo->angle >= ANG45 && player->mo->angle <= ANG90+ANG45))
-		player->mbackward = 1;
-	else if (player->rmomy > 0 && (player->mo->angle >= ANG180+ANG45 && player->mo->angle <= ANG270+ANG45))
-		player->mbackward = 1;
-	else // Put in 'or' checks here!
-		player->mbackward = 0;
-// End various movement calculations Tails
+	// Monster Iestyn - 04-11-13
+	// Quadrants are stupid, excessive and broken, let's do this a much simpler way!
+	// Get delta angle from rmom angle and player angle first
+	dangle = R_PointToAngle2(0,0, player->rmomx, player->rmomy) - movepushangle;
+	if (dangle > ANGLE_180) //flip to keep to one side
+		dangle = InvAngle(dangle);
+
+	// now use it to determine direction!
+	if (dangle <= ANGLE_45) // angles 0-45 or 315-360
+		player->mforward = 1; // going forwards
+	else if (dangle >= ANGLE_135) // angles 135-225
+		player->mbackward = 1; // going backwards
 
     ticruned++;
     if( (cmd->angleturn & TICCMD_RECEIVED) == 0)
@@ -345,196 +309,48 @@ void P_MovePlayer (player_t* player)
     player->aiming = cmd->aiming<<16;
 
 	// Set the player speeds.
-	switch(player->charspeed)
-	{
-		case 0:
-			snormalspeed = 52; // Super Sneakers
-			swaterspeed = 20; // Super Sneakers & Underwater
-			sflyspeed = 20; // Super Sneakers & Flying
-			normalspeed = 26; // Normal ground
-			waterspeed = 10; // Underwater
-			flyspeed = 10; // Flying
-
-			if (player->mo->eflags & MF_UNDERWATER || player->mo->eflags & MF_TOUCHWATER)
-			{
-				if(player->speed > 6)
-					player->acceleration = 416;
-				else if(player->speed > 5)
-					player->acceleration = 384;
-				else if(player->speed > 4)
-					player->acceleration = 352;
-				else if(player->speed > 3)
-					player->acceleration = 320;
-				else if(player->speed > 2)
-					player->acceleration = 256;
-				else if(player->speed > 1)
-					player->acceleration = 192;
-				else if(player->speed > 0)
-					player->acceleration = 128;
-				else
-					player->acceleration = 64;
-			}
-			else
-			{
-				if(player->speed > 14)
-					player->acceleration = 1024;
-				else if(player->speed > 13)
-					player->acceleration = 960;
-				else if(player->speed > 12)
-					player->acceleration = 896;
-				else if(player->speed > 11)
-					player->acceleration = 832;
-				else if(player->speed > 10)
-					player->acceleration = 768;
-				else if(player->speed > 9)
-					player->acceleration = 704;
-				else if(player->speed > 8)
-					player->acceleration = 640;
-				else if(player->speed > 7)
-					player->acceleration = 576;
-				else if(player->speed > 6)
-					player->acceleration = 512;
-				else if(player->speed > 5)
-					player->acceleration = 448;
-				else if(player->speed > 4)
-					player->acceleration = 416;
-				else if(player->speed > 3)
-					player->acceleration = 384;
-				else if(player->speed > 2)
-					player->acceleration = 320;
-				else if(player->speed > 1)
-					player->acceleration = 256;
-				else if(player->speed > 0)
-					player->acceleration = 192;
-				else
-					player->acceleration = 128;
-			}
-			break;
-
-		case 1:
-			snormalspeed = 34; // Super Sneakers
-			swaterspeed = 14; // Super Sneakers & Underwater
-			sflyspeed = 20; // Super Sneakers & Flying
-			normalspeed = 17; // Normal ground
-			waterspeed = 7; // Underwater
-			flyspeed = 10; // Flying
-
-			if (player->mo->eflags & MF_UNDERWATER || player->mo->eflags & MF_TOUCHWATER)
-			{
-				if(player->speed > 6)
-					player->acceleration = 512;
-				else if(player->speed > 5)
-					player->acceleration = 448;
-				else if(player->speed > 4)
-					player->acceleration = 416;
-				else if(player->speed > 3)
-					player->acceleration = 384;
-				else if(player->speed > 2)
-					player->acceleration = 320;
-				else if(player->speed > 1)
-					player->acceleration = 256;
-				else if(player->speed > 0)
-					player->acceleration = 192;
-				else
-					player->acceleration = 128;
-			}
-			else
-			{
-				if(player->speed > 5)
-					player->acceleration = 1024;
-				else if(player->speed > 4)
-					player->acceleration = 896;
-				else if(player->speed > 3)
-					player->acceleration = 768;
-				else if(player->speed > 2)
-					player->acceleration = 512;
-				else if(player->speed > 1)
-					player->acceleration = 384;
-				else if(player->speed > 0)
-					player->acceleration = 256;
-				else
-					player->acceleration = 192;
-			}
-			break;
-		case 2:
-			snormalspeed = 43; // Super Sneakers
-			swaterspeed = 17; // Super Sneakers & Underwater
-			sflyspeed = 20; // Super Sneakers & Flying
-			normalspeed = 21; // Normal ground
-			waterspeed = 9; // Underwater
-			flyspeed = 10; // Flying
-
-			if (player->mo->eflags & MF_UNDERWATER || player->mo->eflags & MF_TOUCHWATER)
-			{
-				if(player->speed > 6)
-					player->acceleration = 512;
-				else if(player->speed > 5)
-					player->acceleration = 448;
-				else if(player->speed > 4)
-					player->acceleration = 416;
-				else if(player->speed > 3)
-					player->acceleration = 384;
-				else if(player->speed > 2)
-					player->acceleration = 320;
-				else if(player->speed > 1)
-					player->acceleration = 256;
-				else if(player->speed > 0)
-					player->acceleration = 192;
-				else
-					player->acceleration = 128;
-			}
-			else
-			{
-				if(player->speed > 10)
-					player->acceleration = 1024;
-				else if(player->speed > 9)
-					player->acceleration = 944;
-				else if(player->speed > 8)
-					player->acceleration = 864;
-				else if(player->speed > 7)
-					player->acceleration = 784;
-				else if(player->speed > 6)
-					player->acceleration = 704;
-				else if(player->speed > 5)
-					player->acceleration = 624;
-				else if(player->speed > 4)
-					player->acceleration = 544;
-				else if(player->speed > 3)
-					player->acceleration = 464;
-				else if(player->speed > 2)
-					player->acceleration = 384;
-				else if(player->speed > 1)
-					player->acceleration = 304;
-				else if(player->speed > 0)
-					player->acceleration = 224;
-				else
-					player->acceleration = 128;
-			}
-			break;
-		default: 
-			// No need for "safety reasons"!
-			// If your charspeed is over 2, then why not let it be whatever you want? Nozomi 03-18-2026
-			normalspeed = player->charspeed;
-			waterspeed = normalspeed/5*2;
-			flyspeed = waterspeed;
-			snormalspeed = normalspeed/2*5;
-			swaterspeed = waterspeed/2*5;
-			sflyspeed = flyspeed/2*5;
-			
-			// Custom acceleration calculation! Nozomi 03-18-2026
-			if (player->speed)
-				if (player->speed < normalspeed/2)
-					player->acceleration = 128 + (1024/(normalspeed/2) * player->speed);
-				else
-					player->acceleration = 1024;
-			else
-				player->acceleration = 128;
-
-			if (player->mo->eflags & MF_UNDERWATER || player->mo->eflags & MF_TOUCHWATER)
-				player->acceleration /= 2;
-
-			break;
+	if (player->charspeed < 3) {
+		player->charspeed = 28;
 	}
+
+	normalspeed = player->charspeed;
+	waterspeed = normalspeed/5*3;
+	flyspeed = waterspeed;
+	snormalspeed = normalspeed/3*5;
+	swaterspeed = waterspeed/3*5;
+	sflyspeed = flyspeed/3*5;
+
+	// So... why wasn't SSNTails handling it this way before...?
+	// That... I do not know. Nozomi 03-18-2026
+	if (player->powers[pw_strength] || player->powers[pw_super]) {
+		if (player->powers[pw_tailsfly])
+			topspeed = sflyspeed;
+		else if (player->mo->eflags & MF_UNDERWATER)
+			topspeed = swaterspeed;
+		else
+			topspeed = snormalspeed;
+	}
+	else {
+		if (player->powers[pw_tailsfly])
+			topspeed = flyspeed;
+		else if (player->mo->eflags & MF_UNDERWATER)
+			topspeed = waterspeed;
+		else
+			topspeed = normalspeed;
+	}
+	
+	
+	// Custom acceleration calculation! Nozomi 03-18-2026
+	if (player->speed)
+		if (player->speed < normalspeed/2)
+			player->acceleration = 128 + (1024/(normalspeed/2) * player->speed);
+		else
+			player->acceleration = 1024;
+	else
+		player->acceleration = 128;
+
+	if (player->mo->eflags & MF_UNDERWATER || player->mo->eflags & MF_TOUCHWATER)
+		player->acceleration /= 2;
 
 	if (onground || (player->mo->state == &states[S_PLAY_PAIN] && player->powers[pw_invisibility])) {
 		player->mo->eflags &= ~MF_SPRUNG;
@@ -551,229 +367,62 @@ void P_MovePlayer (player_t* player)
 
 	// Removed NiGHTS code Nozomi 03-18-2026
 
-	if (cmd->forwardmove && !(player->gliding || player->exiting || (player->mo->state == &states[S_PLAY_PAIN] && player->powers[pw_invisibility] && !onground)))
+	if (!cv_analog.value && cmd->forwardmove && !(player->gliding || player->exiting || (player->mo->state == &states[S_PLAY_PAIN] && player->powers[pw_invisibility] && !onground)))
 	{
 		if(player->climbing)
 			player->mo->momz = (cmd->forwardmove/10)*FRACUNIT;
-		else if(player->powers[pw_strength] || player->powers[pw_super]) // do you have super sneakers? Tails 02-28-2000
-			movepushforward = cmd->forwardmove * (waterspeed*player->acceleration); // then go faster!! Tails 02-28-2000
-		else // if not, then run normally Tails 02-28-2000
+		else
 			movepushforward = cmd->forwardmove * ((waterspeed/2)*player->acceleration); // Changed by Tails: 9-14-99
     
-		// allow very small movement while in air for gameplay
-		if (!onground)
-		{  
-			movepushforward >>= 2; // Proper air movement - Changed by Tails: 9-13-99
-		}
-
-		// Allow a bit of movement while spinning Tails
+		// Allow a bit of movement while spinning
 		if (player->mfspinning)
 		{
-			if(player->mforward && cmd->forwardmove > 0)
+			if ((player->mforward && cmd->forwardmove > 0) || (player->mbackward && cmd->forwardmove < 0)
+			|| (player->mfstartdash))
 				movepushforward = 0;
-			else if(!player->mfstartdash)
-				movepushforward=movepushforward/8;
+			else if (onground)
+				movepushforward >>= 4;
 			else
-				movepushforward = 0;
+				movepushforward >>= 3;
 		}
+		// allow very small movement while in air for gameplay
+		else if (!onground)
+			movepushforward >>= 2; // proper air movement
 
-		if (player->powers[pw_super] || player->powers[pw_strength])
-		{
-			if(player->powers[pw_tailsfly])
-			{
-				if((player->speed < sflyspeed) && (player->mforward > 0) && (cmd->forwardmove > 0)) // Sonic's Speed
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->mforward > 0) && (cmd->forwardmove < 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->speed < sflyspeed) && (player->mbackward > 0) && (cmd->forwardmove < 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->mbackward > 0) && (cmd->forwardmove > 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if ((player->mforward == 0) && (player->mbackward == 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-			}
-			else if(player->mo->eflags & MF_UNDERWATER)
-			{
-				if((player->speed < swaterspeed) && (player->mforward > 0) && (cmd->forwardmove > 0)) // Sonic's Speed
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->mforward > 0) && (cmd->forwardmove < 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->speed < swaterspeed) && (player->mbackward > 0) && (cmd->forwardmove < 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->mbackward > 0) && (cmd->forwardmove > 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if ((player->mforward == 0) && (player->mbackward == 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-			}
-			else
-			{
-				if((player->speed < snormalspeed) && (player->mforward > 0) && (cmd->forwardmove > 0)) // Sonic's Speed
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->mforward > 0) && (cmd->forwardmove < 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->speed < snormalspeed) && (player->mbackward > 0) && (cmd->forwardmove < 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->mbackward > 0) && (cmd->forwardmove > 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				 else if ((player->mforward == 0) && (player->mbackward == 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-			}
-		}
-		else
-		{
-			if(player->powers[pw_tailsfly])
-			{
-				if((player->speed < flyspeed) && (player->mforward > 0) && (cmd->forwardmove > 0)) // Sonic's Speed
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->mforward > 0) && (cmd->forwardmove < 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->speed < flyspeed) && (player->mbackward > 0) && (cmd->forwardmove < 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->mbackward > 0) && (cmd->forwardmove > 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if ((player->mforward == 0) && (player->mbackward == 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-			}
-			else if (player->mo->eflags & MF_UNDERWATER)
-			{
-				if((player->speed < waterspeed) && (player->mforward > 0) && (cmd->forwardmove > 0)) // Sonic's Speed
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->mforward > 0) && (cmd->forwardmove < 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->speed < waterspeed) && (player->mbackward > 0) && (cmd->forwardmove < 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->mbackward > 0) && (cmd->forwardmove > 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if ((player->mforward == 0) && (player->mbackward == 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-			}
-			else
-			{
-				if((player->speed < normalspeed) && (player->mforward > 0) && (cmd->forwardmove > 0)) // Sonic's Speed
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->mforward > 0) && (cmd->forwardmove < 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->speed < normalspeed) && (player->mbackward > 0) && (cmd->forwardmove < 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if((player->mbackward > 0) && (cmd->forwardmove > 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-				else if ((player->mforward == 0) && (player->mbackward == 0))
-					P_Thrust (player->mo, movepushangle, movepushforward);
-			}
-		}
+		P_Thrust (player->mo, movepushangle, movepushforward);
 	}
 
 // Insert same code for sidemove here Tails
-	if(cv_analog.value) // Analog mode Sideways Movement Nozomi 03-18-2026
+	if(cv_analog.value) // Analog mode Movement Nozomi 03-18-2026
 	{
-		if (cmd->sidemove && !(player->gliding || player->exiting || (player->mo->state == &states[S_PLAY_PAIN] && player->powers[pw_invisibility])))
+		if (!(player->gliding || player->exiting || (player->mo->state == &states[S_PLAY_PAIN] && player->powers[pw_invisibility])))
 		{
-			if(player->climbing)
-				P_InstaThrust (player->mo, player->mo->angle-ANG90, (cmd->sidemove/10)*FRACUNIT);
-			else if(player->powers[pw_strength] || player->powers[pw_super]) // do you have super sneakers? Tails 02-28-2000
-				movepushforward = cmd->sidemove * (waterspeed*player->acceleration); // then go faster!! Tails 02-28-2000
-			else // if not, then run normally Tails 02-28-2000
-				movepushforward = cmd->sidemove * ((waterspeed/2)*player->acceleration); // Changed by Tails: 9-14-99
+			angle_t controldirection;
 
-			// allow very small movement while in air for gameplay
-			if (!onground)
-			{  
-				movepushforward >>= 2; // Proper air movement - Changed by Tails: 9-13-99
-			}
+			controldirection = R_PointToAngle2(0, 0, cmd->forwardmove*FRACUNIT, -cmd->sidemove*FRACUNIT)+movepushangle;
 
-			// Allow a bit of movement while spinning Tails
+			if (player->climbing)
+				P_InstaThrust (player->mo, movepushsideangle, (cmd->sidemove/10)*FRACUNIT); // See below! Nozomi
+			else
+				movepushforward = FixedHypot(cmd->sidemove, cmd->forwardmove) * ((waterspeed/2)*player->acceleration);
+
+			// Allow a bit of movement while spinning
 			if (player->mfspinning)
 			{
-				if(!player->mfstartdash)
-					movepushforward=movepushforward/8;
-				else
+				if ((player->mforward && cmd->forwardmove > 0) || (player->mbackward && cmd->forwardmove < 0)
+				|| (player->mfstartdash))
 					movepushforward = 0;
+				else if (onground)
+					movepushforward >>= 4;
+				else
+					movepushforward >>= 3;
 			}
+			// allow very small movement while in air for gameplay
+			else if (!onground)
+				movepushforward >>= 2; // proper air movement
 
-			if (player->powers[pw_super] || player->powers[pw_strength])
-			{
-				if(player->powers[pw_tailsfly])
-				{
-					if((player->speed < sflyspeed) && (player->mforward > 0) && (cmd->sidemove > 0)) // Sonic's Speed
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->mforward > 0) && (cmd->sidemove < 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->speed < sflyspeed) && (player->mbackward > 0) && (cmd->sidemove < 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->mbackward > 0) && (cmd->sidemove > 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if ((player->mforward == 0) && (player->mbackward == 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-				}
-				else if(player->mo->eflags & MF_UNDERWATER)
-				{
-					if((player->speed < swaterspeed) && (player->mforward > 0) && (cmd->sidemove > 0)) // Sonic's Speed
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->mforward > 0) && (cmd->sidemove < 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->speed < swaterspeed) && (player->mbackward > 0) && (cmd->sidemove < 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->mbackward > 0) && (cmd->sidemove > 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if ((player->mforward == 0) && (player->mbackward == 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-				}
-				else
-				{
-					if((player->speed < snormalspeed) && (player->mforward > 0) && (cmd->sidemove > 0)) // Sonic's Speed
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->mforward > 0) && (cmd->sidemove < 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->speed < snormalspeed) && (player->mbackward > 0) && (cmd->sidemove < 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->mbackward > 0) && (cmd->sidemove > 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					 else if ((player->mforward == 0) && (player->mbackward == 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-				}
-			}
-			else
-			{
-				if(player->powers[pw_tailsfly])
-				{
-					if((player->speed < flyspeed) && (player->mforward > 0) && (cmd->sidemove > 0)) // Sonic's Speed
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->mforward > 0) && (cmd->sidemove < 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->speed < flyspeed) && (player->mbackward > 0) && (cmd->sidemove < 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->mbackward > 0) && (cmd->sidemove > 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if ((player->mforward == 0) && (player->mbackward == 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-				}
-				else if (player->mo->eflags & MF_UNDERWATER)
-				{
-					if((player->speed < waterspeed) && (player->mforward > 0) && (cmd->sidemove > 0)) // Sonic's Speed
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->mforward > 0) && (cmd->sidemove < 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->speed < waterspeed) && (player->mbackward > 0) && (cmd->sidemove < 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->mbackward > 0) && (cmd->sidemove > 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if ((player->mforward == 0) && (player->mbackward == 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-				}
-				else
-				{
-					if((player->speed < normalspeed) && (player->mforward > 0) && (cmd->sidemove > 0)) // Sonic's Speed
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->mforward > 0) && (cmd->sidemove < 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->speed < normalspeed) && (player->mbackward > 0) && (cmd->sidemove < 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if((player->mbackward > 0) && (cmd->sidemove > 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-					else if ((player->mforward == 0) && (player->mbackward == 0))
-						P_Thrust (player->mo, movepushsideangle, movepushforward);
-				}
-			}
+			movepushsideangle = controldirection;
+			P_Thrust (player->mo, controldirection, movepushforward);
 		}
 	}
 	else // Non-analog Sideways Movement Nozomi 03-18-2026
@@ -785,55 +434,54 @@ void P_MovePlayer (player_t* player)
 			P_InstaThrust (player->mo, movepushsideangle, (cmd->sidemove/10)*FRACUNIT);
 		else if (cmd->sidemove && !player->gliding && !player->exiting && !player->climbing && !(player->mo->state == &states[S_PLAY_PAIN] && player->powers[pw_invisibility])) // Tails 04-12-2001
 		{
-			if(player->powers[pw_strength] || player->powers[pw_super])
-				if(player->mfstartdash || player->mfspinning)
-					movepushside = 0;
-				else
-					movepushside = cmd->sidemove * (waterspeed*player->acceleration);
-			else
-				if(player->mfstartdash || player->mfspinning)
-					movepushside = 0;
-				else
-					movepushside = cmd->sidemove * ((waterspeed/2)*player->acceleration);
+			movepushside = cmd->sidemove * ((waterspeed/2)*player->acceleration);
 
+			// allow very small movement while in air for gameplay
 			if (!onground)
 			{
-				movepushside >>= 2;
+				movepushside >>= 2; // proper air movement
+				// Reduce movepushslide even more if over "max" flight speed
+				if (player->mfspinning || (player->powers[pw_tailsfly] && player->speed > topspeed))
+					movepushside >>= 2;
 			}
-				
-			// Allow a bit of movement while spinning Tails
-			if (player->mfspinning)
+			// Allow a bit of movement while spinning
+			else if (player->mfspinning)
 			{
-				if(!player->mfstartdash)
-					movepushforward=movepushforward/8;
+				if (player->mfstartdash)
+					movepushside = 0;
+				else if (onground)
+					movepushside >>= 4;
 				else
-					movepushforward = 0;
+					movepushside >>= 3;
 			}
 
-			// So... why wasn't SSNTails handling it this way before...?
-			// That... I do not know. Nozomi 03-18-2026
-			if (player->powers[pw_strength] || player->powers[pw_super]) {
-				if (player->powers[pw_tailsfly]) {
-					if (player->speed < sflyspeed)
-						P_Thrust (player->mo, movepushsideangle, movepushside);
-				} else if (player->mo->eflags & MF_UNDERWATER) {
-					if (player->speed < swaterspeed)
-						P_Thrust (player->mo, movepushsideangle, movepushside);
-				} else if (player->speed < snormalspeed)
-					P_Thrust (player->mo, movepushsideangle, movepushside);
-			}
-			else {
-				if (player->powers[pw_tailsfly]) {
-					if (player->speed < flyspeed)
-						P_Thrust (player->mo, movepushsideangle, movepushside);
-				} else if (player->mo->eflags & MF_UNDERWATER) {
-					if (player->speed < waterspeed)
-						P_Thrust (player->mo, movepushsideangle, movepushside);
-				} else if (player->speed < normalspeed)
-					P_Thrust (player->mo, movepushsideangle, movepushside);
-			}
+			P_Thrust (player->mo, movepushsideangle, movepushside);
 		}
 	}	
+
+	newMagnitude = R_PointToDist2(player->mo->momx - player->cmomx, player->mo->momy - player->cmomy, 0, 0);
+	if (newMagnitude > topspeed*FRACUNIT)
+	{
+		fixed_t tempmomx, tempmomy;
+		if (oldMagnitude > topspeed*FRACUNIT && !(player->mfspinning))
+		{
+			if (newMagnitude > oldMagnitude)
+			{
+				tempmomx = FixedMul(FixedDiv(player->mo->momx - player->cmomx, newMagnitude), oldMagnitude);
+				tempmomy = FixedMul(FixedDiv(player->mo->momy - player->cmomy, newMagnitude), oldMagnitude);
+				player->mo->momx = tempmomx + player->cmomx;
+				player->mo->momy = tempmomy + player->cmomy;
+			}
+			// else do nothing
+		}
+		else
+		{
+			tempmomx = FixedMul(FixedDiv(player->mo->momx - player->cmomx, newMagnitude), topspeed*FRACUNIT);
+			tempmomy = FixedMul(FixedDiv(player->mo->momy - player->cmomy, newMagnitude), topspeed*FRACUNIT);
+			player->mo->momx = tempmomx + player->cmomx;
+			player->mo->momy = tempmomy + player->cmomy;
+		}
+	}
 
 /////////////////////////
 // MOVEMENT ANIMATIONS //

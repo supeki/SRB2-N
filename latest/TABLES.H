@@ -68,17 +68,45 @@ extern  fixed_t*        finecosine;
 // Effective size is 4096.
 extern fixed_t          finetangent[FINEANGLES/2];
 
-#define ANG45           0x20000000
-#define ANG90           0x40000000
-#define ANG180          0x80000000
-#define ANG270          0xc0000000
+#define ANG1   0x00B60B61 //0.B6~
+#define ANG2   0x016C16C1 //.6C1~
+#define ANG10  0x071C71C7 //.1C7~
+#define ANG15  0x0AAAAAAB //A.AA~
+#define ANG20  0x0E38E38E //.38E~
+#define ANG30  0x15555555 //.555~
+#define ANG60  0x2AAAAAAB //A.AA~
+#define ANG64h 0x2DDDDDDE //D.DD~
+#define ANG105 0x4AAAAAAB //A.AA~
+#define ANG210 0x95555555 //.555~
+#define ANG255 0xB5555555 //.555~
+#define ANG340 0xF1C71C72 //1.C7~
+#define ANG350 0xF8E38E39 //8.E3~
 
-#define ANGLE_45    0x20000000
-#define ANGLE_90    0x40000000
-#define ANGLE_180   0x80000000
-#define ANGLE_MAX   0xffffffff
-#define ANGLE_1     (ANGLE_45/45)
-#define ANGLE_60    (ANGLE_180/3)
+#define ANGLE_11hh 0x08000000
+#define ANGLE_22h  0x10000000
+#define ANGLE_45   0x20000000
+#define ANGLE_67h  0x30000000
+#define ANGLE_90   0x40000000
+#define ANGLE_112h 0x50000000
+#define ANGLE_135  0x60000000
+#define ANGLE_157h 0x70000000
+#define ANGLE_180  0x80000000
+#define ANGLE_202h 0x90000000
+#define ANGLE_225  0xA0000000
+#define ANGLE_247h 0xB0000000
+#define ANGLE_270  0xC0000000
+#define ANGLE_292h 0xD0000000
+#define ANGLE_315  0xE0000000
+#define ANGLE_337h 0xF0000000
+#define ANGLE_MAX  0xFFFFFFFF
+
+#define ANG45           ANGLE_45
+#define ANG90           ANGLE_90
+#define ANG180          ANGLE_180
+#define ANG270          ANGLE_270
+
+#define ANGLE_1     ANG1
+#define ANGLE_60    ANG60
 
 typedef unsigned angle_t;
 

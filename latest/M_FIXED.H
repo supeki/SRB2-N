@@ -64,6 +64,9 @@ fixed_t FixedDiv (fixed_t a, fixed_t b);
 fixed_t FixedDiv2 (fixed_t a, fixed_t b);
 */
 
+fixed_t FixedSqrt(fixed_t x);
+fixed_t FixedHypot(fixed_t x, fixed_t y);
+
 #ifndef USEASM
     fixed_t FixedMul (fixed_t a, fixed_t b);
     fixed_t FixedDiv2 (fixed_t a, fixed_t b);

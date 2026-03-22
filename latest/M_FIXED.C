@@ -71,3 +71,59 @@ fixed_t FixedDiv ( fixed_t   a, fixed_t    b )
 }
 */
 #endif // useasm
+
+fixed_t FixedSqrt(fixed_t x)
+{
+#ifdef HAVE_SQRT
+	const float fx = FIXED_TO_FLOAT(x);
+	float fr;
+#ifdef HAVE_SQRTF
+	fr = sqrtf(fx);
+#else
+	fr = (float)sqrt(fx);
+#endif
+	return (fixed_t)(fr * FRACUNIT);
+#else
+	// The neglected art of Fixed Point arithmetic
+	// Jetro Lauha
+	// Seminar Presentation
+	// Assembly 2006, 3rd- 6th August 2006
+	// (Revised: September 13, 2006)
+	// URL: http://jet.ro/files/The_neglected_art_of_Fixed_Point_arithmetic_20060913.pdf
+	register UINT32 root, remHi, remLo, testDiv, count;
+	root = 0;         /* Clear root */
+	remHi = 0;        /* Clear high part of partial remainder */
+	remLo = x;        /* Get argument into low part of partial remainder */
+	count = (15 + (FRACBITS >> 1));    /* Load loop counter */
+	do
+	{
+		remHi = (remHi << 2) | (remLo >> 30); remLo <<= 2;  /* get 2 bits of arg */
+		root <<= 1;   /* Get ready for the next bit in the root */
+		testDiv = (root << 1) + 1;    /* Test radical */
+		if (remHi >= testDiv)
+		{
+			remHi -= testDiv;
+			root += 1;
+		}
+	} while (count-- != 0);
+	return root;
+#endif
+}
+
+fixed_t FixedHypot(fixed_t x, fixed_t y)
+{
+	fixed_t ax, yx, yx2, yx1;
+	if (abs(y) > abs(x)) // |y|>|x|
+	{
+		ax = abs(y); // |y| => ax
+		yx = FixedDiv(x, y); // (x/y)
+	}
+	else // |x|>|y|
+	{
+		ax = abs(x); // |x| => ax
+		yx = FixedDiv(y, x); // (x/y)
+	}
+	yx2 = FixedMul(yx, yx); // (x/y)^2
+	yx1 = FixedSqrt(1 * FRACUNIT + yx2); // (1 + (x/y)^2)^1/2
+	return FixedMul(ax, yx1); // |x|*((1 + (x/y)^2)^1/2)
+}
