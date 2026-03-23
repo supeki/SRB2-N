@@ -97,7 +97,7 @@
 #include <io.h>
 #endif
 
-#ifndef O_BINARY
+#ifdef LINUX
 #define O_BINARY 0
 #endif
 
