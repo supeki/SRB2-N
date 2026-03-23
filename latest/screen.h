@@ -180,4 +180,6 @@ void SCR_Startup (void);
 
 void SCR_ChangeFullscreen (void);
 
+int  VID_SetMode(int modenum);
+
 #endif //__SCREEN_H__

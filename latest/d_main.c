@@ -196,10 +196,6 @@ char            *pagename="TITLEPIC";
 void D_PageDrawer (char* lumpname);
 void D_AdvanceDemo (void);
 
-#ifdef LINUX
-void VID_PrepareModeList(void); // FIXME: very dirty; will use a proper include file
-#endif
-
 char*           startupwadfiles[MAX_WADFILES];
 
 boolean         devparm;        // started game with -devparm
@@ -1599,10 +1595,6 @@ void D_DoomMain (void)
     HU_HackChatmacros ();
   //--------------------------------------------------------- CONFIG.CFG
     M_FirstLoadConfig(); // WARNING : this do a "COM_BufExecute()"
-
-#ifdef LINUX
-    VID_PrepareModeList(); // Regenerate Modelist according to cv_fullscreen
-#endif
 
     // set user default mode or mode set at cmdline
     SCR_CheckDefaultMode ();

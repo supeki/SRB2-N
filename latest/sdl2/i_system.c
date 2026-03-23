@@ -1,4 +1,6 @@
 #include "../doomdef.h"
+#include "../d_clisrv.h"
+#include "../d_main.h"
 #include "../m_misc.h"
 #include "../i_system.h"
 #include "../i_video.h"

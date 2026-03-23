@@ -1868,9 +1868,6 @@ menu_t  VidModeDef =
 // shhh... what am I doing... nooooo!
 int   VID_NumModes(void);
 char  *VID_GetModeName(int modenum);
-#ifdef LINUX
-void VID_PrepareModeList(void); // FIXME: hack, we should avoid those #ifdef LINUX
-#endif
 static int vidm_testingmode=0;
 static int vidm_previousmode;
 static int vidm_current=0;
@@ -1900,9 +1897,6 @@ void M_DrawVideoMode(void)
     p = (patch_t*) W_CachePatchName("M_VIDEO",PU_CACHE);
     V_DrawScaledPatch ((BASEVIDWIDTH-p->width)/2,2,0,p);
 
-#ifdef LINUX
-    VID_PrepareModeList(); // FIXME: hack
-#endif
     vidm_nummodes = 0;
     nummodes = VID_NumModes ();
 

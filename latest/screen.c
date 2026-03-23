@@ -97,7 +97,7 @@ consvar_t   cv_scr_width  = {"scr_width",  "320", CV_SAVE, CV_Unsigned};
 consvar_t   cv_scr_height = {"scr_height", "200", CV_SAVE, CV_Unsigned};
 consvar_t   cv_scr_depth =  {"scr_depth",  "8 bits",   CV_SAVE, scr_depth_cons_t};
 consvar_t   cv_scr_mode = {"scr_mode", "0", CV_SAVE, CV_Unsigned};
-consvar_t   cv_fullscreen = {"fullscreen",  "Yes",CV_SAVE | CV_CALL, CV_YesNo, SCR_ChangeFullscreen};
+consvar_t   cv_fullscreen = {"fullscreen",  "No",CV_SAVE | CV_CALL, CV_YesNo, SCR_ChangeFullscreen};
 
 // =========================================================================
 //                           SCREEN VARIABLES

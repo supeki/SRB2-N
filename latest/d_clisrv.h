@@ -50,6 +50,7 @@
 
 #include "d_ticcmd.h"
 #include "d_netcmd.h"
+#include "p_mobj.h"
 
 //
 // Network play related stuff.
