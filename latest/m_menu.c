@@ -1301,6 +1301,7 @@ menuitem_t VideoOptionsMenu[]=
 {
     {IT_STRING | IT_SUBMENU,             "Video Modes...",      &VidModeDef,     0}, 
     {IT_STRING | IT_CVAR | IT_CV_SLIDER, "Brightness",          &cv_usegamma,    20},
+    {IT_STRING | IT_CVAR,                "Fullscreen",          &cv_fullscreen,  40},
 	{IT_STRING | IT_CVAR,                "Snow Density",        &cv_numsnow,     70}, // Changed all to normal string Tails 11-30-2000
 	{IT_STRING | IT_CVAR,                "Rain Density",        &cv_raindensity, 80}, // Changed all to normal string Tails 11-30-2000
 	{IT_STRING | IT_CVAR,                "Rain/Snow Draw Dist", &cv_precipdist,  90}, // Changed all to normal string Tails 11-30-2000

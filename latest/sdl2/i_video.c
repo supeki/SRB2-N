@@ -280,8 +280,7 @@ int VID_SetMode(int modenum)
 	vid.dupy = vid.height / 200;
 	vid.recalc = 1;
 
-	//if (cv_fullscreen.value)
-	if (false) // Not doing THAT again.
+	if (cv_fullscreen.value)
 		flags = SDL_WINDOW_FULLSCREEN;
 	else
 		flags = NULL;

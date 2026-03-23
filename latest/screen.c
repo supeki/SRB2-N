@@ -326,6 +326,11 @@ void SCR_SetDefaultMode (void)
 
 void SCR_ChangeFullscreen (void)
 {
+// Run that functoin girl!!!   
+#ifdef NOZOMI_SDL
+    I_ToggleFullscreen();
+#endif
+
 #ifdef DIRECTFULLSCREEN
 	int modenum;
 
