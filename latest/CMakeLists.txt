@@ -6,6 +6,7 @@ project(srb2-nozomi C)
 # "Win32" - The Win32/DD backend, tried and true however its support for many things is not the greatest and it's from 1998
 set(BACKEND "SDL2")
 
+# Add generic files
 list(APPEND SOURCES
     am_map.c
     command.c
@@ -80,7 +81,7 @@ list(APPEND SOURCES
     z_zone.c
 )
 
-# Add appropriate files and libaries depending on the backend
+# Add the backend's files
 if(BACKEND STREQUAL "Win32")
 	list(APPEND SOURCES
 		win32/dx_error.c 
@@ -95,17 +96,6 @@ if(BACKEND STREQUAL "Win32")
 		win32/win_sys.c
 		win32/win_vid.c
 	)
-	
-	#set(LIBRARIES
-	#	fmod
-	#	dinput
-	#	dxguid 
-	#	dsound 
-	#	ddraw 
-	#	gdi32
-	#	winmm 
-	#	wsock32
-	#)
 endif()
 
 if(BACKEND STREQUAL "SDL2")
@@ -118,11 +108,6 @@ if(BACKEND STREQUAL "SDL2")
 		sdl2/i_system.c
 		sdl2/i_video.c
 	)
-	
-	#set(LIBRARIES
-	#	SDL2
-	#	SDL2main
-	#)
 endif()
 
 MACRO(EXTRALIB NAME)
@@ -135,13 +120,45 @@ MACRO(EXTRALIB NAME)
 	ENDIF(${NAME}_LIBRARY)
 ENDMACRO(EXTRALIB)
 
-IF(${CMAKE_SYSTEM} MATCHES "Linux")
+if(${CMAKE_SYSTEM} MATCHES "Linux")
 	ADD_DEFINITIONS(-DUNIXCOMMON -DLINUX)
 	EXTRALIB(m)
 	EXTRALIB(rt)
-ELSE()
+# Make sure on Windows it doesn't say it "may not be supported"
+# I guess also here's a define incase we need it, it can't hurt to do so
+elseif(${CMAKE_SYSTEM} MATCHES "Windows")
+	ADD_DEFINITIONS(-DCMAKE_WINDOWS)
+else()
 	MESSAGE(WARNING "No specific settings for you system, it may be not supported!")
-ENDIF(${CMAKE_SYSTEM} MATCHES "Linux")
+endif(${CMAKE_SYSTEM} MATCHES "Linux")
+
+# Apply libs and CFLAGS depending on backend
+if(BACKEND STREQUAL "SDL2")
+	set(LIBRARIES
+		SDL2
+		SDL2main
+		${EXTRA_LIBRARIES}
+	)
+	
+	list(APPEND CFLAGS
+		-DNOZOMI_SDL
+	)
+endif()
+
+
+if(BACKEND STREQUAL "Win32")
+	set(LIBRARIES
+		fmod
+		dinput
+		dxguid 
+		dsound 
+		ddraw 
+		gdi32
+		winmm 
+		wsock32
+	)
+endif()
+
 
 # Add the source files and libraries defined earlier
 
@@ -150,16 +167,8 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
-	SDL2
-	SDL2main
-    ${EXTRA_LIBRARIES}
+	${LIBRARIES}
 )
-
-if(BACKEND STREQUAL "SDL2")
-	list(APPEND CFLAGS
-		-DNOZOMI_SDL
-	)
-endif()
 
 list(APPEND CFLAGS
 	-DNEWBUILD
