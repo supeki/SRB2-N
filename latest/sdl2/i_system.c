@@ -67,8 +67,6 @@ ULONG I_GetTime (void)
 
 void I_Sleep(void){}
 
-void I_GetEvent(void){}
-
 void I_OsPolling(void){}
 
 // Apparently this isn't system specific so Ctrl+C,Ctrl+V it is
@@ -179,9 +177,16 @@ void I_LoadingScreen(const char* msg)
 
 void I_SetWindowTitle(char *WNDTTL) {}
 
-void I_DoStartupMouse(void){}
+void I_DoStartupMouse(void){}	
 
-void I_StartupMouse(void){}
+// Apparently, despite its name this is called whenever cv_usemouse changes
+// Why not I_ToggleMouse???
+void I_StartupMouse(void){
+	if (cv_usemouse.value == 0)
+		SDL_SetRelativeMouseMode(SDL_FALSE);
+	if (cv_usemouse.value > 0)
+		SDL_SetRelativeMouseMode(SDL_TRUE);
+}
 
 void I_StartupMouse2(void){}
 
@@ -194,81 +199,202 @@ int I_GetKey(void)
 
 void I_StartTic(void){}
 
-// Translate SDL2's events into Doom Legacy ones 
-void I_StartFrame(void) {
+void I_GetEvent(void){}
+
+// Translate SDL2's events in Doom Legacy ones (keyboard and mouse input)
+void I_StartFrame(void){
 	event_t e_w;
 	SDL_Event e_s;
 	// This exists so we can reuse most of the keydown event code for the keyup event
 	boolean up = false;
-	boolean ignoremodifiers = false;
+		while (SDL_PollEvent(&e_s)) {
+			up = false;
+			memset(&e_w,0x00,sizeof(e_w));
+			switch (e_s.type) {
+				case SDL_QUIT:
+					I_Quit();
+					break;
+				case SDL_KEYUP:
+					e_w.type = ev_keyup;
+					up = true;
+				case SDL_KEYDOWN:
+					if (!up)
+						e_w.type = ev_keydown;
 
-	while (SDL_PollEvent(&e_s) != 0) {
-		switch (e_s.type) {
-			case SDL_QUIT:
-				I_Quit();
-				break;
-			case SDL_KEYUP:
-				e_w.type = ev_keyup;
-				up = true;
-			case SDL_KEYDOWN:
-				if (!up)
+					switch (e_s.key.keysym.sym) {
+						// arrows
+						case SDLK_UP:
+							e_w.data1 = KEY_UPARROW;
+							break;
+						case SDLK_DOWN:
+							e_w.data1 = KEY_DOWNARROW;
+							break;
+						case SDLK_RIGHT:
+							e_w.data1 = KEY_RIGHTARROW;
+							break;
+						case SDLK_LEFT:
+							e_w.data1 = KEY_LEFTARROW;
+							break;
+						// modifer keys
+						case SDLK_LSHIFT:
+						case SDLK_RSHIFT:
+							e_w.data1 = KEY_SHIFT;
+							break;
+						case SDLK_LCTRL:
+						case SDLK_RCTRL:
+							e_w.data1 = KEY_CTRL;
+							break;
+						case SDLK_LALT:
+						case SDLK_RALT:
+							e_w.data1 = KEY_ALT;
+							break;
+						// function keys
+						case SDLK_F1:
+							e_w.data1 = KEY_F1;
+							break;
+						case SDLK_F2:
+							e_w.data1 = KEY_F2;
+							break;
+						case SDLK_F3:
+							e_w.data1 = KEY_F3;
+							break;
+						case SDLK_F4:
+							e_w.data1 = KEY_F4;
+							break;
+						case SDLK_F5:
+							e_w.data1 = KEY_F5;
+							break;
+						case SDLK_F6:
+							e_w.data1 = KEY_F6;
+							break;
+						case SDLK_F7:
+							e_w.data1 = KEY_F7;
+							break;
+						case SDLK_F8:
+							e_w.data1 = KEY_F8;
+							break;
+						case SDLK_F9:
+							e_w.data1 = KEY_F9;
+							break;
+						case SDLK_F10:
+							e_w.data1 = KEY_F10;
+							break;
+						case SDLK_F11:
+							e_w.data1 = KEY_F11;
+							break;
+						case SDLK_F12:
+							e_w.data1 = KEY_F12;
+							break;
+						// Let Snipping Tool/Snip 'n Sketch/Greenshot do whatever! 
+						case SDLK_PRINTSCREEN:
+							return;
+						// those keys to the right of the regular QWERTY layout but to the left of the numpad idk what to call them
+						case SDLK_SCROLLLOCK:
+							e_w.data1 = KEY_SCROLLLOCK;
+							break;
+						case SDLK_PAUSE:
+							e_w.data1 = KEY_PAUSE;
+							break;
+						case SDLK_INSERT:
+							e_w.data1 = KEY_INS;
+							break;
+						case SDLK_HOME:
+							e_w.data1 = KEY_HOME;
+							break;
+						case SDLK_PAGEUP:
+							e_w.data1 = KEY_PGUP;
+							break;
+						case SDLK_DELETE:
+							e_w.data1 = KEY_DEL;
+							break;
+						case SDLK_END:
+							e_w.data1 = KEY_END;
+							break;
+						case SDLK_PAGEDOWN:
+							e_w.data1 = KEY_PGDN;
+							break;
+						// numpad keys
+						case SDLK_KP_0:
+							e_w.data1 = KEY_KEYPAD0;
+							break;
+						case SDLK_KP_1:
+							e_w.data1 = KEY_KEYPAD1;
+							break;
+						case SDLK_KP_2:
+							e_w.data1 = KEY_KEYPAD2;
+							break;
+						case SDLK_KP_3:
+							e_w.data1 = KEY_KEYPAD3;
+							break;
+						case SDLK_KP_4:
+							e_w.data1 = KEY_KEYPAD4;
+							break;
+						case SDLK_KP_5:
+							e_w.data1 = KEY_KEYPAD5;
+							break;
+						case SDLK_KP_6:
+							e_w.data1 = KEY_KEYPAD6;
+							break;
+						case SDLK_KP_7:
+							e_w.data1 = KEY_KEYPAD7;
+							break;
+						case SDLK_KP_8:
+							e_w.data1 = KEY_KEYPAD8;
+							break;
+						case SDLK_KP_9:
+							e_w.data1 = KEY_KEYPAD9;
+							break;
+						case SDLK_KP_PLUS:
+							e_w.data1 = KEY_PLUSPAD;
+							break;
+						case SDLK_KP_MINUS:
+							e_w.data1 = KEY_MINUSPAD;
+							break;
+						case SDLK_KP_PERIOD:
+							e_w.data1 = KEY_KPADDEL;
+							break;
+						// misc keys
+						case SDLK_LGUI:
+							e_w.data1 = KEY_LEFTWIN;
+						case SDLK_RGUI:
+							e_w.data1 = KEY_RIGHTWIN;
+						case SDLK_MENU:
+							e_w.data1 = KEY_MENU;
+						// doom legacy does not have key values for these keys
+						case SDLK_VOLUMEUP:
+						case SDLK_VOLUMEDOWN:
+						case SDLK_MUTE:
+							return;
+						default:
+							e_w.data1 = e_s.key.keysym.sym;
+							break;
+					}
+
+					// For when I inevitably come back to this
+					//CONS_Printf("Virtual key code: 0x%02X (%c)\n", e_s.key.keysym.sym, e_s.key.keysym.sym);
+					//CONS_Printf("Physical key code: 0x%02X (%c)\n", e_s.key.keysym.scancode, e_s.key.keysym.scancode);
+					D_PostEvent(&e_w);
+					break;
+				case SDL_MOUSEBUTTONDOWN:
 					e_w.type = ev_keydown;
-
-				switch (e_s.key.keysym.sym) {
-					case SDLK_UP:
-						e_w.data1 = KEY_UPARROW;
-						break;
-					case SDLK_DOWN:
-						e_w.data1 = KEY_DOWNARROW;
-						break;
-					case SDLK_RIGHT:
-						e_w.data1 = KEY_RIGHTARROW;
-						break;
-					case SDLK_LEFT:
-						e_w.data1 = KEY_LEFTARROW;
-						break;
-					default:
-						e_w.data1 = e_s.key.keysym.sym;
-						break;
-				}
-
-				if (!ignoremodifiers) {
-					// Intercept modifier keys
-					if (SDL_GetModState() & KMOD_SHIFT) {
-						e_w.data1 = KEY_SHIFT;
-						D_PostEvent(&e_w);
-						return;
-					}
-					if (SDL_GetModState() & KMOD_CTRL) {
-						e_w.data1 = KEY_CTRL;
-						D_PostEvent(&e_w);
-						return;
-					}
-					if (SDL_GetModState() & KMOD_ALT) {
-						e_w.data1 = KEY_ALT;
-						D_PostEvent(&e_w);
-						return;
-					}
-				}
-					
-				// For when I inevitably come back to this
-				//CONS_Printf("Virtual key code: 0x%02X (%c)\n", e_s.key.keysym.sym, e_s.key.keysym.sym);
-				//CONS_Printf("Physical key code: 0x%02X (%c)\n", e_s.key.keysym.scancode, e_s.key.keysym.scancode);
-				D_PostEvent(&e_w);
-				break;
-			case SDL_MOUSEMOTION:
-				e_w.type = ev_mouse;
-				e_w.data1 = 0;
-				SDL_GetMouseState(&e_w.data2, &e_w.data3);
-
-				// Adjust mouse X
-				e_w.data2 -= 250;
-				e_w.data2 >>= 2;
-
-				D_PostEvent(&e_w);
-				break;
+					e_w.data1 = KEY_MOUSE1 + e_s.button.button;
+					D_PostEvent(&e_w);
+					break;
+				case SDL_MOUSEBUTTONUP:
+					e_w.type = ev_keyup;
+					e_w.data1 = KEY_MOUSE1 + e_s.button.button;
+					D_PostEvent(&e_w);
+					break;
+				case SDL_MOUSEMOTION:
+					e_w.type = ev_mouse;
+					e_w.data2 = e_s.motion.xrel * (cv_mousesens.value + 1) / 10;
+					e_w.data3 = e_s.motion.yrel * (cv_mousesens.value + 1) / 10;
+					D_PostEvent(&e_w);
+					break;
+				default:
+					break;
+			}
 		}
-	}
 }
 
 void I_GetDiskFreeSpace(INT64 *freespace){}
