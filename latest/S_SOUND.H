@@ -84,6 +84,15 @@ extern consvar_t cdUpdate;
 extern consvar_t cv_jigglecdvol;
 #endif
 
+typedef enum
+{
+	SF_TOTALLYSINGLE =  1,
+	SF_MULTIPLESOUND =  2,
+	SF_OUTSIDESOUND  =  4,
+	SF_X4AWAYSOUND   =  8,
+	SF_X8AWAYSOUND   = 16,
+} soundflags_t;
+
 // register sound vars and commands at game startup
 void S_RegisterSoundStuff (void);
 

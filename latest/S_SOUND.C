@@ -318,6 +318,10 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
         I_Error("Bad sfx #: %d\n", sfx_id);
 #endif
 
+	// check for bogus sound #
+	if(sfx_id == 0 || sfx_id == sfx_None)
+		return;
+
     sfx = &S_sfx[sfx_id];
 
     if (sfx->skinsound!=-1 && origin && origin->skin)
@@ -327,26 +331,8 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
         sfx    = &S_sfx[sfx_id];
     }
 
-
-
     // Initialize sound parameters
-    if (sfx->link)
-    {
-      pitch = (byte)((float)sfx->pitch/pitch);
-      priority = sfx->priority;
-      volume += sfx->volume;
-
-      if (volume < 1)
-        return;
-
-    // added 2-2-98 SfxVolume is now the hardware volume, don't mix up
-    //    if (volume > SfxVolume)
-    //      volume = SfxVolume;
-    }
-    else
-    {
-      priority = NORM_PRIORITY;
-    }
+    priority = NORM_PRIORITY;
 
 	if (pitch > 255)
 		pitch = 255;
@@ -369,7 +355,7 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
     if (origin && origin != players[displayplayer].mo && !(cv_splitscreen.value && origin == players[secondarydisplayplayer].mo))
     {
         int           rc,rc2;
-        int volume2=volume,sep2/*=sep*/,pitch2=pitch;
+        int volume2=volume,sep2,pitch2=pitch;
         rc=S_AdjustSoundParams(players[displayplayer].mo,
                                origin,
                                &volume,
@@ -410,19 +396,7 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
       }
     }
     else
-    {
-      sep = NORM_SEP;
-    }
-
-    // hacks to vary the sfx pitches
-
-    //added:16-02-98: removed by Fab, because it used M_Random() and it
-    //                was a big bug, and then it doesnt change anything
-    //                dont hear any diff. maybe I'll put it back later
-    //                but of course not using M_Random().
-
-    // kill old sound
-    S_StopSound(origin);
+		sep = NORM_SEP;
 
     // try to find a channel
     cnum = S_getChannel(origin, sfx);
@@ -906,11 +880,18 @@ int S_getChannel( void*         origin,
     {
         if (!channels[cnum].sfxinfo)
             break;
-        else if (origin &&  channels[cnum].origin ==  origin)
-        {
-            S_StopChannel(cnum);
-            break;
-        }
+		else if(sfxinfo->flags & SF_MULTIPLESOUND)
+			break;
+		else if(sfxinfo == channels[cnum].sfxinfo && sfxinfo->singularity == true)
+		{
+			S_StopChannel(cnum);
+			break;
+		}
+        else if(origin && channels[cnum].origin == origin && channels[cnum].sfxinfo == sfxinfo)
+		{
+			S_StopChannel(cnum);
+			break;
+		}
     }
 
     // None available
@@ -918,7 +899,8 @@ int S_getChannel( void*         origin,
     {
         // Look for lower priority
         for (cnum=0 ; cnum<cv_numChannels.value ; cnum++)
-            if (channels[cnum].sfxinfo->priority >= sfxinfo->priority) break;
+            if (channels[cnum].sfxinfo->priority >= sfxinfo->priority) 
+				break;
 
         if (cnum == cv_numChannels.value)
         {
