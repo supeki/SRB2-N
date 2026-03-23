@@ -1550,7 +1550,7 @@ enum
 menuitem_t SoundOptionsMenu[]=
 {
     {IT_SUBMENU | IT_STRING,"Sound Volume..."  ,&SoundDef  ,0},
-	{IT_SUBMENU | IT_STRING,"Pitch Options..."  ,&PitchOptionsDef  ,20}
+	{IT_SUBMENU | IT_STRING,"Pitch Options..."  ,&PitchOptionsDef  ,10},
 };
 
 menuitem_t PitchOptionsMenu[]=

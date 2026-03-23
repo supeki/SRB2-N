@@ -67,6 +67,8 @@ extern consvar_t cv_usepitch;
 extern consvar_t cv_ringpitch;
 extern consvar_t cv_underwaterpitch;
 
+extern consvar_t cv_oldsoundbehavior;
+
 #ifdef SNDSERV
 extern consvar_t sndserver_cmd;
 extern consvar_t sndserver_arg;

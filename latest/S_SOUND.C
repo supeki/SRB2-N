@@ -106,9 +106,12 @@ consvar_t cv_soundvolume = {"soundvolume","15",CV_SAVE,soundvolume_cons_t};
 consvar_t cv_musicvolume = {"musicvolume","15",CV_SAVE,soundvolume_cons_t};
 
 // pitch change
-consvar_t cv_usepitch = {"usepitch", "1", CV_SAVE, CV_OnOff};
-consvar_t cv_ringpitch = {"ringpitchchange", "0", CV_SAVE, CV_OnOff};
-consvar_t cv_underwaterpitch = {"underwaterpitchchange", "1", CV_SAVE, CV_OnOff};
+consvar_t cv_usepitch = {"snd_pitch", "1", CV_SAVE, CV_OnOff};
+consvar_t cv_ringpitch = {"pitch_ring", "0", CV_SAVE, CV_OnOff};
+consvar_t cv_underwaterpitch = {"pitch_underwater", "1", CV_SAVE, CV_OnOff};
+
+// old sound behavior
+consvar_t cv_oldsoundbehavior = {"snd_oldbehavior", "0", CV_SAVE, CV_OnOff};
 
 // number of channels available
 void SetChannelsNum(void);
@@ -171,6 +174,9 @@ void S_RegisterSoundStuff (void)
 	CV_RegisterVar (&cv_usepitch);
 	CV_RegisterVar (&cv_ringpitch);
 	CV_RegisterVar (&cv_underwaterpitch);
+
+	// old sound behavior
+	CV_RegisterVar (&cv_oldsoundbehavior);
 
 #ifdef SNDSERV
     CV_RegisterVar (&sndserver_cmd);
@@ -319,7 +325,7 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
 #endif
 
 	// check for bogus sound #
-	if(sfx_id == 0 || sfx_id == sfx_None)
+	if ((sfx_id == 0 || sfx_id == sfx_None) && !cv_oldsoundbehavior.value)
 		return;
 
     sfx = &S_sfx[sfx_id];
@@ -332,7 +338,28 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
     }
 
     // Initialize sound parameters
-    priority = NORM_PRIORITY;
+
+	if (cv_oldsoundbehavior.value) {
+		if (sfx->link)
+		{
+		  pitch = (byte)((float)sfx->pitch/pitch);
+		  priority = sfx->priority;
+		  volume += sfx->volume;
+
+		  if (volume < 1)
+			return;
+
+		// added 2-2-98 SfxVolume is now the hardware volume, don't mix up
+		//    if (volume > SfxVolume)
+		//      volume = SfxVolume;
+		}
+		else
+		{
+		  priority = NORM_PRIORITY;
+		}
+	}
+	else
+		priority = NORM_PRIORITY;
 
 	if (pitch > 255)
 		pitch = 255;
@@ -398,6 +425,9 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
     else
 		sep = NORM_SEP;
 
+	if (cv_oldsoundbehavior.value)
+		S_StopSound(origin);
+
     // try to find a channel
     cnum = S_getChannel(origin, sfx);
 
@@ -413,7 +443,7 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
     // cache data if necessary
     // NOTE : set sfx->data NULL sfx->lump -1 to force a reload
     if (sfx->link)
-        sfx->data = sfx->link->data;
+		sfx->data = sfx->link->data;
 
     if (!sfx->data)
     {
@@ -878,19 +908,29 @@ int S_getChannel( void*         origin,
     // Find an open channel
     for (cnum=0 ; cnum<cv_numChannels.value ; cnum++)
     {
-        if (!channels[cnum].sfxinfo)
-            break;
-		else if(sfxinfo->flags & SF_MULTIPLESOUND)
-			break;
-		else if(sfxinfo == channels[cnum].sfxinfo && sfxinfo->singularity == true)
-		{
-			S_StopChannel(cnum);
-			break;
-		}
-        else if(origin && channels[cnum].origin == origin && channels[cnum].sfxinfo == sfxinfo)
-		{
-			S_StopChannel(cnum);
-			break;
+		if (cv_oldsoundbehavior.value) {
+			if (!channels[cnum].sfxinfo)
+				break;
+			else if(origin && channels[cnum].origin == origin)
+			{
+				S_StopChannel(cnum);
+				break;
+			}
+		} else {
+			if (!channels[cnum].sfxinfo)
+				break;
+			else if(sfxinfo->flags & SF_MULTIPLESOUND)
+				break;
+			else if(sfxinfo == channels[cnum].sfxinfo && sfxinfo->singularity == true)
+			{
+				S_StopChannel(cnum);
+				break;
+			}
+			else if(origin && channels[cnum].origin == origin && channels[cnum].sfxinfo == sfxinfo)
+			{
+				S_StopChannel(cnum);
+				break;
+			}
 		}
     }
 
@@ -898,9 +938,14 @@ int S_getChannel( void*         origin,
     if (cnum == cv_numChannels.value)
     {
         // Look for lower priority
-        for (cnum=0 ; cnum<cv_numChannels.value ; cnum++)
-            if (channels[cnum].sfxinfo->priority >= sfxinfo->priority) 
-				break;
+		if (cv_oldsoundbehavior.value)
+			for (cnum=0 ; cnum<cv_numChannels.value ; cnum++)
+				if (channels[cnum].sfxinfo->priority >= sfxinfo->priority) break;
+		else
+			for (cnum=0 ; cnum<cv_numChannels.value ; cnum++) {
+				if (channels[cnum].sfxinfo->priority >= sfxinfo->priority) 
+					break;
+			}
 
         if (cnum == cv_numChannels.value)
         {
