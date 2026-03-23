@@ -45,7 +45,7 @@ void I_Error(char *error, ...)
 	va_list arglist;
 
 	va_start(arglist, error);
-	wvsprintf(str, error, arglist);
+	vsprintf(str, error, arglist);
 	va_end(arglist);
 
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "SRB2 Error", error, NULL);

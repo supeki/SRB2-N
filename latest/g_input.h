@@ -60,7 +60,7 @@
 #define KEY_MOUSEWHEELDOWN (KEY_MOUSEWHEELUP+1)
 #define NUMINPUTS          (KEY_MOUSEWHEELDOWN+1)
 
-enum
+extern enum
 {
     gc_null = 0,        //a key/button mapped to gc_null has no effect
     gc_forward,

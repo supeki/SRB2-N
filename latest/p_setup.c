@@ -83,6 +83,7 @@
 #include "m_misc.h" // for M_MapNumber
 
 #include "i_sound.h" //for I_PlayCD()..
+#include "i_video.h"
 #include "r_sky.h"
 
 #include "r_data.h"
@@ -102,6 +103,10 @@
 #ifdef HWRENDER
 #include "i_video.h"            //rendermode
 #include "hardware/hw_main.h"
+#endif
+
+#ifdef LINUX
+#include "dosstr.h"
 #endif
 
 extern consvar_t cv_chasecam; // declare the cam var! Tails 01-06-2000

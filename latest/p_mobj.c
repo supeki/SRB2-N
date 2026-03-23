@@ -69,7 +69,7 @@
 #include "d_clisrv.h"
 #include "r_splats.h"   //faB: in dev.
 
-	player_t  *plyr;
+extern player_t  *plyr;
 // protos.
 void CV_ViewHeight_OnChange (void);
 
@@ -1604,10 +1604,10 @@ static precipmobj_t* P_SpawnSnowMobj(fixed_t x, fixed_t y, fixed_t z, mobjtype_t
 //
 // P_RemoveMobj
 //
-mapthing_t     *itemrespawnque[ITEMQUESIZE];
-int             itemrespawntime[ITEMQUESIZE];
-int             iquehead;
-int             iquetail;
+extern mapthing_t     *itemrespawnque[ITEMQUESIZE];
+extern int             itemrespawntime[ITEMQUESIZE];
+extern int             iquehead;
+extern int             iquetail;
 
 void P_RemoveMobj (mobj_t* mobj)
 {

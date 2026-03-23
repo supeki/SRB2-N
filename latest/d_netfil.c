@@ -472,14 +472,22 @@ found:
         if(!ram) {
 #ifdef __OS2__
             fpos_t size64;
+#elif defined (LINUX)
+            off_t size64=0;
 #else
             fpos_t size64=0;
 #endif
         transfer[i].currentfile=fopen(f->filename,"rb");
         if(!transfer[i].currentfile)
             I_Error("File %s not exist",f->filename);
+#ifdef LINUX
+        fseeko(transfer[i].currentfile, 0, SEEK_END);
+        size64 = ftello(transfer[i].currentfile);
+        fseeko(transfer[i].currentfile, 0, SEEK_SET);
+#else
         fseek(transfer[i].currentfile,0,SEEK_END);
         size=fgetpos(transfer[i].currentfile,&size64);
+#endif
         // WARNING fpos_t 64bit in some OS
 #ifndef __OS2__
         if(size64>MAXINT)

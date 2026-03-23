@@ -43,6 +43,10 @@ void I_UpdateSoundParams(int handle, int vol, int sep, int pitch)
 	handle = vol = sep = pitch = 0;
 }
 
+void I_UpdateSound(void) {}
+
+void I_SubmitSound(void) {}
+
 void I_SetSfxVolume(int volume)
 {
 	volume = 0;
@@ -93,7 +97,7 @@ void I_PlaySong(int handle, int looping)
 {
 	handle = 0;
 	looping = 0;
-	return false;
+	return;
 }
 
 void I_StopSong(int handle)

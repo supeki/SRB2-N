@@ -13,6 +13,7 @@
 #include "m_easing.h"
 #include "tables.h"
 #include "doomdef.h"
+#include "doomtype.h"
 
 /*
 	For the computation of the logarithm, we choose, by trial and error, from among

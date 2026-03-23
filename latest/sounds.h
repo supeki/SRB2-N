@@ -36,7 +36,7 @@
 
 
 // 10 customisable sounds for Skins
-enum {
+extern enum {
 	SKSSPIN,
 	SKSPUTPUT,
 	SKSPUDPUD,

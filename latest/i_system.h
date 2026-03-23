@@ -151,7 +151,7 @@ void I_GetDiskFreeSpace(INT64 *freespace);
 char *I_GetUserName(void);
 int  I_mkdir(const char *dirname, int unixright);
 
-boolean window_title;
+extern boolean window_title;
 
 // Why is this an error HERE? This should be accounted for on a backend-by-backend basis
 // and if the backend doesn't have it... oh well! Do we need to stop all compiles of
@@ -161,7 +161,7 @@ void I_SetWindowTitle(char *WNDTTL);
 localtime_t I_GetLocalTime(void);
 
 #ifdef LINUX
-void I_LocateWad(void);
+const char *I_LocateWad(void);
 #endif
 
 #endif

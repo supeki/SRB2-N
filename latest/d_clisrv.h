@@ -216,7 +216,7 @@ typedef enum {
    cl_connected
 } cl_mode_t;
 
-cl_mode_t cl_mode;
+extern cl_mode_t cl_mode;
 
 //#pragma pack()
 

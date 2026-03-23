@@ -642,14 +642,14 @@ void M_SwitchSplitscreen(void)
         MultiPlayerDef.lastOn=setupplayer1; 
 }
 
-static int scalex(x) 
+static int scalex(int x) 
 {
 	x *= (fixed_t)(((float)(vid.width / BASEVIDWIDTH))*FRACUNIT);
 	x /= FRACUNIT;
 	return x;
 }
 
-static int scaley(y)
+static int scaley(int y)
 {
 	y *= (fixed_t)(((float)(vid.height / BASEVIDHEIGHT))*FRACUNIT);
 	y /= FRACUNIT;
