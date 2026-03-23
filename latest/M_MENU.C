@@ -728,7 +728,7 @@ void M_DrawSetupMultiPlayerMenu(void)
     // draw player sprite
 	{
 		int x, y, offx, offy;
-		fixed_t scale = (fixed_t)(atof(skins[R_SkinAvailable(setupm_cvskin->string)].spritescale) * FRACUNIT);
+		fixed_t scale = skins[R_SkinAvailable(setupm_cvskin->string)].spritescale;
 
 		if (scale < 1)
 			scale = FRACUNIT;

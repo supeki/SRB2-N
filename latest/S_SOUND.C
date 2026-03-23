@@ -83,6 +83,7 @@ extern int msg_id;
 #include "s_sound.h"
 #include "w_wad.h"
 #include "z_zone.h"
+#include "srb-nozomi/srb.h"
 
 // commands for music and sound servers
 #ifdef MUSSERV
@@ -115,7 +116,7 @@ consvar_t cv_oldsoundbehavior = {"snd_oldbehavior", "0", CV_SAVE, CV_OnOff};
 
 // number of channels available
 void SetChannelsNum(void);
-consvar_t cv_numChannels = {"snd_channels","16",CV_SAVE | CV_CALL, CV_Unsigned,SetChannelsNum};
+consvar_t cv_numChannels = {"snd_channels","32",CV_SAVE | CV_CALL, CV_Unsigned,SetChannelsNum};
 
 typedef struct
 {
@@ -425,7 +426,7 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
     else
 		sep = NORM_SEP;
 
-	if (cv_oldsoundbehavior.value)
+	if (cv_oldsoundbehavior.value || play_srb_nozomi)
 		S_StopSound(origin);
 
     // try to find a channel

@@ -123,6 +123,8 @@
 
 #include "i_joy.h"
 
+#include "srb-nozomi/srb.h"
+
 // added 8-3-98 increse savegame size from 0x2c000 (180kb) to 512*1024
 #define SAVEGAMESIZE    (512*1024)
 #define SAVESTRINGSIZE  24
@@ -1193,6 +1195,9 @@ void G_Ticker (void)
 */
         }
     }
+
+	if (gamestate != GS_WAITINGPLAYERS)
+		play_srb_nozomi = false;
 
     // do main actions
     switch (gamestate)

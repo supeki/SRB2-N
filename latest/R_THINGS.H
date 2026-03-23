@@ -112,8 +112,8 @@ typedef struct
 	int 		runspeed; // runspeed Nozomi
 	char		face[9];
 	char		hudname[9];
-	char		spritescale[9]; // spritescale Nozomi
-	char		facescale[9]; // facescale Nozomi
+	fixed_t		spritescale; // spritescale Nozomi
+	fixed_t		facescale; // facescale Nozomi
 
     // specific sounds per skin
     short       soundsid[NUMSKINSOUNDS]; // sound # in S_sfx table
