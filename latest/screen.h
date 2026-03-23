@@ -60,8 +60,8 @@
 //#define MAXVIDHEIGHT    768  // lots of tables are allocated with the MAX
 
 //Tails
-#define MAXVIDWIDTH     1280  //dont set this too high because actually
-#define MAXVIDHEIGHT    800  // lots of tables are allocated with the MAX
+#define MAXVIDWIDTH     1920  //dont set this too high because actually
+#define MAXVIDHEIGHT    1200  // lots of tables are allocated with the MAX
                             // size.
 #define BASEVIDWIDTH    320   //NEVER CHANGE THIS! this is the original
 #define BASEVIDHEIGHT   200  // resolution of the graphics.

@@ -419,6 +419,3 @@ void VID_Command_Listmodes(void) {
 		CONS_Printf("Video mode %d: %s.\n", i, VID_GetModeName(i));
 	}
 }
-
-void I_LoadingScreen(void) {}
-void I_StartFrame(void) {}

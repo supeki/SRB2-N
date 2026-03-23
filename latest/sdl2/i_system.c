@@ -1,9 +1,12 @@
 #include "../doomdef.h"
+#include "../m_misc.h"
 #include "../i_system.h"
+#include "../i_video.h"
+#include "../i_sound.h"
 #include "../i_joy.h"
 
 #include "i_main.h"
-#include <SDL2/SDL_messagebox.h>
+#include <SDL2/SDL.h>
 
 byte graphics_started = 0;
 
@@ -11,12 +14,54 @@ byte keyboard_started = 0;
 
 JoyType_t   Joystick;
 
-void I_GetFreeMem(){}
+void I_GetFreeMem(void){}
 
-ULONG I_GetTime(void) 
+#ifdef _WIN32
+static long    hacktics = 0;       //faB: used locally for keyboard repeat keys
+static DWORD starttickcount = 0; // hack for win2k time bug
+ULONG I_GetTime(void)
 {
-	return 0;
+	int newtics = 0;
+
+	if (!starttickcount) // high precision timer
+	{
+		LARGE_INTEGER currtime; // use only LowPart if high resolution counter is not available
+		static LARGE_INTEGER basetime = { {0, 0} };
+
+		// use this if High Resolution timer is found
+		static LARGE_INTEGER frequency;
+
+		if (!basetime.LowPart)
+		{
+			if (!QueryPerformanceFrequency(&frequency))
+				frequency.QuadPart = 0;
+			else
+				QueryPerformanceCounter(&basetime);
+		}
+
+		if (frequency.LowPart && QueryPerformanceCounter(&currtime))
+		{
+			newtics = (INT32)((currtime.QuadPart - basetime.QuadPart) * TICRATE
+				/ frequency.QuadPart);
+		}
+	}
+	else
+		newtics = (GetTickCount() - starttickcount) / (1000 / TICRATE);
+
+	return newtics;
 }
+#else
+ULONG I_GetTime (void)
+{
+	ULONG ticks = SDL_GetTicks();
+
+	ticks = (ticks*TICRATE);
+
+	ticks = (ticks/1000);
+
+	return ticks;
+}
+#endif
 
 void I_Sleep(void){}
 
@@ -24,10 +69,13 @@ void I_GetEvent(void){}
 
 void I_OsPolling(void){}
 
-ticcmd_t *I_BaseTiccmd(void)
+// Apparently this isn't system specific so Ctrl+C,Ctrl+V it is
+ticcmd_t        emptycmd;
+ticcmd_t* I_BaseTiccmd(void)
 {
-	return NULL;
+	return &emptycmd;
 }
+
 
 ticcmd_t *I_BaseTiccmd2(void)
 {
@@ -36,21 +84,37 @@ ticcmd_t *I_BaseTiccmd2(void)
 
 void I_Quit(void)
 {
+	M_SaveConfig(NULL);
+	D_QuitNetGame();
+	I_ShutdownGraphics();
+	I_ShutdownSound();
+	I_ShutdownMusic();
+	I_ShutdownSystem();
 	exit(0);
 }
 
 void I_Error(char *error, ...)
 {
-	char    str[1999];
-	va_list arglist;
+	va_list args;
+	va_start(args, error);
 
-	va_start(arglist, error);
-	vsprintf(str, error, arglist);
-	va_end(arglist);
+	int len = vsnprintf(NULL, 0, error, args);
+	va_end(args);
 
-	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "SRB2 Error", error, NULL);
+	char* buffer = (char*)malloc(len + 1);
 
-	error = NULL;
+	va_start(args, error);
+	vsnprintf(buffer, len + 1, error, args);
+	va_end(args);
+
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "SRB2 Error", buffer, NULL);
+
+	M_SaveConfig(NULL);
+	D_QuitNetGame();
+	I_ShutdownGraphics();
+	I_ShutdownSound();
+	I_ShutdownMusic();
+	I_ShutdownSystem();
 	exit(-1);
 }
 
@@ -90,8 +154,30 @@ const char *I_GetJoyName(int joyindex)
 
 void I_OutputMsg(char *error, ...)
 {
-	error = NULL;
+	va_list args;
+	va_start(args, error);
+
+	int len = vsnprintf(NULL, 0, error, args);
+	va_end(args);
+
+	char* buffer = (char*)malloc(len + 1);
+
+	va_start(args, error);
+	vsnprintf(buffer, len + 1, error, args);
+	va_end(args);
+
+	SDL_Log(buffer);
 }
+
+// Just print this to the console for now
+void I_LoadingScreen(const char* msg)
+{
+	SDL_Log(msg);
+}
+
+void I_SetWindowTitle(char *WNDTTL) {}
+
+void I_DoStartupMouse(void){}
 
 void I_StartupMouse(void){}
 
@@ -104,6 +190,86 @@ int I_GetKey(void)
 	return 0;
 }
 
+void I_StartTic(void){}
+
+// Translate SDL2's events into Doom Legacy ones 
+void I_StartFrame(void) {
+	event_t e_w;
+	SDL_Event e_s;
+	// This exists so we can reuse most of the keydown event code for the keyup event
+	boolean up = false;
+	boolean ignoremodifiers = false;
+
+	while (SDL_PollEvent(&e_s) != 0) {
+		switch (e_s.type) {
+			case SDL_QUIT:
+				I_Quit();
+				break;
+			case SDL_KEYUP:
+				e_w.type = ev_keyup;
+				up = true;
+			case SDL_KEYDOWN:
+				if (!up)
+					e_w.type = ev_keydown;
+
+				switch (e_s.key.keysym.sym) {
+					case SDLK_UP:
+						e_w.data1 = KEY_UPARROW;
+						break;
+					case SDLK_DOWN:
+						e_w.data1 = KEY_DOWNARROW;
+						break;
+					case SDLK_RIGHT:
+						e_w.data1 = KEY_RIGHTARROW;
+						break;
+					case SDLK_LEFT:
+						e_w.data1 = KEY_LEFTARROW;
+						break;
+					default:
+						e_w.data1 = e_s.key.keysym.sym;
+						break;
+				}
+
+				if (!ignoremodifiers) {
+					// Intercept modifier keys
+					if (SDL_GetModState() & KMOD_SHIFT) {
+						e_w.data1 = KEY_SHIFT;
+						D_PostEvent(&e_w);
+						return;
+					}
+					if (SDL_GetModState() & KMOD_CTRL) {
+						e_w.data1 = KEY_CTRL;
+						D_PostEvent(&e_w);
+						return;
+					}
+					if (SDL_GetModState() & KMOD_ALT) {
+						e_w.data1 = KEY_ALT;
+						D_PostEvent(&e_w);
+						return;
+					}
+				}
+					
+				// For when I inevitably come back to this
+				//CONS_Printf("Virtual key code: 0x%02X (%c)\n", e_s.key.keysym.sym, e_s.key.keysym.sym);
+				//CONS_Printf("Physical key code: 0x%02X (%c)\n", e_s.key.keysym.scancode, e_s.key.keysym.scancode);
+				D_PostEvent(&e_w);
+				break;
+			case SDL_MOUSEMOTION:
+				e_w.type = ev_mouse;
+				e_w.data1 = 0;
+				SDL_GetMouseState(&e_w.data2, &e_w.data3);
+
+				// Adjust mouse X
+				e_w.data2 -= 250;
+				e_w.data2 >>= 2;
+
+				D_PostEvent(&e_w);
+				break;
+		}
+	}
+}
+
+void I_GetDiskFreeSpace(INT64 *freespace){}
 void I_StartupTimer(void){}
 
 void I_AddExitFunc(void (*func)())
@@ -121,28 +287,16 @@ int I_StartupSystem(void)
 	return -1;
 }
 
-void I_ShutdownSystem(void){}
-
-void I_GetDiskFreeSpace(INT64* freespace)
-{
-	freespace = NULL;
+void I_ShutdownSystem(void){
+	CONS_Printf("I_ShutdownSystem...\n");
+	SDL_RWclose(logstream);
+	SDL_Quit();
 }
 
 char *I_GetUserName(void)
 {
 	return NULL;
 }
-
-void I_SetWindowTitle(char* WNDTTL){}
-
-// Stub function, just return 0s as localtime is not supported on SDL2 yet
-localtime_t I_GetLocalTime(void){
-	localtime_t nozo_localtime;
-	memset(&nozo_localtime, 0, sizeof(localtime_t));
-	return nozo_localtime; 
-}
-
-void I_StartTic(void){}
 
 int I_mkdir(const char *dirname, int unixright)
 {
@@ -151,11 +305,6 @@ int I_mkdir(const char *dirname, int unixright)
 	return -1;
 }
 
-UINT64 I_FileSize(const char *filename)
-{
-	filename = NULL;
-	return (UINT64)-1;
-}
 
 const char *I_LocateWad(void)
 {
@@ -198,4 +347,12 @@ byte* I_ZoneBase(int* size)
 	memset(pmem, 0, *size);
 
 	return (byte*)pmem;
+}
+
+// Stub that returns a struct full of 0s
+// Save 23-03-2026
+localtime_t I_GetLocalTime(void) {
+	localtime_t nozo_localtime;
+	memset(&nozo_localtime, 0, sizeof(localtime_t));
+	return nozo_localtime;
 }
