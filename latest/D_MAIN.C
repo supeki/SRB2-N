@@ -807,18 +807,18 @@ void D_PageDrawer (char* lumpname)
 			case GS_WAITINGPLAYERS:
 				if (netgame && (!server)) {
 					// show our server joining status! Nozomi 03-10-2026
-					if (cl_mode == cl_connected)
-						V_DrawString(160-strlen("connected! waiting on map change!")*4 + 8, 200-12, "connected! waiting on map change!");
-					else
-						V_DrawString(160-strlen("awaiting multiplayer connection")*4, 200-12, "awaiting multiplayer connection");
 
-					// insert fun thing here later~ Nozomi 03-10-2026
 					// Sonic Robo-Blast! Nozomi
 					if (play_srb_nozomi) {
 						SRBN_Draw();
 					} else {
 						V_DrawString(160-strlen("Press JUMP to play a game!")*4, 100-4, "Press JUMP to play a game!");
 					}
+
+					if (cl_mode == cl_connected)
+						V_DrawString(160-strlen("connected! waiting on map change!")*4 + 8, 200-12, "connected! waiting on map change!");
+					else
+						V_DrawString(160-strlen("awaiting multiplayer connection")*4, 200-12, "awaiting multiplayer connection");
 				}
 				break;
 		}
