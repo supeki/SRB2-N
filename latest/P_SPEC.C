@@ -833,6 +833,7 @@ P_FindSectorFromLineTag
 {
   start = start >= 0 ? sectors[start].nexttag :
     sectors[(unsigned) line->tag % (unsigned) numsectors].firsttag;
+
   while (start >= 0 && sectors[start].tag != line->tag)
     start = sectors[start].nexttag;
   return start;

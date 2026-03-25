@@ -1111,15 +1111,6 @@ void IdentifyVersion (void)
 
 	// Add the maps Nozomi 02-22-2026
 	D_AddFile("maps.wad");
-
-	// SRB2-Nozomi exclusive content! Nozomi 03-02-2026
-	if (M_CheckParm ("-nozomi"))
-    {
-		D_AddFile("nozomi-gfx.wad");
-		D_AddFile("nozomi-music.wad");
-        D_AddFile("nozomi-maps.wad");
-    }
-
 }
 
 
@@ -1357,7 +1348,7 @@ void D_DoomMain (void)
     p = M_CheckParm ("-warp");
     if (p && p < myargc-1)
     {
-        startmap = atoi (myargv[p+1]);
+        startmap = M_MapNumber (myargv[p+1][0], myargv[p+1][1]);
         autostart = true;
     }
 

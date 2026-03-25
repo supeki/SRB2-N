@@ -207,20 +207,20 @@ char *Color_Names[MAXSKINCOLORS]={
    "Silver",
    "Gray", 
    "Pink",
-   "Cherry_Blossom",
-   "Bright_Red",
+   "Cherry_Blossom", // I made this color! :D Nozomi Date Unknown
+   "Bright_Red", // Someone asked for this... Nozomi Date Unknown
    "Red",
    "Crimson", 
    "Peach",
-   "Orange",
+   "Apricot", // used to be Orange Nozomi 03-25-2026
    "Beige",
    "Green",
-   "Forest",
+   "Forest", // Take a hint :)
    "Light_Blue",
-   "Blue",
+   "Blue", // An in-between of Light and Deep! Nozomi Date Unknown
    "Deep_Blue",
    "Purple",
-   "Legacy_Army",
+   "Legacy_Army", // MIDIMan jokingly asked me to port this, I did it :D Nozomi Date Unknown
 };
 
 #if MAXSKINCOLORS > 32
