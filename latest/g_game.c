@@ -2130,13 +2130,11 @@ players[i].continues = 5;
 
 // end set lives/continues via game skill Tails 03-11-2000
 
-if(!cv_gametype.value == 1)
+if(cv_gametype.value != 1)
 players[i].score = 0; // Set score to 0 Tails 03-10-2000
 
 players[i].xtralife = players[i].xtralife2 = 0;
 }
-
-players[i].sp_score = 0;
 
     // for internal maps only
     if (FIL_CheckExtension(mapname))
