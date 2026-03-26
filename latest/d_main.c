@@ -1187,7 +1187,7 @@ void IdentifyVersion (void)
 
     char *doomwaddir;
 
-#ifdef LINUX
+#if defined (LINUX) || defined (NOZOMI_DSI)
     // change to the directory where 'doom3.wad' is found
    I_LocateWad();
 #endif

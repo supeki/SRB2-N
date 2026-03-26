@@ -51,7 +51,7 @@
 
 #include <time.h>
 
-#if !defined( LINUX) && !defined(__OS2__)
+#if !defined( LINUX) && !defined(__OS2__) && !defined (NOZOMI_DSI)
 #include <io.h>
 #include <direct.h>
 #else
@@ -650,7 +650,7 @@ void nameonly(char *s)
       }
 }
 
-#ifdef LINUX
+#if defined (LINUX) || defined (NOZOMI_DSI)
 #define O_BINARY 0
 #endif
 
@@ -775,7 +775,7 @@ filestatus_t recsearch(char *filename,time_t timestamp,boolean changestring)
   return FS_NOTFOUND;
 }
 #else
-#if defined( LINUX) || defined( __OS2__)
+#if defined( LINUX) || defined( __OS2__) || defined (NOZOMI_DSI)
 /* readdir and stat is portable 19990508 by Kin */
 {
     DIR *dds;

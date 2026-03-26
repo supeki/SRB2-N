@@ -48,7 +48,7 @@
 
 #include "doomtype.h"
 
-#ifdef LINUX
+#if defined (LINUX) || defined (NOZOMI_DSI)
 #include <stdlib.h>
 #endif
 

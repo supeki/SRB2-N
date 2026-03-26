@@ -47,11 +47,15 @@ typedef unsigned long ULONG;
 typedef unsigned short USHORT;
 #endif // _OS2EMX_H
 
-#ifdef LINUX
+#if defined (LINUX) || defined (NOZOMI_DSI)
 #include <stdint.h>
 #define UINT32 uint32_t
 #define UINT64 uint64_t
 #define INT32 int32_t
+#endif
+
+#if defined (NOZOMI_DSI)
+#include <stdbool.h>
 #endif
 
 #ifdef __WIN32__
@@ -76,7 +80,7 @@ typedef unsigned short USHORT;
     #endif
 #endif
 // added for Linux 19990220 by Kin
-#ifdef LINUX
+#if defined (LINUX) || defined (NOZOMI_DSI)
 #define stricmp(x,y) strcasecmp(x,y)
 #define strnicmp(x,y,n) strncasecmp(x,y,n)
 #define lstrlen(x) strlen(x)
@@ -98,6 +102,8 @@ typedef unsigned short USHORT;
             #define false   FALSE           // use windows types
             #define true    TRUE
             #define boolean BOOL
+        #elif defined (NOZOMI_DSI)
+            #define boolean bool
         #else
             typedef enum {false, true} boolean;
         #endif
@@ -106,7 +112,7 @@ typedef unsigned short USHORT;
 
 
 // Predefined with some OS.
-#ifndef __WIN32__
+#if !defined (__WIN32__) && !defined (NOZOMI_DSI)
 #include <values.h>
 #endif
 

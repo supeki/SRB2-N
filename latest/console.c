@@ -960,6 +960,7 @@ void CONS_Printf (char *fmt, ...)
         CON_Drawer ();
         I_FinishUpdate ();              // page flip or blit buffer
 #endif
+        printf ("%s",txt);
     }
 }
 
@@ -969,7 +970,7 @@ void CONS_Printf (char *fmt, ...)
 //
 void CONS_Error (char *msg)
 {
-#ifndef NOZOMI_SDL
+#if !defined (NOZOMI_SDL) && !defined (NOZOMI_DSI)
     extern  HWND    hWndMain;
     if(!graphics_started)
     {

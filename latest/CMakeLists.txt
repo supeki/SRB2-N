@@ -4,7 +4,10 @@ project(srb2-nozomi C)
 
 # "SDL2" - The SDL2 backend, newer but more experimental and incomplete
 # "Win32" - The Win32/DD backend, tried and true however its support for many things is not the greatest and it's from 1998
-set(BACKEND "SDL2")
+# "DSi" - A work in progress backend for the Nintendo DSi
+if (NOT(BACKEND)) # user hasnt picked a backend, use SDL2 by default
+    set(BACKEND "SDL2")
+endif()
 
 # Add generic files
 list(APPEND SOURCES
@@ -26,7 +29,6 @@ list(APPEND SOURCES
     g_state.c
     hu_stuff.c
     info.c
-    i_tcp.c
     m_argv.c
     m_bbox.c
     m_cheat.c
@@ -80,6 +82,26 @@ list(APPEND SOURCES
     w_wad.c
     z_zone.c
 )
+
+if (NOT(BACKEND STREQUAL "DSi"))
+    list(APPEND SOURCES
+        i_tcp.c
+    )
+endif()
+
+if(BACKEND STREQUAL "DSi")
+    MESSAGE(STATUS "place my DS holders")
+	list(APPEND SOURCES
+		dsi/dosstr.c
+        dsi/i_cdmus.c
+        dsi/i_main.c
+        dsi/i_net.c
+        dsi/i_sound.c
+        dsi/i_system.c
+        dsi/i_video.c
+	)
+    list(APPEND CFLAGS -DNOZOMI_DSI -DARM9)
+endif()
 
 # Add the backend's files
 if(BACKEND STREQUAL "Win32")
@@ -185,3 +207,13 @@ list(APPEND CFLAGS
 target_compile_options(${PROJECT_NAME} PRIVATE
 	${CFLAGS}
 )
+
+if(BACKEND STREQUAL "DSi")
+    nds_create_rom(${PROJECT_NAME}
+        NAME "SRB2-Nozomi"
+        SUBTITLE "Place the holder"
+        AUTHOR "johnson"
+        ICON "dsi/icon.gif"
+        NITROFS "nitrofs/"
+    )
+endif()

@@ -945,8 +945,9 @@ extern void D_CheckNetGame (void)
 		doomcom->consoleplayer = 0;
 		doomcom->ticdup = 1;
 		doomcom->extratics = 0;
-
+#ifndef NOZOMI_DSI
 		netgame = I_InitTcpNetwork(0);
+#endif
 	} // else net game
 	else
 	{

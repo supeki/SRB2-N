@@ -92,12 +92,12 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-#ifndef LINUX
+#if !defined (LINUX) && !defined (NOZOMI_DSI)
 // only dos need this 19990203 by Kin
 #include <io.h>
 #endif
 
-#ifdef LINUX
+#if defined (LINUX) || defined (NOZOMI_DSI)
 #define O_BINARY 0
 #endif
 

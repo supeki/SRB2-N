@@ -73,7 +73,7 @@
 
 
 // added for linux 19990220 by Kin
-#ifdef LINUX
+#if defined (LINUX) || defined (NOZOMI_DSI)
 #define O_BINARY 0
 #endif
 

@@ -151,6 +151,8 @@ void I_GetDiskFreeSpace(INT64 *freespace);
 char *I_GetUserName(void);
 int  I_mkdir(const char *dirname, int unixright);
 
+const char *I_LocateWad(void);
+
 extern boolean window_title;
 
 // Why is this an error HERE? This should be accounted for on a backend-by-backend basis
