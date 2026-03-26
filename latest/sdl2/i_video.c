@@ -285,7 +285,7 @@ int VID_SetMode(int modenum)
 	else
 		flags = NULL;
 
-	// Init window (hardcoded to 640x400 for now) in the center of the screen
+	// Init window in the center of the screen
 	SDL_window = SDL_CreateWindow("SRB2-Nozomi (EXPERIMENTAL SDL2 backend)", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, vid.width, vid.height, flags);
 	// Just get this port working for now
 	//SetSDLIcon(SDL_window);
