@@ -91,7 +91,7 @@ long FAR PASCAL  MainWndproc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
     case WM_ACTIVATEAPP:           // Handle task switching
         appActive = wParam;
         // pause music when alt-tab
-        if( appActive )
+        if( appActive && !IsIconic(hWnd) )
             I_ResumeSong(0);
         else
             I_PauseSong(0);
@@ -104,7 +104,7 @@ long FAR PASCAL  MainWndproc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
         break;
 
     case WM_PAINT:
-        if (!appActive && !bAppFullScreen)
+        if ((!appActive && !bAppFullScreen) || IsIconic(hWnd))
             // app becomes inactive (if windowed )
         {
             // Paint "Game Paused" in the middle of the screen

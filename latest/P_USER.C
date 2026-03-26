@@ -407,6 +407,11 @@ void P_MovePlayer (player_t* player)
 			angle_t controldirection;
 
 			controldirection = R_PointToAngle2(0, 0, cmd->forwardmove*FRACUNIT, -cmd->sidemove*FRACUNIT)+movepushangle;
+			if ((cmd->forwardmove != 0 || cmd->sidemove != 0)) {
+				player->mo->angle = controldirection;
+				if (player==&players[consoleplayer])
+						localangle = player->mo->angle; // Adjust the local control angle.				
+			}
 
 			if (player->climbing)
 				P_InstaThrust (player->mo, movepushsideangle, (cmd->sidemove/10)*FRACUNIT); // See below! Nozomi
@@ -1500,7 +1505,7 @@ void P_MovePlayer (player_t* player)
 		{
 			// If travelling slow enough, face the way the controls
 			// point and not your direction of movement.
-			if(player->speed < 2 || player->gliding)
+			if(player->speed < 2 || player->gliding || player->mfjumped || player->powers[pw_tailsfly]g)
 			{
 			tempx = tempy = 0;
 
@@ -2216,17 +2221,10 @@ void P_MoveChaseCamera (player_t *player)
 	if (cv_cam_still.value == true) // Tails 07-02-2001
 		angle = camera.mo->angle;
 	else if(cv_analog.value) // Analog Test Tails 06-10-2001
-		angle = R_PointToAngle2(camera.mo->x, camera.mo->y, mo->x, mo->y);
+		angle = R_PointToAngle2(camera.mo->x, camera.mo->y, mo->x + mo->momx, mo->y + mo->momy);
 	else
 		angle = mo->angle;
-/*
-	// Grr stupid camera buttons won't work!
-	if(player->mo && cv_analog.value)
-	{
-	if(player->cmd.cammove) // Tails 06-20-2001
-		P_Thrust(camera.mo, camera.mo->angle-ANG90, player->cmd.cammove);
-	}
-*/
+
     // sets ideal cam pos
     dist  = cv_cam_dist.value;
     x = mo->x - FixedMul( finecosine[(angle>>ANGLETOFINESHIFT) & FINEMASK], dist);
