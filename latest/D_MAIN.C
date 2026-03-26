@@ -597,7 +597,7 @@ void D_Display (void)
 
 void D_UpdateWindowTitle(void)
 {
-	if (gamestate == GS_LEVEL && strlen(mapheaders[gamemap].name) > 0)
+	if (gamestate == GS_LEVEL && strlen(mapheaders[gamemap].name) > 0 && !demoplayback)
 		if (mapheaders[gamemap].act > 0)
 			I_SetWindowTitle(va("Sonic Robo Blast 2 - %s Zone Act %d", mapheaders[gamemap].name, mapheaders[gamemap].act));
 		else
@@ -956,6 +956,7 @@ void D_DoAdvanceDemo (void)
 void D_StartTitle (void)
 {
     gameaction = ga_nothing;
+	gamestate = GS_NOZOMITITLE;
     playerdeadview = false;
 	nozo_timeattack = false;
     displayplayer = consoleplayer = statusbarplayer = 0;

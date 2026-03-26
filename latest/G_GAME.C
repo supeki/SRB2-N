@@ -1146,6 +1146,7 @@ void G_Ticker (void)
     ULONG       i;
     int         buf;
     ticcmd_t*   cmd;
+	gamestate_t oldgamestate = gamestate;
 
     // do player reborns if needed
     if( gamestate == GS_LEVEL )
