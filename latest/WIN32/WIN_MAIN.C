@@ -228,10 +228,10 @@ HWND    OpenMainWindow (HINSTANCE hInstance, int nCmdShow, char* wTitle)
     // Create a window
     // CreateWindowEx - seems to create just the interior, not the borders
 
-    hWnd = CreateWindowEx(WS_EX_TOPMOST,    //ExStyle
+    hWnd = CreateWindowEx(0,    //ExStyle
         "LegacyWC",                         //Classname
         wTitle,                             //Windowname
-        WS_CAPTION|WS_POPUP|WS_SYSMENU,     //dwStyle       //WS_VISIBLE|WS_POPUP for bAppFullScreen
+        WS_CAPTION|WS_POPUP|WS_SYSMENU|WS_MINIMIZEBOX,     //dwStyle       //WS_VISIBLE|WS_POPUP for bAppFullScreen
         0,
         0,
         320,  //GetSystemMetrics(SM_CXSCREEN),

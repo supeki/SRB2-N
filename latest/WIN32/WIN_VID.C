@@ -112,11 +112,11 @@ static  int VID_SetWindowedDisplayMode (viddef_t *lvid, vmode_t *pcurrentmode);
 
 // this holds description of the startup video mode,
 // the resolution is 320x200, windowed on the desktop
-#define NUMSPECIALMODES  4
+#define NUMSPECIALMODES  5
 vmode_t specialmodes[NUMSPECIALMODES] = {
         {
             NULL,
-            "320x200W", //faB: W to make sure it's the windowed mode
+            "320x200", 
             320, 200,   //(200.0/320.0)*(320.0/240.0),
             320, 1,     // rowbytes, bytes per pixel
             1, 2,       // windowed (TRUE), numpages
@@ -126,7 +126,7 @@ vmode_t specialmodes[NUMSPECIALMODES] = {
         },
 		{
             NULL,
-            "640x400W", //faB: W to make sure it's the windowed mode
+            "640x400", 
             640, 400,   //(200.0/320.0)*(320.0/240.0),
             640, 1,     // rowbytes, bytes per pixel
             1, 2,       // windowed (TRUE), numpages
@@ -136,7 +136,17 @@ vmode_t specialmodes[NUMSPECIALMODES] = {
         },
 		{
             NULL,
-            "1280x800W", //faB: W to make sure it's the windowed mode
+            "960x600", 
+            960, 600,   //(200.0/320.0)*(320.0/240.0),
+            960, 1,     // rowbytes, bytes per pixel
+            1, 2,       // windowed (TRUE), numpages
+            NULL,
+            VID_SetWindowedDisplayMode,
+            0          // misc
+        },
+		{
+            NULL,
+            "1280x800", 
             1280, 800,   //(200.0/320.0)*(320.0/240.0),
             1280, 1,     // rowbytes, bytes per pixel
             1, 2,       // windowed (TRUE), numpages
@@ -146,7 +156,7 @@ vmode_t specialmodes[NUMSPECIALMODES] = {
         },
 		{
             NULL,
-            "CUSTOM", //faB: W to make sure it's the windowed mode
+            "CUSTOM", 
             320, 200,   //(200.0/320.0)*(320.0/240.0),
             320, 1,     // rowbytes, bytes per pixel
             1, 2,       // windowed (TRUE), numpages

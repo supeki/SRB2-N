@@ -148,7 +148,7 @@ void SRBN_Init(void) {
 	srbn_platforms[6].patch = 0; // see nozomi-gfx.wad for patch order
 	srbn_platforms[6].type = PLATFORM_PLATFORM; // platform, see above for details
 
-	S_ChangeMusicName("KNOTHOLE", 1);
+	S_ChangeMusicName("robotrop", 1);
 
 	play_srb_nozomi = true;
 }
