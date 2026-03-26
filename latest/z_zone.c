@@ -278,6 +278,7 @@ void* Z_MallocAlign(int size, int tag, void* user, int alignbits)
 
 	do
 	{
+#ifndef NOZOMI_DSI
 		if(rover == start)
 		{
 			// scanned all the way around the list
@@ -288,6 +289,7 @@ void* Z_MallocAlign(int size, int tag, void* user, int alignbits)
 				"Try increasing memory size using the -mb parameter (currently using %d MB)",
 				size, mb_used);
 		}
+#endif
 
 		if(rover->user)
 		{

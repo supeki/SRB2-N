@@ -7,6 +7,8 @@
 
 #include "i_video.h"
 
+#include <gl2d.h>
+
 rendermode_t rendermode = render_soft;
 
 boolean highcolor = false;
@@ -150,8 +152,25 @@ void I_ShutdownGraphics(void){
 	graphics_started = false;
 }
 
-// Translate Doom palette into SDL palette
-void I_SetPalette(byte *palette){}
+u16 ds_palette[256];
+
+// Translate Doom palette into ??? palette
+void I_SetPalette(byte *palette)
+{
+    for (int i = 0; i < 256; i++)
+    {
+        u8 r = palette[i*3+0];
+        u8 g = palette[i*3+1];
+        u8 b = palette[i*3+2];
+
+        // convert 0–255 to 0–31
+        r >>= 3;
+        g >>= 3;
+        b >>= 3;
+
+        ds_palette[i] = RGB15(r, g, b);
+    }
+}
 
 int VID_NumModes(void)
 {
@@ -200,16 +219,29 @@ int VID_GetModeForSize(int w, int h)
 // TODO: Some of the stuff done when we change modes might not be needed. See how much we can keep between mode switches (For example, we might just be able to change the window's dimensions instead of destroying and remaking it)
 int VID_SetMode(int modenum)
 {
-	return 0;
+	// we dont use this anymore, atleast for now until the renderer is actually good/working
+    return 0;
 }
 
 void I_StartupGraphics(void) {
-	if (VID_InitConsole())
-		I_Error("I_StartupGraphics(): Could not initialize commands / console variables!\n");
+    vid.modenum = 3; 
+    vid.width = 256;
+    vid.height = 192;
+    vid.bpp = 1; // 8-bit buffer
+    vid.rowbytes = vid.width;
+    vid.dupx = vid.width / 320;
+    vid.dupy = vid.height / 200;
+    vid.recalc = 1;
 
-	VID_SetMode(3);
+    vid.buffer = malloc(vid.width * vid.height);
+	
+    if (!vid.buffer)
+        I_Error("Could'nt allocate video buffer");
 
-	graphics_started = true;
+    memset(vid.buffer, 0, vid.width*vid.height);
+
+    videoSetMode(MODE_FB0);
+    vramSetBankA(VRAM_A_LCD);
 }
 
 const char *VID_GetModeName(int modenum)
@@ -219,7 +251,19 @@ const char *VID_GetModeName(int modenum)
 
 void I_UpdateNoBlit(void){}
 
-void I_FinishUpdate(void){}
+static u16 tempBuffer[256*192];
+
+void I_FinishUpdate(void)
+{
+    // convert 8bit buffer to RGB15
+    for (int i = 0; i < 256*192; i++)
+        tempBuffer[i] = ds_palette[vid.buffer[i]];
+
+    // copy to VRAM A
+    u16* framebuffer = (u16*)VRAM_A;
+    for (int i = 0; i < 256*192; i++)
+        framebuffer[i] = tempBuffer[i];
+}
 
 void I_WaitVBL(int count)
 {

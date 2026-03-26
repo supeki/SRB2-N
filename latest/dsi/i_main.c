@@ -5,8 +5,6 @@
 #include <nds.h>
 #include <filesystem.h>
 
-int mb_used = 32;
-
 int main(int argc, char **argv)
 {
 	myargc = argc;

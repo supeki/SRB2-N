@@ -18,6 +18,8 @@ byte graphics_started = 0;
 
 byte keyboard_started = 0;
 
+byte mb_used = 13;
+
 JoyType_t   Joystick;
 
 void I_GetFreeMem(void){}
@@ -167,7 +169,44 @@ void I_StartTic(void){}
 void I_GetEvent(void){}
 
 // Translate SDL2's events in Doom Legacy ones (keyboard and mouse input)
-void I_StartFrame(void){}
+void I_StartFrame(void)
+{
+	scanKeys();
+	
+	event_t e_w;
+	const char *key_names[15] = {
+        "A", "B", "Select", "Start", "Right", "Left", "Up", "Down", "R",
+        "L", "X", "Y", "Touch", "Lid", "Debug"
+    };
+
+	for (int i = 0; i <= 14; i++)
+    {
+		switch(i)
+		{
+			case 7:
+				e_w.data1 = KEY_UPARROW;
+				break;
+			case 8:
+				e_w.data1 = KEY_DOWNARROW;
+				break;
+			case 6:
+				e_w.data1 = KEY_LEFTARROW;
+				break;
+			case 5:
+				e_w.data1 = KEY_RIGHTARROW;
+				break;
+			case 3:
+				e_w.data1 = KEY_MENU;
+				break;
+			case 1:
+				e_w.data1 = KEY_SPACE;
+				break;
+			case 2:
+				e_w.data1 = KEY_SHIFT;
+				break;
+		}
+    }
+}
 
 void I_GetDiskFreeSpace(INT64 *freespace){}
 void I_StartupTimer(void){}
@@ -238,7 +277,6 @@ byte* I_ZoneBase(int* size)
 	void* pmem;
 
 	// do it the old way
-	mb_used = (int *)256;
 	*size = mb_used * 1024 * 1024;
 	pmem = malloc(*size);
 
