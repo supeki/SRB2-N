@@ -595,6 +595,16 @@ void D_Display (void)
     } while (!done && I_GetTime()-y<2*TICRATE);
 }
 
+void D_UpdateWindowTitle(void)
+{
+	if (gamestate == GS_LEVEL && strlen(mapheaders[gamemap].name) > 0)
+		if (mapheaders[gamemap].act > 0)
+			I_SetWindowTitle(va("Sonic Robo Blast 2 - %s Zone Act %d", mapheaders[gamemap].name, mapheaders[gamemap].act));
+		else
+			I_SetWindowTitle(va("Sonic Robo Blast 2 - %s Zone", mapheaders[gamemap].name));
+	else
+		I_SetWindowTitle("Sonic Robo Blast 2");
+}
 
 
 // =========================================================================
@@ -714,14 +724,6 @@ p = M_CheckParm ("-name");
         else
             if(lastrendered+2<I_GetTime()) // in case the server hang or netsplit
                 D_Display ();
-
-		if (gamestate == GS_LEVEL && strlen(mapheaders[gamemap].name) > 0)
-			if (mapheaders[gamemap].act > 0)
-				I_SetWindowTitle(va("Sonic Robo Blast 2 - %s Zone Act %d", mapheaders[gamemap].name, mapheaders[gamemap].act));
-			else
-				I_SetWindowTitle(va("Sonic Robo Blast 2 - %s Zone", mapheaders[gamemap].name));
-		else
-			I_SetWindowTitle("Sonic Robo Blast 2");
             
         // Win32 exe uses DirectSound..
 #if !defined( __WIN32__) && !defined( __OS2__)
@@ -958,6 +960,7 @@ void D_StartTitle (void)
 	nozo_timeattack = false;
     displayplayer = consoleplayer = statusbarplayer = 0;
     demosequence = -1;
+	D_UpdateWindowTitle();
     D_AdvanceDemo ();
     CON_ToggleOff();
 }
