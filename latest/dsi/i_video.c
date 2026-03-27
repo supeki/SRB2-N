@@ -251,21 +251,6 @@ void I_StartupGraphics(void) {
     vid.height = 192;
     vid.bpp = 1; // 8-bit buffer
     vid.rowbytes = vid.width;
-<<<<<<< HEAD
-    vid.dupx = vid.width / 320;
-    vid.dupy = vid.height / 200;
-    vid.recalc = 1;
-
-    vid.buffer = malloc(vid.width * vid.height);
-	
-    if (!vid.buffer)
-        I_Error("Could'nt allocate video buffer");
-
-    memset(vid.buffer, 0, vid.width*vid.height);
-
-    videoSetMode(MODE_FB0);
-    vramSetBankA(VRAM_A_LCD);
-=======
     vid.dupx = 1;
     vid.dupy = 1;
     vid.recalc = 0;
@@ -279,7 +264,6 @@ void I_StartupGraphics(void) {
     videoSetMode(MODE_VRAM_A);
     vramSetBankA(VRAM_A_LCD);
 	VID_InitConsole();
->>>>>>> origin/dsi-maybeitwillwork
 }
 
 const char *VID_GetModeName(int modenum)
@@ -289,29 +273,16 @@ const char *VID_GetModeName(int modenum)
 
 void I_UpdateNoBlit(void){}
 
-<<<<<<< HEAD
-static u16 tempBuffer[256*192];
-
-void I_FinishUpdate(void)
-{
-    // convert 8bit buffer to RGB15
-    for (int i = 0; i < 256*192; i++)
-=======
 void I_FinishUpdate(void)
 {
     // convert 8bit buffer to RGB15
 	u16 tempBuffer[vid.width*vid.height];
     for (int i = 0; i < vid.width*vid.height; i++)
->>>>>>> origin/dsi-maybeitwillwork
         tempBuffer[i] = ds_palette[vid.buffer[i]];
 
     // copy to VRAM A
     u16* framebuffer = (u16*)VRAM_A;
-<<<<<<< HEAD
-    for (int i = 0; i < 256*192; i++)
-=======
     for (int i = 0; i < vid.width*vid.height; i++)
->>>>>>> origin/dsi-maybeitwillwork
         framebuffer[i] = tempBuffer[i];
 }
 
