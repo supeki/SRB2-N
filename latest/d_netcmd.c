@@ -849,6 +849,7 @@ void Got_Mapcmd(char **cp,int playernum)
     if(demoplayback && !timingdemo)
         precache=false;
     G_InitNew (skill, mapname,resetplayer);
+	
     if(demoplayback && !timingdemo)
         precache=true;
     CON_ToggleOff ();

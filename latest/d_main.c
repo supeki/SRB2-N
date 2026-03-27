@@ -1454,9 +1454,6 @@ void D_DoomMain (void)
         startmap = atoi (myargv[p+1]);
         autostart = true;
     }
-	
-	startmap = 1;
-	autostart = true;
 
     //BP: get 2 megs more for textures cache
     if(M_CheckParm ("-opengl") || M_CheckParm ("-3dfx") || M_CheckParm ("-d3d") || M_CheckParm ("-minigl"))

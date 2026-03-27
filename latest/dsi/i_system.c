@@ -17,7 +17,7 @@
 byte graphics_started = 0;
 
 byte keyboard_started = 0;
-byte mb_used = 13;
+byte mb_used = 12;
 
 JoyType_t   Joystick;
 
