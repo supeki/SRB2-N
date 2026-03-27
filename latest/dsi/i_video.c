@@ -229,40 +229,29 @@ int VID_SetMode(int modenum)
 	vid.buffer = NULL;
 	
 	vid.modenum = 0; 
-    vid.width = 256;
-    vid.height = 192;
+    vid.width = 320;
+    vid.height = 200;
     vid.bpp = 1; // 8-bit buffer
     vid.rowbytes = vid.width;
     vid.dupx = 1;
     vid.dupy = 1;
     vid.recalc = 0;
     vid.buffer = malloc(vid.width * vid.height);
-	memset(vid.buffer, 0, vid.width*vid.height);
+
+    if (!vid.buffer)
+        I_Error("Couldn't allocate video buffer");
+
+    memset(vid.buffer, 0, vid.width*vid.height);
 	
-	videoSetMode(MODE_FB0);
+	videoSetMode(MODE_VRAM_A);
     vramSetBankA(VRAM_A_LCD);
 	
 	return 0;
 }
 
 void I_StartupGraphics(void) {
-    vid.modenum = 0; 
-    vid.width = 256;
-    vid.height = 192;
-    vid.bpp = 1; // 8-bit buffer
-    vid.rowbytes = vid.width;
-    vid.dupx = 1;
-    vid.dupy = 1;
-    vid.recalc = 0;
-    vid.buffer = malloc(vid.width * vid.height);
-	
-    if (!vid.buffer)
-        I_Error("Could'nt allocate video buffer");
+    VID_SetMode(3);
 
-    memset(vid.buffer, 0, vid.width*vid.height);
-
-    videoSetMode(MODE_VRAM_A);
-    vramSetBankA(VRAM_A_LCD);
 	VID_InitConsole();
 }
 
@@ -275,16 +264,25 @@ void I_UpdateNoBlit(void){}
 
 void I_FinishUpdate(void)
 {
-    // convert 8bit buffer to RGB15
-	u16 tempBuffer[vid.width*vid.height];
-    for (int i = 0; i < vid.width*vid.height; i++)
-        tempBuffer[i] = ds_palette[vid.buffer[i]];
-
-    // copy to VRAM A
     u16* framebuffer = (u16*)VRAM_A;
-    for (int i = 0; i < vid.width*vid.height; i++)
-        framebuffer[i] = tempBuffer[i];
+
+    int x_offset = ((320-256)/2); // 32
+    int y_offset = ((200-192)/2); // 4
+
+	// copy to VRAM A
+    for (int y = 0; y < 192; y++)
+    {
+        for (int x = 0; x < 256; x++)
+        {
+            int src_x = x+x_offset;
+            int src_y = y+y_offset;
+
+            framebuffer[(y*256)+x] =
+                ds_palette[vid.buffer[(src_y*320)+src_x]];
+        }
+    }
 }
+
 
 void I_WaitVBL(int count)
 {

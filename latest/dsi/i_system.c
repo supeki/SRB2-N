@@ -19,8 +19,6 @@ byte graphics_started = 0;
 byte keyboard_started = 0;
 byte mb_used = 12;
 
-byte mb_used = 13;
-
 JoyType_t   Joystick;
 
 void I_GetFreeMem(void){}
@@ -190,7 +188,7 @@ void I_StartTic(void)
 
 void I_GetEvent(void){}
 
-// Translate SDL2's events in Doom Legacy ones (keyboard and mouse input)
+// Translate the DSi's events in Doom Legacy ones (keyboard and touch input)
 void I_StartFrame(void)
 {
 	scanKeys();
@@ -211,21 +209,41 @@ void I_StartFrame(void)
 		event.data1 = KEY_ESCAPE;
 		D_PostEvent(&event);
 	}
-	
-	keys = keysUp();
-	
-	if (keys & KEY_A) {
+
+	if (keys & KEY_UP) {
 		event_t event;
-		event.type = ev_keyup;
-		event.data1 = KEY_ENTER;
+		event.type = ev_keydown;
+		event.data1 = KEY_UPARROW;
 		D_PostEvent(&event);
 	}
 	
-	if (keys & KEY_B) {
+	if (keys & KEY_DOWN) {
 		event_t event;
-		event.type = ev_keyup;
-		event.data1 = KEY_ESCAPE;
+		event.type = ev_keydown;
+		event.data1 = KEY_DOWNARROW;
 		D_PostEvent(&event);
+	}
+
+	if (keys & KEY_LEFT) {
+		event_t event;
+		event.type = ev_keydown;
+		event.data1 = KEY_LEFTARROW;
+		D_PostEvent(&event);
+	}
+	
+	if (keys & KEY_RIGHT) {
+		event_t event;
+		event.type = ev_keydown;
+		event.data1 = KEY_RIGHTARROW;
+		D_PostEvent(&event);
+	}
+
+	if (keys & KEY_TOUCH) { // not sure if this works yet
+		touchPosition touch_pos;
+		e_w.type = ev_mouse;
+		e_w.data2 = touch_pos.px * (cv_mousesens.value + 1) / 10;
+		e_w.data3 = touch_pos.py * (cv_mousesens.value + 1) / 10;
+		D_PostEvent(&e_w);
 	}
 }
 

@@ -11,6 +11,8 @@ int main(int argc, char **argv)
 	myargv = argv; /// \todo pull out path to exe from this string
 
 	consoleDemoInit();
+
+	defaultExceptionHandler(); // debug
 	
 	TIMER0_DATA=0;	// Set up the timer
 	TIMER1_DATA=0;
