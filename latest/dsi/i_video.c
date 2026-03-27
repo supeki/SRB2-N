@@ -2,7 +2,9 @@
 #include "../doomdef.h"
 #include "../i_system.h"
 #include "../i_video.h"
+#include "../r_draw.h"
 #include "../screen.h"
+#include "../v_video.h"
 #include "../z_zone.h"
 
 #include "i_video.h"
@@ -220,15 +222,36 @@ int VID_GetModeForSize(int w, int h)
 int VID_SetMode(int modenum)
 {
 	// we dont use this anymore, atleast for now until the renderer is actually good/working
-    return 0;
-}
-
-void I_StartupGraphics(void) {
-    vid.modenum = 3; 
+	vid.recalc = 1;
+	vid.bpp = cv_scr_depth.value;
+	
+	if (vid.buffer) free(vid.buffer);
+	vid.buffer = NULL;
+	
+	vid.modenum = 0; 
     vid.width = 256;
     vid.height = 192;
     vid.bpp = 1; // 8-bit buffer
     vid.rowbytes = vid.width;
+    vid.dupx = 1;
+    vid.dupy = 1;
+    vid.recalc = 0;
+    vid.buffer = malloc(vid.width * vid.height);
+	memset(vid.buffer, 0, vid.width*vid.height);
+	
+	videoSetMode(MODE_FB0);
+    vramSetBankA(VRAM_A_LCD);
+	
+	return 0;
+}
+
+void I_StartupGraphics(void) {
+    vid.modenum = 0; 
+    vid.width = 256;
+    vid.height = 192;
+    vid.bpp = 1; // 8-bit buffer
+    vid.rowbytes = vid.width;
+<<<<<<< HEAD
     vid.dupx = vid.width / 320;
     vid.dupy = vid.height / 200;
     vid.recalc = 1;
@@ -242,6 +265,21 @@ void I_StartupGraphics(void) {
 
     videoSetMode(MODE_FB0);
     vramSetBankA(VRAM_A_LCD);
+=======
+    vid.dupx = 1;
+    vid.dupy = 1;
+    vid.recalc = 0;
+    vid.buffer = malloc(vid.width * vid.height);
+	
+    if (!vid.buffer)
+        I_Error("Could'nt allocate video buffer");
+
+    memset(vid.buffer, 0, vid.width*vid.height);
+
+    videoSetMode(MODE_VRAM_A);
+    vramSetBankA(VRAM_A_LCD);
+	VID_InitConsole();
+>>>>>>> origin/dsi-maybeitwillwork
 }
 
 const char *VID_GetModeName(int modenum)
@@ -251,17 +289,29 @@ const char *VID_GetModeName(int modenum)
 
 void I_UpdateNoBlit(void){}
 
+<<<<<<< HEAD
 static u16 tempBuffer[256*192];
 
 void I_FinishUpdate(void)
 {
     // convert 8bit buffer to RGB15
     for (int i = 0; i < 256*192; i++)
+=======
+void I_FinishUpdate(void)
+{
+    // convert 8bit buffer to RGB15
+	u16 tempBuffer[vid.width*vid.height];
+    for (int i = 0; i < vid.width*vid.height; i++)
+>>>>>>> origin/dsi-maybeitwillwork
         tempBuffer[i] = ds_palette[vid.buffer[i]];
 
     // copy to VRAM A
     u16* framebuffer = (u16*)VRAM_A;
+<<<<<<< HEAD
     for (int i = 0; i < 256*192; i++)
+=======
+    for (int i = 0; i < vid.width*vid.height; i++)
+>>>>>>> origin/dsi-maybeitwillwork
         framebuffer[i] = tempBuffer[i];
 }
 
@@ -270,7 +320,9 @@ void I_WaitVBL(int count)
 	count = 0;
 }
 
-void I_ReadScreen(byte *scr){}
+void I_ReadScreen(byte *scr){
+	memcpy(scr, (u16*)VRAM_A, vid.width*vid.height);
+}
 
 void I_BeginRead(void){}
 
@@ -284,7 +336,7 @@ boolean VID_InitConsole(void) {
 	CV_RegisterVar(&cv_fullscreen);
 
 	// Register commands
-	COM_AddCommand("videomode", VID_Command_Vidmode);
+	COM_AddCommand("vid_mode", VID_Command_Vidmode);
 	COM_AddCommand("listmodes", VID_Command_Listmodes);
 
 	return 0;
@@ -295,13 +347,13 @@ void VID_Command_Vidmode(void) {
 	int modenum;
 
 	if (COM_Argc() != 2) {
-		CONS_Printf("videomode <mode number>: Changes the video mode to the specified one. Number must be between 1 and %d.\n", NUM_SDLMODES - 1);
+		CONS_Printf("vid_mode <mode number>: Changes the video mode to the specified one. Number must be between 1 and %d.\n", NUM_SDLMODES - 1);
 		return;
 	}
 
 	modenum = atoi(COM_Argv(1));
 
-	if (modenum < 1 || modenum > NUM_SDLMODES - 1) {
+	if (modenum < 0 || modenum > NUM_SDLMODES - 1) {
 		CONS_Printf("Invalid video mode \"%d\"! Must be between 1 and %d.\n", modenum, NUM_SDLMODES - 1);
 		return;
 	} else {

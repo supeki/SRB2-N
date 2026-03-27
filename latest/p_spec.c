@@ -217,6 +217,8 @@ void P_InitPicAnims (void)
 {
   //  Init animation
   int         i;
+  
+  return;
 
   if(W_CheckNumForName("ANIMATED") != -1)
     animdefs = (animdef_t *)W_CacheLumpName("ANIMATED",PU_STATIC);

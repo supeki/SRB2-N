@@ -1214,59 +1214,6 @@ void IdentifyVersion (void)
     {
         I_Error ("srb2.srb not found!\n");
     }
-
-	// Add the flats Nozomi 02-22-2026
-	if ( !access ("flats.wad",R_OK) )
-    {
-        D_AddFile ("flats.wad");
-    }
-
-	// Add the textures Nozomi 02-22-2026
-	if ( !access ("textures.wad",R_OK) )
-    {
-        D_AddFile ("textures.wad");
-    }
-
-	// Add the graphics Nozomi 02-22-2026
-	if ( !access ("gfx.wad",R_OK) )
-    {
-        D_AddFile ("gfx.wad");
-    }
-
-	// Add the sprites Nozomi 02-22-2026
-	if ( !access ("sprites.wad",R_OK) )
-    {
-        D_AddFile ("sprites.wad");
-    }
-
-	// Add the sounds Nozomi 02-22-2026
-	if ( !access ("sfx.wad",R_OK) )
-    {
-        D_AddFile ("sfx.wad");
-    }
-
-	// Add the music Nozomi 02-22-2026
-	if ( !access ("music.wad",R_OK) )
-    {
-        D_AddFile ("music.wad");
-    }
-
-	// Add the players Tails 12-24-2001
-	D_AddFile("sonic.plr");
-	D_AddFile("tails.plr");
-	D_AddFile("knux.plr");
-
-	// Add the maps Nozomi 02-22-2026
-	D_AddFile("maps.wad");
-
-	// SRB2-Nozomi exclusive content! Nozomi 03-02-2026
-	if (M_CheckParm ("-nozomi"))
-    {
-		D_AddFile("nozomi-gfx.wad");
-		D_AddFile("nozomi-music.wad");
-        D_AddFile("nozomi-maps.wad");
-    }
-
 }
 
 

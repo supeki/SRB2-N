@@ -1326,13 +1326,6 @@ void GetPackets (void)
         if(netbuffer->packettype == CLIENTJOIN)
         if(server)
         {
-            if(    netbuffer->u.clientcfg.version!=VERSION
-                || netbuffer->u.clientcfg.subversion!=SUBVERSION)
-            {
-                D_SendRefuse(node,"Different DOOM versions cannot play a net game! (server version %d.%d build %d)",VERSION/100,VERSION%100,SUBVERSION);
-                D_FreeNodeNum(node);
-            }
-            else
             if(!cv_allownewplayer.value)
             {
                 D_SendRefuse(node,"The server is not accepting people for the moment");

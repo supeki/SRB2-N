@@ -694,6 +694,8 @@ void* W_CacheLumpNum ( int lump, int tag )
 // ==========================================================================
 void* W_CacheLumpName ( char* name, int tag )
 {
+	if (W_CheckNumForName(name) == -1)
+		return W_CacheLumpNum (W_GetNumForName("SBOSLIFE"), tag);
     return W_CacheLumpNum (W_GetNumForName(name), tag);
 }
 
@@ -762,6 +764,8 @@ void* W_CachePatchNum ( int lump,int tag )
 void* W_CachePatchName ( char*   name,
                          int     tag )
 {
+	if (W_CheckNumForName(name) == -1)
+		return W_CachePatchNum (W_GetNumForName("SBOSLIFE"), tag);
     return W_CachePatchNum (W_GetNumForName(name), tag);
 }
 
