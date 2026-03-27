@@ -15,9 +15,9 @@ maps
 		}
 		defaulttoptexture = "DSZROCK2";
 		overridemiddletexture = false;
-		viewpositionx = 1554.554f;
-		viewpositiony = 806.5715f;
-		viewscale = 1.022978f;
+		viewpositionx = 2051.876f;
+		viewpositiony = -70.49545f;
+		viewscale = 0.2119368f;
 		overridefloortexture = false;
 		customceilheight = 128;
 		customfloorheight = 0;
@@ -27,7 +27,7 @@ maps
 			backoffsety = 0;
 			backoffsetx = 0;
 			backscalex = 100;
-			gridsize = 32;
+			gridsize = 128;
 			background = "";
 			backsource = 0;
 			backscaley = 100;

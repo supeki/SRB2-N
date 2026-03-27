@@ -1,0 +1,34 @@
+﻿Sonic Robo Blast 2 - Nozomi
+========  Roadmap  ========
+
+-------- Completed --------
+
+     Custom Resolutions
+        Map Headers
+          Johnson
+       Analog Tweaks
+          Weather
+Merge Nozomi with Base Assets
+ Sprite Color Translations
+ S_SKIN Sprite & Face Scale
+
+------- In Progress -------
+
+  Sonic Robo-Blast! Nozomi
+   General Optimizations
+   SRB2 Lock-on Campaign     
+   SDL2 Platform Support 
+     Nintendo DSi Port
+
+--------- Planned ---------
+    Remove [Game Paused]
+      Assets Cleanup
+      ENDOOM Drawing
+      Super Emeralds
+  15/30/60 Tics Per Second
+      S_SKIN Refactor
+     MAP_HEAD Refactor
+ SKINCOLS / PWAD Skincolors
+   Tracker MODule Playback
+  Big Fucking Gems Edition
+    Super & Hyper Levels

@@ -108,11 +108,12 @@ static  int VID_SetWindowedDisplayMode (viddef_t *lvid, vmode_t *pcurrentmode);
 // TODO - Make it so this is a global variable which is set based on the index of the custom mode at boot, right now it's a hardcoded constant which is not great,
 // but better than just using a number like before
 // Save 22-03-2026
-#define MODE_CUSTOM 3
 
 // this holds description of the startup video mode,
 // the resolution is 320x200, windowed on the desktop
 #define NUMSPECIALMODES  5
+#define MODE_CUSTOM NUMSPECIALMODES-1
+
 vmode_t specialmodes[NUMSPECIALMODES] = {
         {
             NULL,

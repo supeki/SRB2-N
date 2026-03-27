@@ -1505,7 +1505,7 @@ void P_MovePlayer (player_t* player)
 		{
 			// If travelling slow enough, face the way the controls
 			// point and not your direction of movement.
-			if(player->speed < 2 || player->gliding || player->mfjumped || player->powers[pw_tailsfly]g)
+			if(player->speed < 2 || player->gliding || player->mfjumped || player->powers[pw_tailsfly])
 			{
 			tempx = tempy = 0;
 
