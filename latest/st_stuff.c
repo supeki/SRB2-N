@@ -1092,7 +1092,7 @@ static void ST_loadGraphics(void)
         sprintf(namebuf, "STTNUM%d", i);
         tallnum[i] = (patch_t *) W_CachePatchName(namebuf, PU_STATIC);
 
-        sprintf(namebuf, "STYSNUM%d", i);
+        sprintf(namebuf, "STTNUM%d", i);
         shortnum[i] = (patch_t *) W_CachePatchName(namebuf, PU_STATIC);
     }
 

@@ -17,23 +17,43 @@
 byte graphics_started = 0;
 
 byte keyboard_started = 0;
+byte mb_used = 13;
 
 JoyType_t   Joystick;
 
 void I_GetFreeMem(void){}
 
-ULONG I_GetTime (void)
+#define timers2ms(tlow,thigh) ((tlow>>5)+(thigh<<11))
+
+// Handy DSdev.org timer functions
+u32 GetTicks(void)
 {
-	ULONG ticks = 0;
+	return timers2ms(TIMER0_DATA, TIMER1_DATA);
+} 
 
-	ticks = (ticks*TICRATE);
-
-	ticks = (ticks/1000);
-
-	return ticks;
+void Pause(u32 ms)
+{
+	u32 now;
+	now=timers2ms(TIMER0_DATA, TIMER1_DATA);
+	while((u32)timers2ms(TIMER0_DATA, TIMER1_DATA)<now+ms);
 }
 
-void I_Sleep(void){}
+
+void I_Sleep(unsigned long usecs)
+{
+	Pause(usecs/1000);
+}
+
+int ms_to_next_tick;
+
+ULONG I_GetTime (void)
+{
+  int t = GetTicks();
+  int i = t*(TICRATE/5)/200;
+  ms_to_next_tick = (i+1)*200/(TICRATE/5) - t;
+  if (ms_to_next_tick > 1000/TICRATE || ms_to_next_tick<1) ms_to_next_tick = 1;
+  return i;
+}
 
 void I_OsPolling(void){}
 
@@ -162,12 +182,50 @@ int I_GetKey(void)
 	return 0;
 }
 
-void I_StartTic(void){}
+void I_StartTic(void)
+{
+}
 
 void I_GetEvent(void){}
 
 // Translate SDL2's events in Doom Legacy ones (keyboard and mouse input)
-void I_StartFrame(void){}
+void I_StartFrame(void)
+{
+	scanKeys();
+	u16 keys = keysDown();
+	
+	event_t e_w;
+
+	if (keys & KEY_A) {
+		event_t event;
+		event.type = ev_keydown;
+		event.data1 = KEY_ENTER;
+		D_PostEvent(&event);
+	}
+	
+	if (keys & KEY_B) {
+		event_t event;
+		event.type = ev_keydown;
+		event.data1 = KEY_ESCAPE;
+		D_PostEvent(&event);
+	}
+	
+	keys = keysUp();
+	
+	if (keys & KEY_A) {
+		event_t event;
+		event.type = ev_keyup;
+		event.data1 = KEY_ENTER;
+		D_PostEvent(&event);
+	}
+	
+	if (keys & KEY_B) {
+		event_t event;
+		event.type = ev_keyup;
+		event.data1 = KEY_ESCAPE;
+		D_PostEvent(&event);
+	}
+}
 
 void I_GetDiskFreeSpace(INT64 *freespace){}
 void I_StartupTimer(void){}
@@ -238,7 +296,6 @@ byte* I_ZoneBase(int* size)
 	void* pmem;
 
 	// do it the old way
-	mb_used = (int *)256;
 	*size = mb_used * 1024 * 1024;
 	pmem = malloc(*size);
 

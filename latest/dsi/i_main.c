@@ -5,14 +5,17 @@
 #include <nds.h>
 #include <filesystem.h>
 
-int mb_used = 32;
-
 int main(int argc, char **argv)
 {
 	myargc = argc;
 	myargv = argv; /// \todo pull out path to exe from this string
 
 	consoleDemoInit();
+	
+	TIMER0_DATA=0;	// Set up the timer
+	TIMER1_DATA=0;
+	TIMER0_CR=TIMER_DIV_1024 | TIMER_ENABLE;
+	TIMER1_CR=TIMER_CASCADE | TIMER_ENABLE;
 
 	// start NitroFS
 	nitroFSInit(NULL);
