@@ -96,6 +96,7 @@ struct sfxinfo_struct
     // lump number of sfx
     int         lumpnum;
 
+	int			flags;
 };
 
 
@@ -142,8 +143,9 @@ typedef enum
     mus_invinc, // invincibility Tails
     mus_drown, // drowning Tails 03-06-2000
     mus_gmover, // Tails 03-14-2000
-    mus_xtlife, // Tails 03-14-2000
+    mus_xtlife, // Tails 03-14-2000 // keep in the files anyways Nozomi
     mus_inter,
+	mus_supers,
     mus_runnin, // gfz1
     mus_stalks, // gfz2
     mus_countd, // gfz3
@@ -324,6 +326,7 @@ typedef enum
 	sfx_athun1,
 	sfx_athun2,
 	sfx_rainin,
+	sfx_oneup,
 
     // free slots for S_AddSoundFx() at run-time --------------------
     sfx_freeslot0,

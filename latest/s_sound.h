@@ -67,6 +67,11 @@ extern consvar_t cv_usepitch;
 extern consvar_t cv_ringpitch;
 extern consvar_t cv_underwaterpitch;
 
+extern consvar_t cv_oldsoundbehavior;
+extern consvar_t cv_drownmusic;
+extern consvar_t cv_invmusic;
+extern consvar_t cv_supermusic;
+
 #ifdef SNDSERV
 extern consvar_t sndserver_cmd;
 extern consvar_t sndserver_arg;
@@ -83,6 +88,15 @@ extern consvar_t cdUpdate;
 #ifdef LINUX
 extern consvar_t cv_jigglecdvol;
 #endif
+
+typedef enum
+{
+	SF_TOTALLYSINGLE =  1,
+	SF_MULTIPLESOUND =  2,
+	SF_OUTSIDESOUND  =  4,
+	SF_X4AWAYSOUND   =  8,
+	SF_X8AWAYSOUND   = 16,
+} soundflags_t;
 
 // register sound vars and commands at game startup
 void S_RegisterSoundStuff (void);

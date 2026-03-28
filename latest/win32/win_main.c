@@ -91,7 +91,7 @@ long FAR PASCAL  MainWndproc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
     case WM_ACTIVATEAPP:           // Handle task switching
         appActive = wParam;
         // pause music when alt-tab
-        if( appActive )
+        if( appActive && !IsIconic(hWnd) )
             I_ResumeSong(0);
         else
             I_PauseSong(0);
@@ -104,7 +104,7 @@ long FAR PASCAL  MainWndproc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
         break;
 
     case WM_PAINT:
-        if (!appActive && !bAppFullScreen)
+        if ((!appActive && !bAppFullScreen) || IsIconic(hWnd))
             // app becomes inactive (if windowed )
         {
             // Paint "Game Paused" in the middle of the screen
@@ -228,10 +228,10 @@ HWND    OpenMainWindow (HINSTANCE hInstance, int nCmdShow, char* wTitle)
     // Create a window
     // CreateWindowEx - seems to create just the interior, not the borders
 
-    hWnd = CreateWindowEx(WS_EX_TOPMOST,    //ExStyle
+    hWnd = CreateWindowEx(0,    //ExStyle
         "LegacyWC",                         //Classname
         wTitle,                             //Windowname
-        WS_CAPTION|WS_POPUP|WS_SYSMENU,     //dwStyle       //WS_VISIBLE|WS_POPUP for bAppFullScreen
+        WS_CAPTION|WS_POPUP|WS_SYSMENU|WS_MINIMIZEBOX,     //dwStyle       //WS_VISIBLE|WS_POPUP for bAppFullScreen
         0,
         0,
         320,  //GetSystemMetrics(SM_CXSCREEN),

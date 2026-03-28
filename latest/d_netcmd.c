@@ -84,6 +84,7 @@
 #include "p_spec.h"
 #include "m_cheat.h"
 #include "d_clisrv.h"
+#include "info.h"
 
 // ------
 // protos
@@ -352,6 +353,7 @@ void D_RegisterClientCommands (void)
     CV_RegisterVar (&cv_allowexitlevel);
 
 	CV_RegisterVar (&cv_analog); // Analog Test Tails 06-10-2001
+	CV_RegisterVar (&cv_bosslockon);
 
     //s_sound.c
     CV_RegisterVar (&cv_soundvolume);
@@ -451,7 +453,7 @@ void SendNameAndColor(void)
     p=buf;
 
 	if (!cv_playercolor.value) {
-		for (i=MAXSKINCOLORS-1;i>1;i--)
+		for (i=MAXSKINCOLORS;i>1;i--)
 			if (Color_Names[i] > 0)
 				break;
 
@@ -525,9 +527,9 @@ void SendNameAndColor(void)
 		{
 			CV_SetValue(&cv_playercolor, SKINCOLOR_RED);
 		}
-		else if(players[consoleplayer].ctfteam == 2 && cv_playercolor.value != SKINCOLOR_LIGHT_BLUE)
+		else if(players[consoleplayer].ctfteam == 2 && cv_playercolor.value != SKINCOLOR_LIGHTBLUE)
 		{
-			CV_SetValue(&cv_playercolor, SKINCOLOR_LIGHT_BLUE);
+			CV_SetValue(&cv_playercolor, SKINCOLOR_LIGHTBLUE);
 		}
 	}
 }
@@ -770,7 +772,7 @@ void Command_Stopdemo_f (void)
 void Command_Map_f (void)
 {
     char buf[MAX_WADPATH+1];
-	char mapname[15] = ""; // Tried changing it to a character buffer to fix an issue. Please work!! Save 21-03-2026
+	char mapname[15] = ""; // Tried changing it to a character buffer to fix an issue. Save 22-03-2026
 #define MAPNAME &buf[2]
     int i;
 

@@ -83,6 +83,7 @@ extern int msg_id;
 #include "s_sound.h"
 #include "w_wad.h"
 #include "z_zone.h"
+#include "srb-nozomi/srb.h"
 
 // commands for music and sound servers
 #ifdef MUSSERV
@@ -106,13 +107,21 @@ consvar_t cv_soundvolume = {"soundvolume","15",CV_SAVE,soundvolume_cons_t};
 consvar_t cv_musicvolume = {"musicvolume","15",CV_SAVE,soundvolume_cons_t};
 
 // pitch change
-consvar_t cv_usepitch = {"usepitch", "1", CV_SAVE, CV_OnOff};
-consvar_t cv_ringpitch = {"ringpitchchange", "0", CV_SAVE, CV_OnOff};
-consvar_t cv_underwaterpitch = {"underwaterpitchchange", "1", CV_SAVE, CV_OnOff};
+consvar_t cv_usepitch = {"snd_pitch", "1", CV_SAVE, CV_OnOff};
+consvar_t cv_ringpitch = {"pitch_ring", "0", CV_SAVE, CV_OnOff};
+consvar_t cv_underwaterpitch = {"pitch_underwater", "1", CV_SAVE, CV_OnOff};
+
+// old sound behavior
+consvar_t cv_oldsoundbehavior = {"snd_oldbehavior", "0", CV_SAVE, CV_OnOff};
+
+// music toggles
+consvar_t cv_drownmusic = {"mus_drownmusic", "1", CV_SAVE, CV_OnOff};
+consvar_t cv_invmusic = {"mus_invmusic", "1", CV_SAVE, CV_OnOff};
+consvar_t cv_supermusic = {"mus_supermusic", "1", CV_SAVE, CV_OnOff};
 
 // number of channels available
 void SetChannelsNum(void);
-consvar_t cv_numChannels = {"snd_channels","16",CV_SAVE | CV_CALL, CV_Unsigned,SetChannelsNum};
+consvar_t cv_numChannels = {"snd_channels","32",CV_SAVE | CV_CALL, CV_Unsigned,SetChannelsNum};
 
 typedef struct
 {
@@ -171,6 +180,14 @@ void S_RegisterSoundStuff (void)
 	CV_RegisterVar (&cv_usepitch);
 	CV_RegisterVar (&cv_ringpitch);
 	CV_RegisterVar (&cv_underwaterpitch);
+
+	// old sound behavior
+	CV_RegisterVar (&cv_oldsoundbehavior);
+
+	// music toggles
+	CV_RegisterVar (&cv_drownmusic);
+	CV_RegisterVar (&cv_invmusic);
+	CV_RegisterVar (&cv_supermusic);
 
 #ifdef SNDSERV
     CV_RegisterVar (&sndserver_cmd);
@@ -318,6 +335,10 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
         I_Error("Bad sfx #: %d\n", sfx_id);
 #endif
 
+	// check for bogus sound #
+	if ((sfx_id == 0 || sfx_id == sfx_None) && !cv_oldsoundbehavior.value)
+		return;
+
     sfx = &S_sfx[sfx_id];
 
     if (sfx->skinsound!=-1 && origin && origin->skin)
@@ -327,26 +348,29 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
         sfx    = &S_sfx[sfx_id];
     }
 
-
-
     // Initialize sound parameters
-    if (sfx->link)
-    {
-      pitch = (byte)((float)sfx->pitch/pitch);
-      priority = sfx->priority;
-      volume += sfx->volume;
 
-      if (volume < 1)
-        return;
+	if (cv_oldsoundbehavior.value) {
+		if (sfx->link)
+		{
+		  pitch = (byte)((float)sfx->pitch/pitch);
+		  priority = sfx->priority;
+		  volume += sfx->volume;
 
-    // added 2-2-98 SfxVolume is now the hardware volume, don't mix up
-    //    if (volume > SfxVolume)
-    //      volume = SfxVolume;
-    }
-    else
-    {
-      priority = NORM_PRIORITY;
-    }
+		  if (volume < 1)
+			return;
+
+		// added 2-2-98 SfxVolume is now the hardware volume, don't mix up
+		//    if (volume > SfxVolume)
+		//      volume = SfxVolume;
+		}
+		else
+		{
+		  priority = NORM_PRIORITY;
+		}
+	}
+	else
+		priority = NORM_PRIORITY;
 
 	if (pitch > 255)
 		pitch = 255;
@@ -369,7 +393,7 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
     if (origin && origin != players[displayplayer].mo && !(cv_splitscreen.value && origin == players[secondarydisplayplayer].mo))
     {
         int           rc,rc2;
-        int volume2=volume,sep2/*=sep*/,pitch2=pitch;
+        int volume2=volume,sep2,pitch2=pitch;
         rc=S_AdjustSoundParams(players[displayplayer].mo,
                                origin,
                                &volume,
@@ -410,19 +434,10 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
       }
     }
     else
-    {
-      sep = NORM_SEP;
-    }
+		sep = NORM_SEP;
 
-    // hacks to vary the sfx pitches
-
-    //added:16-02-98: removed by Fab, because it used M_Random() and it
-    //                was a big bug, and then it doesnt change anything
-    //                dont hear any diff. maybe I'll put it back later
-    //                but of course not using M_Random().
-
-    // kill old sound
-    S_StopSound(origin);
+	if (cv_oldsoundbehavior.value || play_srb_nozomi)
+		S_StopSound(origin);
 
     // try to find a channel
     cnum = S_getChannel(origin, sfx);
@@ -439,7 +454,7 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
     // cache data if necessary
     // NOTE : set sfx->data NULL sfx->lump -1 to force a reload
     if (sfx->link)
-        sfx->data = sfx->link->data;
+		sfx->data = sfx->link->data;
 
     if (!sfx->data)
     {
@@ -718,6 +733,9 @@ void S_ChangeMusic( int                   musicnum,
 	if (musicnum == mus_dm2ttl && strlen(custom_ttlmusic) > 0 && gamestate == GS_NOZOMITITLE)
 		strncpy(music_name, custom_ttlmusic, 8);
 
+	if (musicnum == mus_supers && strlen(custom_supermusic) > 0)
+		strncpy(music_name, custom_supermusic, 8);
+
 	if (mus_playing && !stricmp(mus_playing->name, music_name))
 		return;
 
@@ -904,21 +922,44 @@ int S_getChannel( void*         origin,
     // Find an open channel
     for (cnum=0 ; cnum<cv_numChannels.value ; cnum++)
     {
-        if (!channels[cnum].sfxinfo)
-            break;
-        else if (origin &&  channels[cnum].origin ==  origin)
-        {
-            S_StopChannel(cnum);
-            break;
-        }
+		if (cv_oldsoundbehavior.value) {
+			if (!channels[cnum].sfxinfo)
+				break;
+			else if(origin && channels[cnum].origin == origin)
+			{
+				S_StopChannel(cnum);
+				break;
+			}
+		} else {
+			if (!channels[cnum].sfxinfo)
+				break;
+			else if(sfxinfo->flags & SF_MULTIPLESOUND)
+				break;
+			else if(sfxinfo == channels[cnum].sfxinfo && sfxinfo->singularity == true)
+			{
+				S_StopChannel(cnum);
+				break;
+			}
+			else if(origin && channels[cnum].origin == origin && channels[cnum].sfxinfo == sfxinfo)
+			{
+				S_StopChannel(cnum);
+				break;
+			}
+		}
     }
 
     // None available
     if (cnum == cv_numChannels.value)
     {
         // Look for lower priority
-        for (cnum=0 ; cnum<cv_numChannels.value ; cnum++)
-            if (channels[cnum].sfxinfo->priority >= sfxinfo->priority) break;
+		if (cv_oldsoundbehavior.value)
+			for (cnum=0 ; cnum<cv_numChannels.value ; cnum++)
+				if (channels[cnum].sfxinfo->priority >= sfxinfo->priority) break;
+		else
+			for (cnum=0 ; cnum<cv_numChannels.value ; cnum++) {
+				if (channels[cnum].sfxinfo->priority >= sfxinfo->priority) 
+					break;
+			}
 
         if (cnum == cv_numChannels.value)
         {

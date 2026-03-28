@@ -76,6 +76,9 @@ void D_PageDrawer (char* pagename);
 void D_AdvanceDemo (void);
 void D_StartTitle (void);
 
+// So we're not updating it constantly... Nozomi 03-26-2026
+void D_UpdateWindowTitle(void);
+
 // Sonic Robo-Blast! Nozomi
 void D_InitSRBPatches(void);
 

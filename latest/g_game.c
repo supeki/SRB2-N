@@ -122,6 +122,9 @@
 #include "byteptr.h"
 
 #include "i_joy.h"
+#include "info.h"
+
+#include "srb-nozomi/srb.h"
 
 // added 8-3-98 increse savegame size from 0x2c000 (180kb) to 512*1024
 #define SAVEGAMESIZE    (512*1024)
@@ -222,7 +225,7 @@ consvar_t cv_showmessages   = {"showmessages","1",CV_SAVE | CV_CALL | CV_NOINIT,
 consvar_t cv_mousemove      = {"mousemove"   ,"1",CV_SAVE,CV_OnOff};
 consvar_t cv_mousemove2     = {"mousemove2"  ,"1",CV_SAVE,CV_OnOff};
 consvar_t cv_analog			= {"analog"		 ,"0",CV_NETVAR | CV_CALL,CV_OnOff, Analog_OnChange}; // Analog Test Tails 06-10-2001
-
+consvar_t cv_bosslockon	    = {"bosslockon"  ,"0",CV_SAVE,CV_OnOff};
 
 #if MAXPLAYERS>32
 #error please update "player_name" table using the new value for MAXPLAYERS
@@ -1144,6 +1147,7 @@ void G_Ticker (void)
     ULONG       i;
     int         buf;
     ticcmd_t*   cmd;
+	gamestate_t oldgamestate = gamestate;
 
     // do player reborns if needed
     if( gamestate == GS_LEVEL )
@@ -1193,6 +1197,9 @@ void G_Ticker (void)
 */
         }
     }
+
+	if (gamestate != GS_WAITINGPLAYERS)
+		play_srb_nozomi = false;
 
     // do main actions
     switch (gamestate)
@@ -2088,55 +2095,55 @@ void G_InitNew (skill_t skill, char* mapname, boolean resetplayer)
 {
             players[i].playerstate = PST_REBORN;
 
-players[i].emerald1 = 0;
-players[i].emerald2 = 0;
-players[i].emerald3 = 0;
-players[i].emerald4 = 0;
-players[i].emerald5 = 0;
-players[i].emerald6 = 0;
-players[i].emerald7 = 0;
+    players[i].emerald1 = 0;
+    players[i].emerald2 = 0;
+    players[i].emerald3 = 0;
+    players[i].emerald4 = 0;
+    players[i].emerald5 = 0;
+    players[i].emerald6 = 0;
+    players[i].emerald7 = 0;
 
-// start set lives/continues via game skill Tails 03-11-2000
+    // start set lives/continues via game skill Tails 03-11-2000
 
-if (skill == sk_nightmare)
-{
-players[i].lives = 1;
-players[i].continues = 0;
-}
+    if (skill == sk_nightmare)
+    {
+    players[i].lives = 1;
+    players[i].continues = 0;
+    }
 
-else if (skill == sk_hard)
-{
-players[i].lives = 3;
-players[i].continues = 1;
-}
+    else if (skill == sk_hard)
+    {
+    players[i].lives = 3;
+    players[i].continues = 1;
+    }
 
-else if (skill == sk_medium)
-{
-players[i].lives = 5;
-players[i].continues = 2;
-}
+    else if (skill == sk_medium)
+    {
+    players[i].lives = 5;
+    players[i].continues = 2;
+    }
 
-else if (skill == sk_easy)
-{
-players[i].lives = 7;
-players[i].continues = 3;
-}
+    else if (skill == sk_easy)
+    {
+    players[i].lives = 7;
+    players[i].continues = 3;
+    }
 
-else if (skill == sk_baby)
-{
-players[i].lives = 9;
-players[i].continues = 5;
-}
+    else if (skill == sk_baby)
+    {
+    players[i].lives = 9;
+    players[i].continues = 5;
+    }
 
-// end set lives/continues via game skill Tails 03-11-2000
+    // end set lives/continues via game skill Tails 03-11-2000
 
-if(cv_gametype.value != 1)
-players[i].score = 0; // Set score to 0 Tails 03-10-2000
+    if(cv_gametype.value != 1)
+    players[i].score = 0; // Set score to 0 Tails 03-10-2000
 
-players[i].xtralife = players[i].xtralife2 = 0;
+    players[i].xtralife = players[i].xtralife2 = 0;
 
-players[i].sp_score = 0;
-}
+    players[i].sp_score = 0;
+    }
 
     // for internal maps only
     if (FIL_CheckExtension(mapname))

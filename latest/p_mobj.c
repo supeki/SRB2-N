@@ -1422,7 +1422,6 @@ mobj_t* P_SpawnMobj ( fixed_t       x,
     mobj->height = info->height;
     mobj->flags = info->flags;
 	mobj->flags2 = info->flags2;
-
     mobj->health = info->spawnhealth;
 
     if (gameskill != sk_nightmare)
@@ -2212,6 +2211,9 @@ void P_SpawnMapThing (mapthing_t* mthing)
         return;
     }
 
+	if (mobjinfo[i].flags2 & MF2_BOSS)
+		level_has_bosses = true;
+
 	if ((i == 84 || i == 44 || i == MT_MISC2 || i == MT_MISC10 || i == MT_MISC11 || i == MT_MISC50 || i == MT_MISC48 || i == MT_MISC31 || i == MT_BKTV)
 		&& gameskill == sk_nightmare
 		&& !(mapheaders[gamemap].special)) // Don't have rings in Very Hard mode Tails 03-26-2001
@@ -2283,7 +2285,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
 		mobj->spawnpoint = mthing;
 
 		mobj->skin = &skins[skin];
-		mobj->color = (skin == 0) ? 14 : (skin == 1) ? 10 : 12;
+		mobj->color = (skin == 0) ? SKINCOLOR_LIGHTBLUE : (skin == 1) ? SKINCOLOR_APRICOT : SKINCOLOR_GREEN;
 		mobj->flags |= MF_TRANSLATION;
 		P_SetMobjState(mobj, (skin == 0) ? S_DUMMY_STND : (skin == 1) ? S_PLAY_TAP1 : S_DUMMY_STND);
 		mobj->angle = ANG45 * (mthing->angle/45);
@@ -2319,13 +2321,16 @@ void P_SpawnMapThing (mapthing_t* mthing)
     if (mobj->flags & MF_COUNTITEM)
         totalitems++;
 
-    mobj->angle = ANG45 * (mthing->angle/45);
+    mobj->angle = FixedAngle(mthing->angle*FRACUNIT);
     if (mthing->options & MTF_AMBUSH)
         mobj->flags |= MF_AMBUSH;
 	}
 
 	if (mobj->flags2 & MF2_PUSHABLE && mthing->options & MTF_AMBUSH)
 		mobj->flags2 &= ~MF2_PUSHABLE;
+
+	if (mobj->flags2 & MF2_SPRING && mobj->flags & MF_TRANSLATION)
+		mobj->color = mobjinfo[i].speed+1;
 }
 
 
