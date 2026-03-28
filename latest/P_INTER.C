@@ -683,7 +683,7 @@ void P_TouchSpecialThing ( mobj_t*       special,
 				return; // Only go in the mouth
 			else
 			{
-		  if(player->powers[pw_underwater] <= 12*TICRATE + 1)
+		  if(player->powers[pw_underwater] <= 12*TICRATE + 1 && cv_drownmusic.value)
 			{
 			S_ChangeMusic(mus_runnin + gamemap - 1, 1);
 			I_PlayCD(gamemap + 1, true);
