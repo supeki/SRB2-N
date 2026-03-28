@@ -322,7 +322,7 @@ void R_InitTranslationTables (void)
 	translationtables [0x7b+SKINCOLOR_WHITE*256] = 89;
 	translationtables [0x7c+SKINCOLOR_WHITE*256] = 91;
 	translationtables [0x7d+SKINCOLOR_WHITE*256] = 93;
-	translationtables [0x7e+SKINCOLOR_WHITE*256] = 95;
+	translationtables [0x7e + SKINCOLOR_WHITE * 256] = 95;
 	translationtables [0x7f+SKINCOLOR_WHITE*256] = 97;
 
 	// Silver

@@ -79,6 +79,7 @@ list(APPEND SOURCES
     wi_stuff.c
     w_wad.c
     z_zone.c
+	srb-nozomi/srb.c
 )
 
 # Add the backend's files
