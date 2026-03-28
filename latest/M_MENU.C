@@ -254,7 +254,7 @@ void M_OpenGLOption(int choice);
 //void M_SetupMultiOption(int choice); // Tails 03-26-2001
 
 menu_t MainDef,SinglePlayerDef,MultiPlayerDef,SetupMultiPlayerDef,
-       EpiDef,ModeDef,NewDef,TimeAttackDef,OptionsDef,SoundOptionsDef,PitchOptionsDef,VidModeDef,ControlDef,SoundDef,
+       EpiDef,ModeDef,NewDef,TimeAttackDef,OptionsDef,SoundOptionsDef,PitchOptionsDef,MusicTogglesDef,VidModeDef,ControlDef,SoundDef,
        ReadDef2,ReadDef1,SaveDef,LoadDef,ControlDef2,GameOptionDef,
        NetOptionDef,VideoOptionsDef,MouseOptionsDef;
 
@@ -1549,8 +1549,9 @@ enum
 
 menuitem_t SoundOptionsMenu[]=
 {
-    {IT_SUBMENU | IT_STRING,"Sound Volume..."  ,&SoundDef  ,0},
-	{IT_SUBMENU | IT_STRING,"Pitch Options..."  ,&PitchOptionsDef  ,10},
+    {IT_SUBMENU | IT_STRING,"Sound Volume..."  ,&SoundDef,        0},
+	{IT_SUBMENU | IT_STRING,"Pitch Options..." ,&PitchOptionsDef,10},
+	{IT_SUBMENU | IT_STRING,"Music Toggles..." ,&MusicTogglesDef,  30}
 };
 
 menuitem_t PitchOptionsMenu[]=
@@ -1558,6 +1559,13 @@ menuitem_t PitchOptionsMenu[]=
     {IT_STRING | IT_CVAR, "Enable Pitch Changes"  ,&cv_usepitch  ,0},
 	{IT_STRING | IT_CVAR, "Ring Collecting", &cv_ringpitch, 20},
 	{IT_STRING | IT_CVAR, "Water Muffling", &cv_underwaterpitch, 30}
+};
+
+menuitem_t MusicTogglesMenu[]=
+{
+	{IT_STRING | IT_CVAR, "Invulnerability", &cv_invmusic, 0},
+	{IT_STRING | IT_CVAR, "Super Theme", &cv_supermusic, 10},
+	{IT_STRING | IT_CVAR, "Drowning Theme", &cv_drownmusic, 20},
 };
 
 menuitem_t SoundMenu[]=
@@ -1587,6 +1595,17 @@ menu_t  PitchOptionsDef =
     sizeof(PitchOptionsMenu)/sizeof(menuitem_t),
     &SoundOptionsDef,
     PitchOptionsMenu,
+    M_DrawGenericMenu,
+    60,40,
+    0
+};
+
+menu_t  MusicTogglesDef =
+{
+    "M_OPTTTL",
+    sizeof(MusicTogglesMenu)/sizeof(menuitem_t),
+    &SoundOptionsDef,
+    MusicTogglesMenu,
     M_DrawGenericMenu,
     60,40,
     0

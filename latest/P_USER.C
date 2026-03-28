@@ -58,7 +58,7 @@
 
 boolean  P_NukeEnemies (player_t* player);
 boolean  PIT_NukeEnemies (mobj_t* thing);
-boolean  P_LookForEnemies (player_t* player);
+boolean  P_LookForEnemies (player_t* player, boolean boss);
 boolean  P_HomingAttack (player_t* player, mobj_t* enemy);
 void D_StartTitle(); // Tails
 void P_FindEmerald();
@@ -259,6 +259,14 @@ void P_MovePlayer (player_t* player)
 	else
 		movepushangle = player->mo->angle;
 
+	// Analog Mode Boss Lock-on
+
+	if (cv_bosslockon.value && level_has_bosses) // awesome global that's set to false at P_SetupLevel and set to true when any mobj spawns with MF2_BOSS :3 Nozomi 03-27-2026
+	{
+		if ((leveltime % 4 == 0) && !player->mo->tracer)
+			P_LookForEnemies(player, true);
+	}
+
 	movepushsideangle = movepushangle-ANG90;
 
 	if(!cv_analog.value || (player->mfspinning)) // Analog Test Tails 06-10-2001
@@ -359,14 +367,11 @@ void P_MovePlayer (player_t* player)
 	if (player->powers[pw_strength] || player->powers[pw_super])
 		player->acceleration *= 2;
 
-	if (onground || (player->mo->state == &states[S_PLAY_PAIN] && player->powers[pw_invisibility])) {
-		player->mo->eflags &= ~MF_SPRUNG;
-	}
+	player->mo->eflags &= ~MF_SPRUNG;
 
 	// Autobrake by Jisk, turned into a player option by Nozomi 03-19-2026
-	if (!onground && !(cmd->forwardmove || cmd->sidemove) && player->autobrake && !(player->mo->eflags & MF_SPRUNG)) {
+	if (!onground && !(cmd->forwardmove || cmd->sidemove) && player->autobrake && player->mfjumped && !(player->mfspinning || player->gliding || player->climbing || (player->mo->state == &states[S_PLAY_PAIN] && player->powers[pw_invisibility]))) {
         int momentum = P_AproxDistance(player->mo->momx,player->mo->momy);
-
 
         if (momentum > 5*FRACUNIT)
             P_Thrust(player->mo, R_PointToAngle2(0,0, player->mo->momx, player->mo->momy), -FRACUNIT/3*2);
@@ -409,8 +414,12 @@ void P_MovePlayer (player_t* player)
 			controldirection = R_PointToAngle2(0, 0, cmd->forwardmove*FRACUNIT, -cmd->sidemove*FRACUNIT)+movepushangle;
 			if ((cmd->forwardmove != 0 || cmd->sidemove != 0)) {
 				player->mo->angle = controldirection;
+
 				if (player==&players[consoleplayer])
-						localangle = player->mo->angle; // Adjust the local control angle.				
+					localangle = player->mo->angle; // Adjust the local control angle.	
+				
+				if (cv_bosslockon.value && player->mo->tracer && (player->mo->tracer->flags2 & MF2_BOSS))
+					localangle = R_PointToAngle2(camera.mo->x, camera.mo->y, player->mo->tracer->x, player->mo->tracer->y);
 			}
 
 			if (player->climbing)
@@ -744,7 +753,7 @@ void P_MovePlayer (player_t* player)
 		// begin the drown music for countdown! // Tails 04-25-2001
 		if(player->countdown == 11*TICRATE)
 		{
-			if(player==&players[consoleplayer])
+			if(player==&players[consoleplayer] && cv_drownmusic.value)
 				{
 					S_ChangeMusic(mus_drown, false);
 					I_PlayCD (35, false);
@@ -886,11 +895,12 @@ void P_MovePlayer (player_t* player)
 				player->lives += 1;
 				if(player==&players[consoleplayer])
 				{
-				S_StopMusic();
-				S_ChangeMusic(mus_xtlife, false);
-				I_PlayCD(37, false);
+					S_StartSound(player->mo, sfx_oneup); // No more oneup music! Nozomi
+					//S_StopMusic();
+					//S_ChangeMusic(mus_xtlife, false);
+					//I_PlayCD(37, false);
 				}
-				player->powers[pw_extralife] = 4*TICRATE + 1;
+				//player->powers[pw_extralife] = 4*TICRATE + 1;
 				player->xtralife = 1;
 			}
 
@@ -899,11 +909,12 @@ void P_MovePlayer (player_t* player)
 				player->lives += 1;
 				if(player==&players[consoleplayer])
 				{
-				S_StopMusic();
-				S_ChangeMusic(mus_xtlife, false);
-				I_PlayCD(37, false);
+					S_StartSound(player->mo, sfx_oneup); // No more oneup music! Nozomi
+					//S_StopMusic();
+					//S_ChangeMusic(mus_xtlife, false);
+					//I_PlayCD(37, false);
 				}
-				player->powers[pw_extralife] = 4*TICRATE + 1;
+				//player->powers[pw_extralife] = 4*TICRATE + 1;
 				player->xtralife = 2;
 			}
 		}
@@ -915,11 +926,12 @@ void P_MovePlayer (player_t* player)
 			player->lives++;
 			if(player==&players[consoleplayer])
 			{
-			S_StopMusic();
-			S_ChangeMusic(mus_xtlife, false);
-			I_PlayCD(37, false);
+				S_StartSound(player->mo, sfx_oneup); // No more oneup music! Nozomi
+				//S_StopMusic();
+				//S_ChangeMusic(mus_xtlife, false);
+				//I_PlayCD(37, false);
 			}
-			player->powers[pw_extralife] = 4*TICRATE + 1;
+			//player->powers[pw_extralife] = 4*TICRATE + 1;
 			player->xtralife2 += 50000;
 		}
 
@@ -957,6 +969,9 @@ void P_MovePlayer (player_t* player)
 				player->mo->health = 1;
 	//			P_SetMobjState(player->mo, S_PLAY); // Return to normal
 
+				if (cv_supermusic.value)
+					S_ChangeMusic(mus_runnin + gamemap - 1, 1);
+
 				// If you had a shield, restore its visual significance.
 				if(player->powers[pw_blueshield])
 					P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z, MT_BLUEORB)->target = player->mo;
@@ -975,33 +990,6 @@ void P_MovePlayer (player_t* player)
 				 player->mo->momz = 0;
 	//			 P_SpawnSplash (player->mo, (player->mo->z));
 			}*/
-		}
-
-/////////////////////////
-//Special Music Changes//
-/////////////////////////
-
-		if(player->powers[pw_extralife] == 1) // Extra Life!
-		{
-			if(player->powers[pw_invulnerability] > 1)
-			{
-				if(player==&players[consoleplayer])
-				{
-					S_StopMusic();
-					S_ChangeMusic(mus_invinc, false);
-					I_PlayCD(36, false);
-				}
-			}
-			else if(player==&players[consoleplayer] && player->powers[pw_underwater] <= 12*TICRATE + 1 && player->powers[pw_underwater] > 0)
-			{
-				S_ChangeMusic(mus_drown, false); // Tails 03-14-2000
-				I_PlayCD (35, false);
-			}
-			else
-			{
-				S_ChangeMusic(mus_runnin + gamemap - 1, 1); // Tails 03-14-2000
-				I_PlayCD (gamemap + 1, true);
-			}
 		}
 
 ///////////////////////////
@@ -1059,12 +1047,17 @@ void P_MovePlayer (player_t* player)
 		{
 			if (((player->mo->z+player->mo->height/2) >= player->mo->waterz) && player->powers[pw_underwater])
 			{
-				if(!(player->powers[pw_invulnerability] > 1 || player->powers[pw_extralife] > 1) && (player->powers[pw_underwater] <= 12*TICRATE + 1))
+				if (cv_drownmusic.value && player->powers[pw_underwater] >= (12*TICRATE + 1) && !(player->powers[pw_super] || player->powers[pw_invulnerability]))
 				{
 					S_ChangeMusic(mus_runnin + gamemap - 1, 1); // Tails 04-04-2000
 					I_PlayCD(gamemap + 1, true); // Tails 04-05-2000
 				}
-				else if ((player->powers[pw_super] == false) && (player->powers[pw_invulnerability] > 1) && (player->powers[pw_underwater] <= 12*TICRATE + 1) && (player->powers[pw_extralife] <= 1))
+				else if ((cv_drownmusic.value && player->powers[pw_underwater] >= (12*TICRATE + 1) && player->powers[pw_invulnerability] && !player->powers[pw_super]))
+				{
+					S_ChangeMusic(mus_invinc, false);
+					I_PlayCD(36, false);
+				}
+				else if ((cv_drownmusic.value && player->powers[pw_underwater] >= (12*TICRATE + 1) && player->powers[pw_super]))
 				{
 					S_ChangeMusic(mus_invinc, false);
 					I_PlayCD(36, false);
@@ -1073,9 +1066,8 @@ void P_MovePlayer (player_t* player)
 				player->powers[pw_underwater] = 0;
 			}
 
-			if (player->powers[pw_underwater] == 12*TICRATE + 1)
+			if (player->powers[pw_underwater] == 12*TICRATE + 1 && cv_drownmusic.value)
 			{            
-				S_StopMusic();
 				S_ChangeMusic(mus_drown, false);
 				I_PlayCD(35, false);
 			}
@@ -1146,7 +1138,7 @@ void P_MovePlayer (player_t* player)
 		// Resume normal music stuff. Tails
 		if ((player->powers[pw_invulnerability] == 1))
 		{
-			if(!(player->powers[pw_extralife] > 1) && ((player->powers[pw_underwater] > 12*TICRATE + 1) || (!player->powers[pw_underwater])))
+			if(((player->powers[pw_underwater] > 12*TICRATE + 1) || (!player->powers[pw_underwater])))
 			{
 				S_ChangeMusic(mus_runnin + gamemap - 1, 1);
 				I_PlayCD(gamemap + 1, true);
@@ -1309,6 +1301,9 @@ void P_MovePlayer (player_t* player)
 								// Insert flashy transformation animation here.
 								player->powers[pw_super] = true;
 								P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z + player->mo->height, MT_CAPE)->target = player->mo; // A cape... "Super" Sonic, get it? Ha...ha...
+							
+								if (cv_supermusic.value)
+									S_ChangeMusic(mus_supers, true);
 							}
 							else if(!player->homing) // Otherwise, THOK!
 							{
@@ -1325,7 +1320,7 @@ void P_MovePlayer (player_t* player)
 								// Must press jump while holding down spin to activate.
 								if(cv_homing.value && !player->homing && player->mfjumped)
 								{
-									if(P_LookForEnemies(player))
+									if(P_LookForEnemies(player, false))
 										if(player->mo->tracer)
 											player->homing = 1;
 								}
@@ -1903,7 +1898,7 @@ boolean PIT_NukeEnemies (mobj_t* thing)
 // P_LookForEnemies
 // Looks for something you can hit - Used for homing attack Tails 06-20-2001
 //
-boolean P_LookForEnemies (player_t* player)
+boolean P_LookForEnemies (player_t* player, boolean boss)
 {
     int                 i;
     angle_t             an;
@@ -1918,13 +1913,21 @@ boolean P_LookForEnemies (player_t* player)
         if (!linetarget)
             continue;
 
-		if(P_AproxDistance(P_AproxDistance(player->mo->x - linetarget->x, player->mo->y - linetarget->y), player->mo->z - linetarget->z) > RING_DIST)
-			continue;
+		if (!boss)
+			if(P_AproxDistance(P_AproxDistance(player->mo->x - linetarget->x, player->mo->y - linetarget->y), player->mo->z - linetarget->z) > RING_DIST)
+				continue;
+		else // Double the check range for bosses.
+			if(P_AproxDistance(P_AproxDistance(player->mo->x - linetarget->x, player->mo->y - linetarget->y), player->mo->z - linetarget->z) > RING_DIST*2)
+				continue;
 
 		if(linetarget->type == MT_PLAYER)
 			continue;
 
-		if ((R_PointToAngle2(player->mo->x + P_ReturnThrustX(player->mo, player->mo->angle, player->mo->radius), player->mo->y + P_ReturnThrustY(player->mo, player->mo->angle, player->mo->radius), linetarget->x, linetarget->y) - player->mo->angle + ANGLE_60) > ANGLE_60*2)
+		if (!boss) // Ignore angle checks for bosses!
+			if ((R_PointToAngle2(player->mo->x + P_ReturnThrustX(player->mo, player->mo->angle, player->mo->radius), player->mo->y + P_ReturnThrustY(player->mo, player->mo->angle, player->mo->radius), linetarget->x, linetarget->y) - player->mo->angle + ANGLE_60) > ANGLE_60*2)
+				continue;
+
+		if (boss && !(linetarget->flags2 & MF2_BOSS))
 			continue;
 
 		player->mo->target = linetarget;
@@ -2220,9 +2223,12 @@ void P_MoveChaseCamera (player_t *player)
 
 	if (cv_cam_still.value == true) // Tails 07-02-2001
 		angle = camera.mo->angle;
-	else if(cv_analog.value) // Analog Test Tails 06-10-2001
+	else if(cv_analog.value) { // Analog Test Tails 06-10-2001
 		angle = R_PointToAngle2(camera.mo->x, camera.mo->y, mo->x + mo->momx, mo->y + mo->momy);
-	else
+
+		if (cv_bosslockon.value && player->mo->tracer && (player->mo->tracer->flags2 & MF2_BOSS))
+			angle = R_PointToAngle2(camera.mo->x, camera.mo->y, player->mo->tracer->x, player->mo->tracer->y);
+	} else
 		angle = mo->angle;
 
     // sets ideal cam pos

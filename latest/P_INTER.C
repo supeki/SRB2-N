@@ -1010,7 +1010,7 @@ void P_KillMobj ( mobj_t*       source,
            case MT_MISC10: // Super Ring Box
 				source->player->health += 10;
 				source->player->mo->health = source->player->health;
-			S_StartSound (source->player->mo, sfx_itemup);
+				S_StartSound (source->player->mo, sfx_itemup);
 				source->player->numboxes++;
 				source->player->totalring += 10;
 				if(cv_gametype.value == 1 || cv_gametype.value == 3 || cv_gametype.value == 4) // Random box generation Tails 08-09-2001
@@ -1019,7 +1019,7 @@ void P_KillMobj ( mobj_t*       source,
            case MT_MISC11: // Grey Ring Box
 				source->player->health += 25;
 				source->player->mo->health = source->player->health;
-			S_StartSound (source->player->mo, sfx_itemup);
+				S_StartSoundAtVolumeAndPitch (source->player->mo, sfx_itemup, 255, 5*NORM_PITCH/3); // Tried pitching this up, might not work?
 				source->player->numboxes++;
 				source->player->totalring += 25;
 				if(cv_gametype.value == 1 || cv_gametype.value == 3 || cv_gametype.value == 4) // Random box generation Tails 08-09-2001
@@ -1029,7 +1029,7 @@ void P_KillMobj ( mobj_t*       source,
 				if(source->player->powers[pw_super] == false)
 				{
 					source->player->powers[pw_invulnerability] = 20*TICRATE + 1;
-					if(source->player==&players[consoleplayer])
+					if(source->player==&players[consoleplayer] && cv_invmusic.value)
 					{
 						   S_StopMusic();
 						   S_ChangeMusic(mus_invinc, false);
@@ -1116,11 +1116,12 @@ void P_KillMobj ( mobj_t*       source,
 			   source->player->lives += 1;
 			   if(source->player==&players[consoleplayer])
 			   {
-				   S_StopMusic();
-				   S_ChangeMusic(mus_xtlife, false);
-				   I_PlayCD(37, false);
+				   S_StartSound(source, sfx_oneup); // No more oneup music! Nozomi
+				   //S_StopMusic();
+				   //S_ChangeMusic(mus_xtlife, false);
+				   //I_PlayCD(37, false);
 			   }
-			   source->player->powers[pw_extralife] = 4*TICRATE + 1;
+			   //source->player->powers[pw_extralife] = 4*TICRATE + 1;
 				source->player->numboxes++;
 				if(cv_gametype.value == 1 || cv_gametype.value == 3 || cv_gametype.value == 4) // Random box generation Tails 08-09-2001
 					target->fuse = cv_itemrespawntime.value*TICRATE;

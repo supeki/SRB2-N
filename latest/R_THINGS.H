@@ -155,7 +155,8 @@ typedef struct
 } mapheader_t;
 
 extern mapheader_t mapheaders[NUMMAPHEADERS+1];
-char custom_ttlmusic[9];
+extern char custom_ttlmusic[9];
+extern char custom_supermusic[9];
 
 void    R_AddMapHeader (int wadnum);
 

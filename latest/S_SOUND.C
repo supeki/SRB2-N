@@ -114,6 +114,11 @@ consvar_t cv_underwaterpitch = {"pitch_underwater", "1", CV_SAVE, CV_OnOff};
 // old sound behavior
 consvar_t cv_oldsoundbehavior = {"snd_oldbehavior", "0", CV_SAVE, CV_OnOff};
 
+// music toggles
+consvar_t cv_drownmusic = {"mus_drownmusic", "1", CV_SAVE, CV_OnOff};
+consvar_t cv_invmusic = {"mus_invmusic", "1", CV_SAVE, CV_OnOff};
+consvar_t cv_supermusic = {"mus_supermusic", "1", CV_SAVE, CV_OnOff};
+
 // number of channels available
 void SetChannelsNum(void);
 consvar_t cv_numChannels = {"snd_channels","32",CV_SAVE | CV_CALL, CV_Unsigned,SetChannelsNum};
@@ -178,6 +183,11 @@ void S_RegisterSoundStuff (void)
 
 	// old sound behavior
 	CV_RegisterVar (&cv_oldsoundbehavior);
+
+	// music toggles
+	CV_RegisterVar (&cv_drownmusic);
+	CV_RegisterVar (&cv_invmusic);
+	CV_RegisterVar (&cv_supermusic);
 
 #ifdef SNDSERV
     CV_RegisterVar (&sndserver_cmd);
@@ -722,6 +732,9 @@ void S_ChangeMusic( int                   musicnum,
 
 	if (musicnum == mus_dm2ttl && strlen(custom_ttlmusic) > 0 && gamestate == GS_NOZOMITITLE)
 		strncpy(music_name, custom_ttlmusic, 8);
+
+	if (musicnum == mus_supers && strlen(custom_supermusic) > 0)
+		strncpy(music_name, custom_supermusic, 8);
 
 	if (mus_playing && !stricmp(mus_playing->name, music_name))
 		return;

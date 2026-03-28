@@ -195,6 +195,8 @@ mapthing_t      redctfstarts[MAXPLAYERS]; // CTF Tails 08-04-2001
 mapthing_t*     redctfstarts_p; // CTF Tails 08-04-2001
 mapthing_t*     bluectfstarts_p; // CTF Tails 08-04-2001
 
+boolean			level_has_bosses;
+
 //
 // P_LoadVertexes
 //
@@ -990,6 +992,8 @@ boolean P_SetupLevel (int           episode,
 
     totalkills = totalitems = totalsecret = totalrings = wminfo.maxfrags = numplayers = 0; // Tails 08-11-2001
     wminfo.partime = 180;
+
+	level_has_bosses = false;
 
 	for(i=0; i<MAXPLAYERS; i++) // Find number of players Tails 08-11-2001
 	{

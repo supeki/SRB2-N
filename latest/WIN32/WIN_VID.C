@@ -366,18 +366,18 @@ void I_FinishUpdate (void)
         // 26-12-99 BP: can fail when not active (alt-tab)
         if(LockScreen())
         {
-        //faB: TODO: use directX blit here!!? a blit might use hardware with access
-        //     to main memory on recent hardware, and software blit of directX may be
-        //  optimized for p2 or mmx??
-        VID_BlitLinearScreen (vid.buffer, ScreenPtr,
-            vid.width*vid.bpp, vid.height,
-            vid.width*vid.bpp, ScreenPitch );
+			//faB: TODO: use directX blit here!!? a blit might use hardware with access
+			//     to main memory on recent hardware, and software blit of directX may be
+			//  optimized for p2 or mmx??
+			VID_BlitLinearScreen (vid.buffer, ScreenPtr,
+				vid.width*vid.bpp, vid.height,
+				vid.width*vid.bpp, ScreenPitch );
 
-        UnlockScreen();
+			UnlockScreen();
 
-        // swap screens
-        ScreenFlip(cv_vidwait.value);
-    }
+			// swap screens
+			ScreenFlip(cv_vidwait.value);
+		}
     }
 }
 

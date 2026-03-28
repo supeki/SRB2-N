@@ -307,6 +307,7 @@ extern int              bmapheight;     // in mapblocks
 extern fixed_t          bmaporgx;
 extern fixed_t          bmaporgy;       // origin of block map
 extern mobj_t**         blocklinks;     // for thing chains
+extern boolean			level_has_bosses;
 
 
 //
@@ -326,6 +327,14 @@ P_DamageMobj
   mobj_t*       inflictor,
   mobj_t*       source,
   int           damage );
+
+fixed_t P_ReturnThrustX ( mobj_t*       mo,
+                     angle_t       angle,
+                     fixed_t       move );
+
+fixed_t P_ReturnThrustY ( mobj_t*       mo,
+                     angle_t       angle,
+                     fixed_t       move );
 
 //
 // P_SIGHT

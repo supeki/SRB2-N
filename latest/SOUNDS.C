@@ -56,7 +56,8 @@ musicinfo_t S_music[NUMMUSIC] =
     { "drown\0" , 0 }, // drowning Tails 03-06-2000
     { "gmover"  , 0 }, // Tails 03-14-2000
     { "xtlife"  , 0 }, // Tails 03-14-2000
-	{ "inter\0"  , 0 },
+	{ "inter\0" , 0 },
+	{ "supers"  , 0 }, // Super Sonic :) Nozomi 03-28-2026
     { "runnin"  , 0 },
     { "stalks"  , 0 },
     { "countd"  , 0 },
@@ -88,7 +89,7 @@ musicinfo_t S_music[NUMMUSIC] =
     { "shawn3"  , 0 },
     { "openin"  , 0 },
     { "evil\0\0", 0 },
-    { "ultima"  , 0 },
+    { "ultima"  , 0 }
 };
 
 
@@ -243,6 +244,7 @@ sfxinfo_t S_sfx[NUMSFX] =
   { "athun1"   , false, 126, 0, -1, -1, 0, -1, 2},
   { "athun2"   , false, 126, 0, -1, -1, 0, -1, 2},
   { "rainin"   , true,  127, 0, -1, -1, 0, -1, 2},
+  { "oneup"    , true,  127, 0, -1, -1, 0, -1, 2},
   
   // skin sounds free slots to add sounds at run time (Boris HACK!!!)
   // initialized to NULL

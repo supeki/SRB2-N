@@ -21,10 +21,10 @@ Merge Nozomi with Base Assets
      Nintendo DSi Port
 
 --------- Planned ---------
-    Remove [Game Paused]
       Assets Cleanup
       ENDOOM Drawing
       Super Emeralds
+   Player Animation System
   15/30/60 Tics Per Second
       S_SKIN Refactor
      MAP_HEAD Refactor
