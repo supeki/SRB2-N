@@ -185,7 +185,8 @@
 #include "win32/win_main.h"
 #endif
 
-#include "srb-nozomi/srb.h"
+#include "EXTRAS/srb.h"
+#include "EXTRAS/tetris.h"
 
 //
 //  DEMO LOOP
@@ -276,7 +277,7 @@ void D_ProcessEvents (void)
     {
         ev = &events[eventtail];
         // Menu input
-		if (gamestate != GS_WAITINGPLAYERS)
+		if (gamestate != GS_WAITINGPLAYERS && gamestate != GS_NOZOMITETRIS)
 			if (M_Responder (ev))
 				continue;              // menu ate the event
 
@@ -397,6 +398,9 @@ void D_Display (void)
 	  case GS_NOZOMITITLE:
 		D_PageDrawer (pagename);
 		break;
+	  case GS_NOZOMITETRIS:
+		  T_TetrisDrawer ();
+		  break;
 	  case GS_NULL:
         break;
 
@@ -765,10 +769,11 @@ void D_PageTicker (void)
 		if (netgame && (!server)) {
 			// Sonic Robo-Blast! Nozomi
 
-			if (play_srb_nozomi)
-				SRBN_GameplayLoop();
-			else if (gamekeydown[gamecontrol[gc_jump][0]] || gamekeydown[gamecontrol[gc_jump][1]])
-				SRBN_Init();
+			if (nozomi_extra)
+				if (play_srb_nozomi)
+					SRBN_GameplayLoop();
+				else if (gamekeydown[gamecontrol[gc_jump][0]] || gamekeydown[gamecontrol[gc_jump][1]])
+					SRBN_Init();
 		}
 					
 		return;
@@ -811,11 +816,11 @@ void D_PageDrawer (char* lumpname)
 					// show our server joining status! Nozomi 03-10-2026
 
 					// Sonic Robo-Blast! Nozomi
-					if (play_srb_nozomi) {
-						SRBN_Draw();
-					} else {
-						V_DrawString(160-strlen("Press JUMP to play a game!")*4, 100-4, "Press JUMP to play a game!");
-					}
+					if (nozomi_extra)
+						if (play_srb_nozomi)
+							SRBN_Draw();
+						else
+							V_DrawString(160-strlen("Press JUMP to play a game!")*4, 100-4, "Press JUMP to play a game!");
 
 					if (cl_mode == cl_connected)
 						V_DrawString(160-strlen("connected! waiting on map change!")*4 + 8, 200-12, "connected! waiting on map change!");
@@ -1115,6 +1120,12 @@ void IdentifyVersion (void)
 
 	// Add the maps Nozomi 02-22-2026
 	D_AddFile("maps.wad");
+
+	if (M_CheckParm("-extra"))
+	{
+		D_AddFile("extdata.dat");
+		nozomi_extra = true;
+	}
 }
 
 
@@ -1556,8 +1567,11 @@ p = M_CheckParm ("-ctfteam"); // Tails 08-04-2001
     CONS_Printf (text[ST_INIT_NUM]);
     ST_Init ();
 
-	// Sonic Robo-Blast! Nozomi
-	D_InitSRBNozomi();
+	// Nozomi's secret Extra games :)
+	if (nozomi_extra) {
+		D_InitSRBNozomi(); // Sonic Robo-Blast! Nozomi
+		D_InitNozomiTetris(); // Nozomi Tetris
+	}
 
     // init all NETWORK
     CONS_Printf (text[D_CHECKNET_NUM]);

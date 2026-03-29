@@ -124,7 +124,8 @@
 #include "i_joy.h"
 #include "info.h"
 
-#include "srb-nozomi/srb.h"
+#include "EXTRAS/srb.h"
+#include "EXTRAS/tetris.h"
 
 // added 8-3-98 increse savegame size from 0x2c000 (180kb) to 512*1024
 #define SAVEGAMESIZE    (512*1024)
@@ -167,6 +168,7 @@ boolean         paused;
 boolean         usergame;               // ok to save / end game
 
 // srb2-nozomi stuff
+boolean nozomi_extra = false;
 boolean nozo_timeattack = false;
 consvar_t cv_nozotimeattacklevel = {"timeattacklevel", "1"};
 
@@ -1233,6 +1235,10 @@ void G_Ticker (void)
 
 	  case GS_NOZOMITITLE:
 		  D_PageTicker ();
+		  break;
+
+	  case GS_NOZOMITETRIS:
+		  T_TetrisTicker ();
 		  break;
     }
 }
