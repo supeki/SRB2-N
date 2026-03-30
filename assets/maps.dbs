@@ -1,0 +1,46 @@
+type = "Doom Builder Map Settings Configuration";
+gameconfig = "SRB2_Nozomi.cfg";
+strictpatches = 0;
+
+maps
+{
+	
+	MAP07
+	{
+		defaultfloortexture = "SLIME16";
+		overrideceilheight = false;
+		
+		resources
+		{
+		}
+		defaulttoptexture = "DSZROCK2";
+		overridemiddletexture = false;
+		viewpositionx = 1554.554f;
+		viewpositiony = 806.5715f;
+		viewscale = 1.022978f;
+		overridefloortexture = false;
+		customceilheight = 128;
+		customfloorheight = 0;
+		
+		grid
+		{
+			backoffsety = 0;
+			backoffsetx = 0;
+			backscalex = 100;
+			gridsize = 32;
+			background = "";
+			backsource = 0;
+			backscaley = 100;
+		}
+		defaultceiltexture = "DSZFLR3";
+		overridebrightness = false;
+		uselongtexturenames = false;
+		overridebottomtexture = false;
+		overridefloorheight = false;
+		overridetoptexture = false;
+		custombrightness = 196;
+		overrideceiltexture = false;
+		defaultwalltexture = "DSZROCK2";
+		defaultbottomtexture = "DSZROCK2";
+	}
+}

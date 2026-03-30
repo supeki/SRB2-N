@@ -1422,7 +1422,6 @@ mobj_t* P_SpawnMobj ( fixed_t       x,
     mobj->height = info->height;
     mobj->flags = info->flags;
 	mobj->flags2 = info->flags2;
-
     mobj->health = info->spawnhealth;
 
     if (gameskill != sk_nightmare)

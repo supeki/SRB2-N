@@ -1198,6 +1198,9 @@ boolean P_SetupLevel (int           episode,
     if (precache)
         R_PrecacheLevel ();
 
+	if (!demoplayback)
+		D_UpdateWindowTitle();
+
     //CONS_Printf("%d vertexs %d segs %d subsector\n",numvertexes,numsegs,numsubsectors);
     return true;
 }

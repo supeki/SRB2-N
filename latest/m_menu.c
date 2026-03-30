@@ -682,7 +682,7 @@ void M_DrawSetupMultiPlayerMenu(void)
 	// draw color string
 	{
 		int i;
-		char colorname[15] = ""; // Tried changing it to a character buffer to fix an issue. Please work!! Save 21-03-2026
+		char colorname[15] = ""; // Tried changing it to a character buffer to fix an issue. Save 22-03-2026
 		strcpy(colorname, setupm_cvcolor->string);
 		for (i=0; i<((int)strlen(colorname)); i++)
 			if (colorname[i] == '_')
@@ -728,7 +728,7 @@ void M_DrawSetupMultiPlayerMenu(void)
     // draw player sprite
 	{
 		int x, y, offx, offy;
-		fixed_t scale = (fixed_t)(atof(skins[R_SkinAvailable(setupm_cvskin->string)].spritescale) * FRACUNIT);
+		fixed_t scale = skins[R_SkinAvailable(setupm_cvskin->string)].spritescale;
 
 		if (scale < 1)
 			scale = FRACUNIT;
@@ -1551,7 +1551,7 @@ enum
 menuitem_t SoundOptionsMenu[]=
 {
     {IT_SUBMENU | IT_STRING,"Sound Volume..."  ,&SoundDef  ,0},
-	{IT_SUBMENU | IT_STRING,"Pitch Options..."  ,&PitchOptionsDef  ,20}
+	{IT_SUBMENU | IT_STRING,"Pitch Options..."  ,&PitchOptionsDef  ,10},
 };
 
 menuitem_t PitchOptionsMenu[]=

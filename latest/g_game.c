@@ -123,6 +123,8 @@
 
 #include "i_joy.h"
 
+#include "srb-nozomi/srb.h"
+
 // added 8-3-98 increse savegame size from 0x2c000 (180kb) to 512*1024
 #define SAVEGAMESIZE    (512*1024)
 #define SAVESTRINGSIZE  24
@@ -1144,6 +1146,7 @@ void G_Ticker (void)
     ULONG       i;
     int         buf;
     ticcmd_t*   cmd;
+	gamestate_t oldgamestate = gamestate;
 
     // do player reborns if needed
     if( gamestate == GS_LEVEL )
@@ -1193,6 +1196,10 @@ void G_Ticker (void)
 */
         }
     }
+
+    boolean play_srb_nozomi;
+	if (gamestate != GS_WAITINGPLAYERS)
+		play_srb_nozomi = false;
 
     // do main actions
     switch (gamestate)
@@ -2134,6 +2141,7 @@ if(cv_gametype.value != 1)
 players[i].score = 0; // Set score to 0 Tails 03-10-2000
 
 players[i].xtralife = players[i].xtralife2 = 0;
+players[i].sp_score = 0;
 }
 
     // for internal maps only

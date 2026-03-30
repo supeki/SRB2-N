@@ -770,7 +770,7 @@ void Command_Stopdemo_f (void)
 void Command_Map_f (void)
 {
     char buf[MAX_WADPATH+1];
-	char mapname[15] = ""; // Tried changing it to a character buffer to fix an issue. Please work!! Save 21-03-2026
+	char mapname[15] = ""; // Tried changing it to a character buffer to fix an issue. Save 22-03-2026
 #define MAPNAME &buf[2]
     int i;
 
