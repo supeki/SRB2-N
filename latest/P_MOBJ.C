@@ -2057,7 +2057,10 @@ void P_SpawnPlayer (mapthing_t* mthing)
     p->fixedcolormap = 0;
 	p->ringtimer = 0;
     p->viewheight = cv_viewheight.value<<FRACBITS;
-    // added 2-12-98
+	if (p == &players[consoleplayer])
+		p->autobrake = cv_playerautobrake.value;
+	if (cv_splitscreen.value && p == &players[secondarydisplayplayer])
+		p->autobrake = cv_playerautobrake2.value;
     p->viewz = p->mo->z + p->viewheight;
 
     // setup gun psprite

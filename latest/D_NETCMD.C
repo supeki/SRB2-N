@@ -444,7 +444,7 @@ void D_RegisterClientCommands (void)
 //
 void SendNameAndColor(void)
 {
-    char     buf[MAXPLAYERNAME+1+SKINNAMESIZE+1+1],*p;
+    char     buf[MAXPLAYERNAME+1+SKINNAMESIZE+1+4],*p;
 	int team; // Tails 07-31-2001
 	int y; // Tails 07-31-2001
 	int z; // Tails 07-31-2001
@@ -540,7 +540,7 @@ void SendNameAndColor(void)
 // splitscreen
 void SendNameAndColor2(void)
 {
-    char     buf[MAXPLAYERNAME+1+SKINNAMESIZE+1],*p;
+    char     buf[MAXPLAYERNAME+1+SKINNAMESIZE+1+4],*p;
 
     p=buf;
     WRITEBYTE(p,cv_playercolor2.value);
