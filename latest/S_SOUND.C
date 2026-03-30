@@ -73,6 +73,7 @@ extern int msg_id;
 
 #include "doomdef.h"
 #include "doomstat.h"
+#include "d_main.h"
 #include "command.h"
 #include "g_game.h"
 #include "m_argv.h"

@@ -168,7 +168,6 @@ boolean         paused;
 boolean         usergame;               // ok to save / end game
 
 // srb2-nozomi stuff
-boolean nozomi_extra = false;
 boolean nozo_timeattack = false;
 consvar_t cv_nozotimeattacklevel = {"timeattacklevel", "1"};
 
@@ -1238,7 +1237,11 @@ void G_Ticker (void)
 		  break;
 
 	  case GS_NOZOMITETRIS:
-		  T_TetrisTicker ();
+		  T_TetrisTicker();
+		  break;
+
+	  case GS_SRBNOZOMI:
+		  SRBN_GameplayLoop();
 		  break;
     }
 }
