@@ -48,8 +48,9 @@
 
 #include "doomtype.h"
 
-#ifdef LINUX
+#if defined (LINUX) || defined (__EMSCRIPTEN__)
 #include <stdlib.h>
+#include <math.h>
 #endif
 
 //

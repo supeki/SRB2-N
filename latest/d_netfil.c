@@ -51,7 +51,7 @@
 
 #include <time.h>
 
-#if !defined( LINUX) && !defined(__OS2__)
+#ifdef DJGPPDOS
 #include <io.h>
 #include <direct.h>
 #else
@@ -472,7 +472,7 @@ found:
         if(!ram) {
 #ifdef __OS2__
             fpos_t size64;
-#elif defined (LINUX)
+#elif defined (LINUX) || defined (__EMSCRIPTEN__)
             off_t size64=0;
 #else
             fpos_t size64=0;
@@ -480,7 +480,7 @@ found:
         transfer[i].currentfile=fopen(f->filename,"rb");
         if(!transfer[i].currentfile)
             I_Error("File %s not exist",f->filename);
-#ifdef LINUX
+#if defined (LINUX) || defined (__EMSCRIPTEN__)
         fseeko(transfer[i].currentfile, 0, SEEK_END);
         size64 = ftello(transfer[i].currentfile);
         fseeko(transfer[i].currentfile, 0, SEEK_SET);
@@ -650,7 +650,7 @@ void nameonly(char *s)
       }
 }
 
-#ifdef LINUX
+#if defined (LINUX) || defined (__EMSCRIPTEN__)
 #define O_BINARY 0
 #endif
 
@@ -775,7 +775,7 @@ filestatus_t recsearch(char *filename,time_t timestamp,boolean changestring)
   return FS_NOTFOUND;
 }
 #else
-#if defined( LINUX) || defined( __OS2__)
+#if defined( LINUX) || defined( __OS2__) || defined (__EMSCRIPTEN__)
 /* readdir and stat is portable 19990508 by Kin */
 {
     DIR *dds;

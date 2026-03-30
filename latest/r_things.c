@@ -1329,7 +1329,7 @@ void R_DrawPSprite (pspdef_t* psp)
     else
       vis->extra_colormap = viewplayer->mo->subsector->sector->extra_colormap;
 
-    R_DrawVisSprite (vis, vis->x1, vis->x2);
+    //R_DrawVisSprite (vis, vis->x1, vis->x2);
 }
 
 
@@ -1824,7 +1824,7 @@ void R_DrawSprite (vissprite_t* spr)
 
     mfloorclip = clipbot;
     mceilingclip = cliptop;
-    R_DrawVisSprite (spr, spr->x1, spr->x2);
+    //R_DrawVisSprite (spr, spr->x1, spr->x2);
 }
 
 

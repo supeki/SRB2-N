@@ -190,7 +190,7 @@ CV_PossibleValue_t usejoystick_cons_t[]={{0,"Off"}
                                         ,{12,"Wingman Warrior"}
                                         ,{0,NULL}};
 #else
-#ifdef LINUX
+#if defined (LINUX) || defined (__EMSCRIPTEN__)
 #define usejoystick_cons_t  NULL
 #else
 #ifdef __OS2__

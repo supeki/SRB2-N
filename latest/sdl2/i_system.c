@@ -10,13 +10,20 @@
 #include "i_main.h"
 #include <SDL2/SDL.h>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 byte graphics_started = 0;
 
 byte keyboard_started = 0;
 
 JoyType_t   Joystick;
 
-void I_GetFreeMem(void){}
+void I_GetFreeMem(void)
+{
+    CONS_Printf(192 * 1024 * 1024); // 192 MB free memory
+}
 
 #ifdef _WIN32
 static long    hacktics = 0;       //faB: used locally for keyboard repeat keys
@@ -84,6 +91,10 @@ ticcmd_t *I_BaseTiccmd2(void)
 
 void I_Quit(void)
 {
+#ifdef __EMSCRIPTEN__
+	emscripten_cancel_main_loop();
+	emscripten_force_exit(0);
+#endif
 	M_SaveConfig(NULL);
 	D_QuitNetGame();
 	I_ShutdownGraphics();
@@ -397,7 +408,12 @@ void I_StartFrame(void){
 		}
 }
 
-void I_GetDiskFreeSpace(INT64 *freespace){}
+void I_GetDiskFreeSpace(INT64* freespace)
+{
+	*freespace = INT32_MAX;
+	return;
+}
+
 void I_StartupTimer(void){}
 
 void I_AddExitFunc(void (*func)())

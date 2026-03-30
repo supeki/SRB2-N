@@ -293,9 +293,9 @@ int VID_SetMode(int modenum)
 	if (!SDL_window)
 		I_Error("VID_SetMode(): Could not create window!");
 
-	SDL_renderer = SDL_CreateRenderer(SDL_window, -1, SDL_RENDERER_ACCELERATED);
-	if (!SDL_renderer)
-		I_Error("VID_SetMode(): Could not create renderer!");
+	//SDL_renderer = SDL_CreateRenderer(SDL_window, -1, SDL_RENDERER_ACCELERATED);
+	//if (!SDL_renderer)
+	//	I_Error("VID_SetMode(): Could not create renderer!");
 
 	surface = SDL_CreateRGBSurfaceWithFormat(0, vid.width, vid.height, 8, SDL_PIXELFORMAT_INDEX8);
 
@@ -323,6 +323,10 @@ void I_StartupGraphics(void) {
 	VID_SetMode(3);
 
 	graphics_started = true;
+
+#ifdef __EMSCRIPTEN__
+	VID_SetMode(VID_GetModeForSize(BASEVIDWIDTH*2, BASEVIDHEIGHT*2));
+#endif
 }
 
 const char *VID_GetModeName(int modenum)

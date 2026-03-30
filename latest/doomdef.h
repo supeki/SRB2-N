@@ -92,12 +92,12 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-#ifndef LINUX
+#ifdef DJGPPDOS
 // only dos need this 19990203 by Kin
 #include <io.h>
 #endif
 
-#ifdef LINUX
+#if defined (LINUX) || defined (__EMSCRIPTEN__)
 #define O_BINARY 0
 #endif
 

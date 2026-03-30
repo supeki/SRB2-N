@@ -2,19 +2,25 @@
 #include "../d_main.h"
 #include "../m_argv.h"
 #include <SDL2/SDL_rwops.h>
+#include "../i_system.h"
 
-int mb_used = 32;
+byte mb_used = 32;
 
 SDL_RWops* logstream;
 
-#ifndef FORCESDLMAIN
-int main(int argc, char **argv)
+#if defined(__EMSCRIPTEN__)
+int main_program(void)
+{ 
 #else
-int SDL_main(int argc, char** argv)
+#ifdef FORCESDLMAIN
+int SDL_main(int argc, char **argv)
+#else
+int main(int argc, char **argv)
 #endif
 {
 	myargc = argc;
 	myargv = argv; /// \todo pull out path to exe from this string
+#endif
 
 	// startup SRB2
 	CONS_Printf ("Setting up SRB2-Nozomi...\n");
@@ -31,6 +37,18 @@ int SDL_main(int argc, char** argv)
 	return 0;
 #endif
 }
+
+#if defined (__EMSCRIPTEN__) 
+int main(int argc, char **argv)
+{
+    myargc = argc;
+	myargv = argv;
+
+    I_MountIDBFS(); // Mount IndexedDB filesystem on entry
+
+	return 0;
+}
+#endif
 
 void I_FPrintf(FILE *fileHandle, const char *lpFmt, ...)
 {

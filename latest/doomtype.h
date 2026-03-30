@@ -47,7 +47,7 @@ typedef unsigned long ULONG;
 typedef unsigned short USHORT;
 #endif // _OS2EMX_H
 
-#ifdef LINUX
+#if defined (LINUX) || defined (__EMSCRIPTEN__)
 #include <stdint.h>
 #define UINT32 uint32_t
 #define UINT64 uint64_t
@@ -76,7 +76,7 @@ typedef unsigned short USHORT;
     #endif
 #endif
 // added for Linux 19990220 by Kin
-#ifdef LINUX
+#if defined (LINUX) || defined (__EMSCRIPTEN__)
 #define stricmp(x,y) strcasecmp(x,y)
 #define strnicmp(x,y,n) strncasecmp(x,y,n)
 #define lstrlen(x) strlen(x)
@@ -99,7 +99,8 @@ typedef unsigned short USHORT;
             #define true    TRUE
             #define boolean BOOL
         #else
-            typedef enum {false, true} boolean;
+            #include <stdbool.h>
+            #define boolean bool
         #endif
     //#endif // __cplusplus
 #endif // __BYTEBOOL__

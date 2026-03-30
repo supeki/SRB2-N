@@ -127,6 +127,10 @@
 #include "I_os2.h"
 #endif
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h> // emscripten_set_main_loop()
+#endif
+
 #include "doomdef.h"
 
 #include "command.h"
@@ -601,9 +605,11 @@ int p; // Tails 06-10-2001
 ULONG   rendergametic;
 boolean supdate;
 
+static void D_RunFrame(void);
+int  entertic,realtics;
+
 void D_DoomLoop (void)
 {
-    int  entertic,realtics;
 
     if (demorecording)
         G_BeginRecording ();
@@ -681,7 +687,37 @@ p = M_CheckParm ("-name");
     SCR_SetMode();  // change video mode
     SCR_Recalc();
 
-    while (1)
+#if defined(__EMSCRIPTEN__)
+	emscripten_set_main_loop(D_RunFrame, 0, 1);
+#else
+	for (;;)
+	{
+		D_RunFrame();
+	}
+#endif
+}
+
+static boolean D_LockFrame = false;
+
+#ifdef __EMSCRIPTEN__
+int EMSCRIPTEN_KEEPALIVE pause_loop(void)
+{
+	D_LockFrame = true;
+	emscripten_pause_main_loop();
+	return 0;
+}
+
+int EMSCRIPTEN_KEEPALIVE resume_loop(void)
+{
+	D_LockFrame = false;
+	emscripten_resume_main_loop();
+	return 0;
+}
+#endif
+
+static void D_RunFrame(void)
+{
+	if (!D_LockFrame)
     {
         // get real tics
         entertic = I_GetTime ();

@@ -50,7 +50,11 @@
 extern ULONG      rendergametic;
 
 // the infinite loop of D_DoomLoop() called from win_main for windows version
-void D_DoomLoop (void);
+void D_DoomLoop(void)
+#ifndef __EMSCRIPTEN__ 
+FUNCNORETURN
+#endif
+;
 
 //
 // D_DoomMain()

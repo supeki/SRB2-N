@@ -93,7 +93,7 @@ int M_MapNumber(char first, char second)
 //
 // FIL_WriteFile
 //
-#ifdef LINUX
+#if defined (LINUX) || defined (__EMSCRIPTEN__)
 #define O_BINARY 0
 #endif
 
