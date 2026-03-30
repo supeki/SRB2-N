@@ -4,7 +4,7 @@
 #define NOZOMI_SRB
 
 // Boolean that when set to true, starts a session of SRB-N!
-boolean play_srb_nozomi;
+extern boolean play_srb_nozomi;
 
 // Cache everything...
 void D_InitSRBNozomi(void);
@@ -24,8 +24,8 @@ typedef struct
 } srbn_platform_t;
 
 // Functions for srb.c!
-void SRBN_Init(void);
-void SRBN_GameplayLoop(void);
-void SRBN_Draw(void);
+extern void SRBN_Init(void);
+extern void SRBN_GameplayLoop(void);
+extern void SRBN_Draw(void);
 
 #endif

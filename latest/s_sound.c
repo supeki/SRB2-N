@@ -23,7 +23,7 @@
 //
 // Revision 1.8  2000/04/22 16:16:50  emanne
 // Correction de l'interface.
-// Une erreur s'y était glissé, d'où un segfault si on compilait sans SDL.
+// Une erreur s'y ï¿½tait glissï¿½, d'oï¿½ un segfault si on compilait sans SDL.
 //
 // Revision 1.7  2000/04/21 08:23:47  emanne
 // To have SDL working.
@@ -426,6 +426,7 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
     else
 		sep = NORM_SEP;
 
+    boolean play_srb_nozomi;
 	if (cv_oldsoundbehavior.value || play_srb_nozomi)
 		S_StopSound(origin);
 

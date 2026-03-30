@@ -800,11 +800,12 @@ void D_PageTicker (void)
 	if (gamestate == GS_WAITINGPLAYERS) {
 		if (netgame && (!server)) {
 			// Sonic Robo-Blast! Nozomi
-
-			if (play_srb_nozomi)
-				SRBN_GameplayLoop();
-			else if (gamekeydown[gamecontrol[gc_jump][0]] || gamekeydown[gamecontrol[gc_jump][1]])
-				SRBN_Init();
+            boolean play_srb_nozomi;
+            void SRBN_Init(void);
+			//if (play_srb_nozomi)
+			//	SRBN_GameplayLoop();
+			//else if (gamekeydown[gamecontrol[gc_jump][0]] || gamekeydown[gamecontrol[gc_jump][1]])
+			//	SRBN_Init();
 		}
 					
 		return;
@@ -845,10 +846,10 @@ void D_PageDrawer (char* lumpname)
 			case GS_WAITINGPLAYERS:
 				if (netgame && (!server)) {
 					// show our server joining status! Nozomi 03-10-2026
-
 					// Sonic Robo-Blast! Nozomi
+                    boolean play_srb_nozomi;
 					if (play_srb_nozomi) {
-						SRBN_Draw();
+						//SRBN_Draw();
 					} else {
 						V_DrawString(160-strlen("Press JUMP to play a game!")*4, 100-4, "Press JUMP to play a game!");
 					}
@@ -1589,7 +1590,8 @@ p = M_CheckParm ("-ctfteam"); // Tails 08-04-2001
     ST_Init ();
 
 	// Sonic Robo-Blast! Nozomi
-	D_InitSRBNozomi();
+    //void D_InitSRBNozomi(void);
+	//D_InitSRBNozomi();
 
     // init all NETWORK
     CONS_Printf (text[D_CHECKNET_NUM]);
