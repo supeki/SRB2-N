@@ -822,11 +822,11 @@ static void R_ProjectSprite (mobj_t* thing)
         return;
 
     // decide which patch to use for sprite relative to player
-#ifdef RANGECHECK
-    if ((unsigned)thing->sprite >= numsprites)
-        I_Error ("R_ProjectSprite: invalid sprite number %i ",
+    if ((unsigned)thing->sprite >= numsprites) {
+        CONS_Printf ("R_ProjectSprite: invalid sprite number %i ",
                  thing->sprite);
-#endif
+		return;
+	}
 
     //Fab:02-08-98: 'skin' override spritedef currently used for skin
     if (thing->skin)
@@ -834,12 +834,13 @@ static void R_ProjectSprite (mobj_t* thing)
     else
         sprdef = &sprites[thing->sprite];
 
-#ifdef RANGECHECK
-    if ( (thing->frame&FF_FRAMEMASK) >= sprdef->numframes )
-        I_Error ("R_ProjectSprite: invalid sprite frame %i : %i ",
+    if ( (thing->frame&FF_FRAMEMASK) >= sprdef->numframes ) {
+        CONS_Printf ("R_ProjectSprite: invalid sprite frame %i : %i ",
                  thing->sprite, thing->frame);
-#endif
-    sprframe = &sprdef->spriteframes[ thing->frame & FF_FRAMEMASK];
+		return;
+	}
+
+	sprframe = &sprdef->spriteframes[ thing->frame & FF_FRAMEMASK ];
 
     if (sprframe->rotate)
     {
