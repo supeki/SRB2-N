@@ -341,7 +341,7 @@ void P_LoadSubsectors (int lump)
 //
 // levelflats
 //
-#define MAXLEVELFLATS   256
+#define MAXLEVELFLATS   1024 // was 256, upped this incase our levels get complex :3 Nozomi
 
 int                     numlevelflats;
 levelflat_t*            levelflats;
