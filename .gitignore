@@ -19,3 +19,5 @@ CMakeUserPresets.json
 assets/srb2-nozomi.exe
 assets/config.cfg
 latest/build/*
+latest/win32/wlegacy.ncb
+latest/win32/wlegacy.opt
