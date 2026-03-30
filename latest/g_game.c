@@ -1240,6 +1240,10 @@ void G_Ticker (void)
 	  case GS_NOZOMITETRIS:
 		  T_TetrisTicker ();
 		  break;
+		  
+	  case GS_SRBNOZOMI:
+		  SRBN_GameplayLoop ();
+		  break;
     }
 }
 

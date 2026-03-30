@@ -61,7 +61,8 @@ typedef enum
     GS_WAITINGPLAYERS,          // added 3-9-98 : waiting player in net game
 	// nozomi
 	GS_NOZOMITITLE,
-	GS_NOZOMITETRIS				// don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask
+	GS_NOZOMITETRIS,				// don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask
+	GS_SRBNOZOMI // dedicated srb-nozomi gamestate
 } gamestate_t;
 
 typedef enum

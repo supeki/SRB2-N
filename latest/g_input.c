@@ -415,18 +415,32 @@ int G_KeyStringtoNum(char *keystr)
 
 void G_Controldefault(void)
 {
+#ifdef NOZOMI_DSI
+	gamecontrol[gc_forward    ][0]=KEY_UPARROW;
+    gamecontrol[gc_backward   ][0]=KEY_DOWNARROW;
+#else
     gamecontrol[gc_forward    ][0]='w';
     gamecontrol[gc_backward   ][0]='s';
+#endif
 	gamecontrol[gc_strafeleft ][0]='a';
     gamecontrol[gc_straferight][0]='d';
     gamecontrol[gc_turnleft   ][0]=KEY_LEFTARROW;
     gamecontrol[gc_turnright  ][0]=KEY_RIGHTARROW;
+#ifdef NOZOMI_DSI
+	gamecontrol[gc_jump       ][0]=KEY_ENTER;
+#else
 	gamecontrol[gc_jump       ][0]=KEY_SPACE;
+#endif
 	gamecontrol[gc_use        ][0]=KEY_SHIFT;
     gamecontrol[gc_fire       ][0]=KEY_CTRL;
     gamecontrol[gc_fire       ][1]=KEY_MOUSE1;
+#ifdef NOZOMI_DSI
+	gamecontrol[gc_lookup     ][0]=KEY_NULL;
+    gamecontrol[gc_lookdown   ][0]=KEY_NULL;
+#else
     gamecontrol[gc_lookup     ][0]=KEY_UPARROW;
     gamecontrol[gc_lookdown   ][0]=KEY_DOWNARROW;
+#endif
     gamecontrol[gc_centerview ][0]='f';
     gamecontrol[gc_weapon1    ][0]='1';
     gamecontrol[gc_weapon2    ][0]='2';

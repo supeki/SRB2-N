@@ -394,6 +394,9 @@ void D_Display (void)
 	  case GS_NOZOMITITLE:
 		D_PageDrawer (pagename);
 		break;
+	  case GS_SRBNOZOMI:
+		SRBN_Draw();
+		break;
 	  case GS_NOZOMITETRIS:
 		  T_TetrisDrawer ();
 		  break;

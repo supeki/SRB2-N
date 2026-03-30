@@ -1,13 +1,27 @@
 // Sonic Robo-Blast! Nozomi
 
+#include "../console.h"
 #include "../doomdef.h"
+#include "../d_main.h"
 #include "../g_input.h"
+#include "../g_state.h"
 #include "../r_main.h"
 #include "../s_sound.h"
 #include "../v_video.h"
 #include "../w_wad.h"
 #include "../z_zone.h"
 #include "srb.h"
+
+#define NOZOMI_DSI_XOFF 32
+#define NOZOMI_DSI_YOFF 4
+
+typedef struct
+{
+	int x;
+	int y;
+} srbn_camera_t;
+
+srbn_camera_t srbn_camera;
 
 // Prototypes!
 
@@ -57,6 +71,17 @@ static srbn_platform_t srbn_platforms[1024]; // We shouldn't really need this ma
 // Platform Patches
 static patch_t* srbn_platformpatches[1024]; // Same with the platform patches... blegh.
 
+static void Command_StartSRBN_f(void)
+{
+	if (gamestate != GS_SRBNOZOMI && wipegamestate != GS_SRBNOZOMI) {
+		gamestate = GS_SRBNOZOMI;
+		wipegamestate = -1;
+	}
+
+	SRBN_Init();
+	CON_ToggleOff();
+}
+
 // Initialize a bunch of stuff yaya! Nozomi 03-10-2026
 void D_InitSRBNozomi(void) {
 	int i;
@@ -83,6 +108,8 @@ void D_InitSRBNozomi(void) {
 	// cache platform patches
 	for (i=0; i<8; i++)
 		srbn_platformpatches[i] = W_CachePatchName(va("SRBP%04d", i), PU_CACHE);
+	
+	COM_AddCommand ("srbnozomi", Command_StartSRBN_f);
 }
 
 void SRBN_Init(void) {
@@ -159,13 +186,17 @@ static void SRBN_InputHandle(void)
 	// movement!! Nozomi 03-10-2026
 	// ...Not yet Nozomi! This is for input now! ~ Future Nozomi
 	if (gamekeydown[gamecontrol[gc_strafeleft][0]] ||
-		gamekeydown[gamecontrol[gc_strafeleft][1]])
+		gamekeydown[gamecontrol[gc_strafeleft][1]] ||
+		gamekeydown[gamecontrol[gc_turnleft][0]] ||
+		gamekeydown[gamecontrol[gc_turnleft][1]])
 		srbn_input_left++;
 	else
 		srbn_input_left = 0;
 
 	if (gamekeydown[gamecontrol[gc_straferight][0]] ||
-		gamekeydown[gamecontrol[gc_straferight][1]])
+		gamekeydown[gamecontrol[gc_straferight][1]] ||
+		gamekeydown[gamecontrol[gc_turnright][0]] ||
+		gamekeydown[gamecontrol[gc_turnright][1]])
 		srbn_input_right++;
 	else
 		srbn_input_right = 0;
@@ -252,6 +283,27 @@ static void SRBN_PlayerHandle(void)
 	srbn_sonic_momy++;
 
 	SRBN_CheckCollision();
+}
+
+static void SRBN_CameraHandle(void)
+{
+	if (srbn_sonic_x != srbn_camera.x+128)
+		srbn_camera.x += (int)((float)(srbn_sonic_x - (srbn_camera.x+128)) / 2.0f);
+	
+	if (srbn_sonic_y != srbn_camera.y+96)
+		srbn_camera.y += (int)((float)(srbn_sonic_y - (srbn_camera.y+96)) / 2.0f);
+
+	if (srbn_camera.x < 0)
+		srbn_camera.x = 0;
+	
+	if (srbn_camera.x > NOZOMI_DSI_XOFF*2-1)
+		srbn_camera.x = NOZOMI_DSI_XOFF*2-1;
+	
+	if (srbn_camera.y < 0)
+		srbn_camera.y = 0;
+	
+	if (srbn_camera.y > NOZOMI_DSI_YOFF-1)
+		srbn_camera.y = NOZOMI_DSI_YOFF-1;
 }
 
 static boolean SRBN_InPlatform(srbn_platform_t platform)
@@ -416,11 +468,11 @@ static void SRBN_DrawSonikku(void)
 		earless_patch = (int)(srbn_sonic_idletimer / 6.65f) % 5 + 1;
 
 	if (srbn_sonic_dir > 0)
-		V_DrawScaledPatch(srbn_sonic_x, srbn_sonic_y - srbn_sonic_momy, 0, srbn_earless[earless_patch]);
+		V_DrawScaledPatch(srbn_sonic_x+NOZOMI_DSI_XOFF - srbn_camera.x, srbn_sonic_y - srbn_sonic_momy + NOZOMI_DSI_YOFF - srbn_camera.y, 0, srbn_earless[earless_patch]);
 	else
-		V_DrawScaledPatchFlipped(srbn_sonic_x, srbn_sonic_y - srbn_sonic_momy, 0, srbn_earless[earless_patch]);
+		V_DrawScaledPatchFlipped(srbn_sonic_x+NOZOMI_DSI_XOFF - srbn_camera.x, srbn_sonic_y - srbn_sonic_momy + NOZOMI_DSI_YOFF - srbn_camera.y, 0, srbn_earless[earless_patch]);
 
-	V_DrawStringWhite(0, 0, va("%d,%d", srbn_sonic_x, srbn_sonic_y));
+	V_DrawStringWhite(NOZOMI_DSI_XOFF, NOZOMI_DSI_YOFF, va("%d,%d", srbn_sonic_x, srbn_sonic_y));
 }
 
 static void SRBN_DrawPlatforms(void)
@@ -443,7 +495,7 @@ static void SRBN_DrawPlatforms(void)
 		{
 			for (k=0; k<platform.w; k++)
 			{
-				V_DrawScaledPatch(platform.x + (w*k), platform.y + (h*j), 0, patch);
+				V_DrawScaledPatch(platform.x + (w*k) + NOZOMI_DSI_XOFF - srbn_camera.x, platform.y + (h*j) + NOZOMI_DSI_YOFF - srbn_camera.y, 0, patch);
 			}
 		}
 	}
@@ -453,6 +505,7 @@ void SRBN_GameplayLoop(void)
 {
 	SRBN_InputHandle();
 	SRBN_PlayerHandle();
+	SRBN_CameraHandle();
 }
 
 void SRBN_Draw(void)

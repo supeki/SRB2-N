@@ -399,7 +399,7 @@ enum
 menuitem_t MainMenu[]=
 {
     {IT_SUBMENU | IT_STRING,"1  player" ,&SinglePlayerDef,  88},
-	{IT_CALL | IT_STRING, "host server", M_HostSERVER, 96},
+	{IT_CALL | IT_STRING, "Play SRBN", M_HostSERVER, 96},
     {IT_SUBMENU | IT_STRING," options"  ,&OptionsDef     , 104},
     {IT_CALL    | IT_STRING,"quit game",M_QuitDOOM      , 112}
 };
@@ -2524,7 +2524,7 @@ void M_QuitDOOM(int choice)
 
 void M_HostSERVER(int choice)
 {
-	if (netgame) {
+	/*if (netgame) {
 		CONS_Printf("You're already in a netgame!\n");
 		return;
 	}
@@ -2532,8 +2532,9 @@ void M_HostSERVER(int choice)
 			COM_BufAddText("stopdemo\n");
 	server=true;
 	netgame = true;
-    multiplayer = true;
-    COM_BufAddText ("map map01\n");
+    multiplayer = true;*/
+	menuactive = false;
+    COM_BufAddText ("srbnozomi\n");
 }
 
 
