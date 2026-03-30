@@ -81,6 +81,8 @@ list(APPEND SOURCES
     wi_stuff.c
     w_wad.c
     z_zone.c
+    EXTRAS/srb.c
+    EXTRAS/tetris.c
 )
 
 if (NOT(BACKEND STREQUAL "DSi"))
@@ -210,9 +212,9 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 
 if(BACKEND STREQUAL "DSi")
     nds_create_rom(${PROJECT_NAME}
-        NAME "SRB2-Nozomi"
-        SUBTITLE "Place the holder"
-        AUTHOR "johnson"
+        NAME "Sonic Robo Blast 2"
+        SUBTITLE "Nozomi"
+        AUTHOR "Nozomi Team"
         ICON "dsi/icon.gif"
         NITROFS "nitrofs/"
     )

@@ -206,6 +206,13 @@ void I_StartFrame(void)
 	if (keys & KEY_B) {
 		event_t event;
 		event.type = ev_keydown;
+		event.data1 = KEY_SHIFT;
+		D_PostEvent(&event);
+	}
+	
+	if (keys & KEY_START) {
+		event_t event;
+		event.type = ev_keydown;
 		event.data1 = KEY_ESCAPE;
 		D_PostEvent(&event);
 	}
@@ -244,6 +251,57 @@ void I_StartFrame(void)
 		e_w.data2 = touch_pos.px * (cv_mousesens.value + 1) / 10;
 		e_w.data3 = touch_pos.py * (cv_mousesens.value + 1) / 10;
 		D_PostEvent(&e_w);
+	}
+	
+	keys = keysUp();
+	
+	if (keys & KEY_A) {
+		event_t event;
+		event.type = ev_keyup;
+		event.data1 = KEY_ENTER;
+		D_PostEvent(&event);
+	}
+	
+	if (keys & KEY_B) {
+		event_t event;
+		event.type = ev_keyup;
+		event.data1 = KEY_SHIFT;
+		D_PostEvent(&event);
+	}
+	
+	if (keys & KEY_START) {
+		event_t event;
+		event.type = ev_keyup;
+		event.data1 = KEY_ESCAPE;
+		D_PostEvent(&event);
+	}
+
+	if (keys & KEY_UP) {
+		event_t event;
+		event.type = ev_keyup;
+		event.data1 = KEY_UPARROW;
+		D_PostEvent(&event);
+	}
+	
+	if (keys & KEY_DOWN) {
+		event_t event;
+		event.type = ev_keyup;
+		event.data1 = KEY_DOWNARROW;
+		D_PostEvent(&event);
+	}
+
+	if (keys & KEY_LEFT) {
+		event_t event;
+		event.type = ev_keyup;
+		event.data1 = KEY_LEFTARROW;
+		D_PostEvent(&event);
+	}
+	
+	if (keys & KEY_RIGHT) {
+		event_t event;
+		event.type = ev_keyup;
+		event.data1 = KEY_RIGHTARROW;
+		D_PostEvent(&event);
 	}
 }
 

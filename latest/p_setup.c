@@ -503,7 +503,7 @@ void P_LoadSectors (int lump)
     memcpy (levelflats, foundflats, numlevelflats*sizeof(levelflat_t));
 
     // search for animated flats and set up
-    P_SetupLevelFlatAnims ();
+    // P_SetupLevelFlatAnims ();
 }
 
 

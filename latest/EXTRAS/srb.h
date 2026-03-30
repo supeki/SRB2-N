@@ -4,7 +4,7 @@
 #define NOZOMI_SRB
 
 // Boolean that when set to true, starts a session of SRB-N!
-boolean play_srb_nozomi;
+extern boolean play_srb_nozomi;
 
 // Cache everything...
 void D_InitSRBNozomi(void);

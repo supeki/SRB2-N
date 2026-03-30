@@ -1077,7 +1077,6 @@ void IdentifyVersion (void)
         I_Error ("srb2.srb not found!\n");
     }
 
-#ifndef NOZOMI_DSI
 	// Add the flats Nozomi 02-22-2026
 	if ( !access ("flats.wad",R_OK) )
     {
@@ -1115,21 +1114,18 @@ void IdentifyVersion (void)
     }
 
 	// Add the players Tails 12-24-2001
-	D_AddFile("sonic.plr");
-	D_AddFile("tails.plr");
-	D_AddFile("knux.plr");
+	D_AddFile("Sonic.plr");
+	D_AddFile("Tails.plr");
+	D_AddFile("Knux.plr");
 
 	// Add the maps Nozomi 02-22-2026
 	D_AddFile("maps.wad");
-
-	// SRB2-Nozomi exclusive content! Nozomi 03-02-2026
-	if (M_CheckParm ("-nozomi"))
+	
+	if ( !access ("extdata.dat",R_OK) )
     {
-		D_AddFile("nozomi-gfx.wad");
-		D_AddFile("nozomi-music.wad");
-        D_AddFile("nozomi-maps.wad");
+		nozomi_extra = true;
+        D_AddFile ("extdata.dat");
     }
-#endif
 }
 
 

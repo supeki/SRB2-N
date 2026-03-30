@@ -1748,6 +1748,8 @@ void G_SecretExitLevel (void)
     gameaction = ga_completed;
 }
 
+int SSSTAGE1;
+
 void G_DoCompleted (void)
 {
     int             i;
@@ -1777,7 +1779,6 @@ void G_DoCompleted (void)
 			{
 				if(players[i].token)
 				{
-                    int SSSTAGE1;
 					if(!players[i].emerald1)
 						wminfo.next = SSSTAGE1-1; // Special Stage 1
 					else if(!players[i].emerald2)

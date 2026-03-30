@@ -605,26 +605,18 @@ void R_DrawMaskedColumn (column_t* column)
         dc_yl = (topscreen+FRACUNIT-1)>>FRACBITS;
         dc_yh = (bottomscreen-1)>>FRACBITS;
 
-#ifdef R_FAKEFLOORS
-        if(windowtop != MAXINT && windowbottom != MAXINT)
+		if(windowtop != MAXINT && windowbottom != MAXINT)
         {
           if(windowtop > topscreen)
             dc_yl = (windowtop + FRACUNIT - 1) >> FRACBITS;
           if(windowbottom < bottomscreen)
             dc_yh = (windowbottom - 1) >> FRACBITS;
         }
-#endif
-
-        if (dc_yh >= mfloorclip[dc_x])
+		
+		if (dc_yh >= mfloorclip[dc_x])
             dc_yh = mfloorclip[dc_x]-1;
         if (dc_yl <= mceilingclip[dc_x])
             dc_yl = mceilingclip[dc_x]+1;
-
-        if(colfunc == R_DrawFogColumn_8)
-        {
-          dc_yh = mfloorclip[dc_x] - 1;
-          dc_yl = mceilingclip[dc_x] + 1;
-        }
 
         if (dc_yl <= dc_yh && dc_yl < vid.height && dc_yh > 0)
         {
@@ -634,6 +626,16 @@ void R_DrawMaskedColumn (column_t* column)
 
             // Drawn by either R_DrawColumn
             //  or (SHADOW) R_DrawFuzzColumn.
+            if (!ylookup[dc_yl])
+            {
+                static int first = 1;
+                if (first)
+                {
+                    CONS_Printf("WARNING: avoiding a crash in %s %d\n", __FILE__, __LINE__);
+                    first = 0;
+                }
+            }
+            else
             colfunc ();
         }
         column = (column_t *)(  (byte *)column + column->length + 4);
@@ -822,11 +824,11 @@ static void R_ProjectSprite (mobj_t* thing)
         return;
 
     // decide which patch to use for sprite relative to player
-#ifdef RANGECHECK
-    if ((unsigned)thing->sprite >= numsprites)
-        I_Error ("R_ProjectSprite: invalid sprite number %i ",
+    if ((unsigned)thing->sprite >= numsprites) {
+        CONS_Printf ("R_ProjectSprite: invalid sprite number %i\n",
                  thing->sprite);
-#endif
+		return;
+	}
 
     //Fab:02-08-98: 'skin' override spritedef currently used for skin
     if (thing->skin)
@@ -834,12 +836,13 @@ static void R_ProjectSprite (mobj_t* thing)
     else
         sprdef = &sprites[thing->sprite];
 
-#ifdef RANGECHECK
-    if ( (thing->frame&FF_FRAMEMASK) >= sprdef->numframes )
-        I_Error ("R_ProjectSprite: invalid sprite frame %i : %i ",
-                 thing->sprite, thing->frame);
-#endif
-    sprframe = &sprdef->spriteframes[ thing->frame & FF_FRAMEMASK];
+    if ( (thing->frame&FF_FRAMEMASK) >= sprdef->numframes ) {
+        CONS_Printf ("R_ProjectSprite: invalid sprite frame %s : %i\n",
+                 sprnames[thing->sprite], thing->frame);
+		return;
+	}
+
+	sprframe = &sprdef->spriteframes[ thing->frame & FF_FRAMEMASK ];
 
     if (sprframe->rotate)
     {
@@ -2297,7 +2300,6 @@ void R_AddMapHeader (int wadnum)
 			if (!stricmp(token,"sp_start"))
 			{
 				char tmp[1999];
-                int SSSTAGE1;
 
 				if (isdigit(value[0]))
 					sprintf(tmp, "%02d", atoi(value));
