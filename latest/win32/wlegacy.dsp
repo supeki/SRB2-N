@@ -54,7 +54,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo /o"..\..\objs\Release\DoomLegacy.bsc"
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 dxguid.lib dinput.lib dsound.lib ddraw.lib winmm.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /out:"C:\srb2-nozomi\srb2win.exe"
+# ADD LINK32 dxguid.lib dinput.lib dsound.lib ddraw.lib winmm.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /out:"C:\Users\eBay Sale\Documents\GitHub\SRB2-N\assets\srb2-nozomi.exe"
 # SUBTRACT LINK32 /pdb:none /incremental:yes
 
 !ELSEIF  "$(CFG)" == "DoomLegacy - Win32 Debug"
@@ -71,7 +71,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /FD /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "__WIN32__" /D "__MSC__" /D "USEASM" /YX /FD /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "__WIN32__" /D "__MSC__" /D "USEASM" /FR /YX /FD /c
 # ADD BASE MTL /nologo /D "_DEBUG" /mktyplib203 /o "NUL" /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /o "NUL" /win32
 # ADD BASE RSC /l 0x40c /d "_DEBUG"
@@ -81,7 +81,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /pdbtype:sept
-# ADD LINK32 dxguid.lib dinput.lib dsound.lib ddraw.lib winmm.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /debug /machine:I386 /out:"C:\srb2-nozomi\srb2win_debug.exe" /pdbtype:sept
+# ADD LINK32 dxguid.lib dinput.lib dsound.lib ddraw.lib winmm.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /debug /machine:I386 /out:"..\..\assets\srb2win_debug.exe" /pdbtype:sept
 # SUBTRACT LINK32 /pdb:none
 
 !ENDIF 
@@ -1013,22 +1013,29 @@ SOURCE=..\_logs\todolauncher.txt
 SOURCE=..\_logs\Todola~1.txt
 # End Source File
 # End Group
+# Begin Group "EXTRA"
+
+# PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\elme.txt
+SOURCE=..\EXTRAS\srb.c
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\..\..\..\..\Last130Code\latest\P_INTER.C
+SOURCE=..\EXTRAS\srb.h
+# End Source File
+# Begin Source File
 
-!IF  "$(CFG)" == "DoomLegacy - Win32 Release"
+SOURCE=..\EXTRAS\tetris.c
+# End Source File
+# Begin Source File
 
-# PROP Exclude_From_Build 1
+SOURCE=..\EXTRAS\tetris.h
+# End Source File
+# End Group
+# Begin Source File
 
-!ELSEIF  "$(CFG)" == "DoomLegacy - Win32 Debug"
-
-!ENDIF 
-
+SOURCE=.\elme.txt
 # End Source File
 # Begin Source File
 

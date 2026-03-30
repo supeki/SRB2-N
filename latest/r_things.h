@@ -100,7 +100,7 @@ R_ClipVisSprite
 // -----------
 // SKINS STUFF
 // -----------
-#define SKINNAMESIZE 16
+#define SKINNAMESIZE 32
 #define DEFAULTSKIN  "sonic"   // Changed by Tails: 9-13-99
 
 typedef struct
@@ -112,8 +112,8 @@ typedef struct
 	int 		runspeed; // runspeed Nozomi
 	char		face[9];
 	char		hudname[9];
-	char		spritescale[9]; // spritescale Nozomi
-	char		facescale[9]; // facescale Nozomi
+	fixed_t		spritescale; // spritescale Nozomi
+	fixed_t		facescale; // facescale Nozomi
 
     // specific sounds per skin
     short       soundsid[NUMSKINSOUNDS]; // sound # in S_sfx table
@@ -156,7 +156,7 @@ typedef struct
 
 extern mapheader_t mapheaders[NUMMAPHEADERS+1];
 extern char custom_ttlmusic[9];
-
+extern char custom_supermusic[9];
 void    R_AddMapHeader (int wadnum);
 
 #endif

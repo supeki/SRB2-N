@@ -1,6 +1,5 @@
 //Microsoft Developer Studio generated resource script.
 //
-#include <windows.h>
 #include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
@@ -78,25 +77,23 @@ VS_VERSION_INFO VERSIONINFO
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "000004b0"
+        BLOCK "080004b0"
         BEGIN
             VALUE "Comments", "Sonic Robo Blast 2 Nozomi is a freeware modification of Sonic Robo Blast 2, a fangame by Sonic Team Jr.\0"
-            VALUE "CompanyName", "Sonic Team Junior, Marilyn Nozomi\0"
-            VALUE "FileDescription", "Sonic Robo Blast 2\0"
-            VALUE "FileVersion", "1, 4, 0, 0\0"
+            VALUE "CompanyName", "Sonic Team Junior\0"
+            VALUE "FileDescription", "Sonic Robo Blast 2 Nozomi\0"
+            VALUE "FileVersion", "1, 5, 0, 0\0"
             VALUE "InternalName", "srb2-nozomi\0"
             VALUE "LegalCopyright", "© 1998-2002 Sonic Team Junior © 2026 Marilyn Nozomi\0"
             VALUE "LegalTrademarks", "Freeware\0"
-            VALUE "OriginalFilename", "srb2win.exe\0"
-            VALUE "PrivateBuild", "\0"
-            VALUE "ProductName", "Sonic Robo Blast 2\0"
-            VALUE "ProductVersion", "1, 4, 0, 0\0"
-            VALUE "SpecialBuild", "\0"
+            VALUE "OriginalFilename", "srb2-nozomi.exe\0"
+            VALUE "ProductName", "Sonic Robo Blast 2 Nozomi\0"
+            VALUE "ProductVersion", "1, 5, 0, 0\0"
         END
     END
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation", 0x0, 1200
+        VALUE "Translation", 0x800, 1200
     END
 END
 

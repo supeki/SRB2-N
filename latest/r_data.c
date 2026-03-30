@@ -945,8 +945,9 @@ int     R_TextureNumForName (char* name)
 
     if (i==-1)
     {
-        I_Error ("R_TextureNumForName: %.8s not found",
+       CONS_Printf ("R_TextureNumForName: %.8s not found\n",
                  name);
+	   return R_CheckTextureNumForName("REDWALL");
     }
     return i;
 }

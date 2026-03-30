@@ -52,8 +52,6 @@
 void FastMonster_OnChange(void);
 void P_Thrust(); // Tails
 void P_InstaThrust(); // Tails 08-26-2001
-fixed_t P_ReturnThrustX();
-fixed_t P_ReturnThrustY();
 void P_ExplodeMissile(); // Tails 08-26-2001
 
 // enable the solid corpses option : still not finished
@@ -2243,7 +2241,7 @@ void A_Invincibility ()
 if (!(multiplayer || netgame))
 {
        plyr->powers[pw_invulnerability] = 20*TICRATE + 1;
-if(plyr->powers[pw_super] == false)
+if((!(plyr->powers[pw_super] && cv_supermusic.value) || (!cv_supermusic.value && cv_invmusic.value)) && cv_invmusic.value)
     {
        S_StopMusic();
        S_ChangeMusic(mus_invinc, false);
@@ -2270,10 +2268,12 @@ void A_ExtraLife ()
 if (!(multiplayer || netgame))
     {
      plyr->lives += 1;
-       S_StopMusic();
-       S_ChangeMusic(mus_xtlife, false);
-       plyr->powers[pw_extralife] = 4*TICRATE + 1;
-       I_PlayCD(37, false);
+       //S_StopMusic();
+	   S_StartSound(plyr->mo, sfx_oneup);
+	   // No more 1up music! Nozomi 03-28-2026
+       //S_ChangeMusic(mus_xtlife, false);
+       //plyr->powers[pw_extralife] = 4*TICRATE + 1;
+       //I_PlayCD(37, false);
     }
 }
 // end extra life Tails 03-12-2000
@@ -2441,23 +2441,24 @@ actor->momz = JUMPGRAVITY*1; // make bunny hop!
 
 // end bunny hop tails
 
-// start random bubble spawn Tails 03-07-2000
-void A_BubbleSpawn (mobj_t*   actor)
+void A_BubbleSpawn(mobj_t *actor)
 {
- if (P_Random () > 128)
-   {
-        P_SpawnMobj (actor->x,actor->y,actor->z + (actor->height / 2), MT_SMALLBUBBLE);
-   }
-else if (P_Random () < 128 && P_Random () > 96)
-   {
-        P_SpawnMobj (actor->x,actor->y,actor->z + (actor->height / 2), MT_MEDIUMBUBBLE);
-   }
-else if (P_Random () > 96 && P_Random () < 160)
-   {
-        P_SpawnMobj (actor->x,actor->y,actor->z + (actor->height / 2), MT_EXTRALARGEBUBBLE);
-   }
+	byte prandom;
+	mobj_t *bubble = NULL;
+	if (!(actor->eflags & MF_UNDERWATER))
+	{
+		return;
+	}
+
+	prandom = P_Random();
+
+	if (leveltime % (3*TICRATE) < 8)
+		bubble = P_SpawnMobj(actor->x, actor->y, actor->z + (actor->height / 2), MT_EXTRALARGEBUBBLE);
+	else if (prandom > 128)
+		bubble = P_SpawnMobj(actor->x, actor->y, actor->z + (actor->height / 2), MT_SMALLBUBBLE);
+	else if (prandom < 128 && prandom > 96)
+		bubble = P_SpawnMobj(actor->x, actor->y, actor->z + (actor->height / 2), MT_MEDIUMBUBBLE);
 }
-// end random bubble spawn Tails 03-07-2000
 
 // start bubble floating Tails 03-07-2000
 void A_BubbleRise (mobj_t*   actor)

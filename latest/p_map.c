@@ -764,23 +764,64 @@ if(tmthing->player) // Is the moving/interacting object the player?
 
 		// Spring logic recode! Nozomi 03-16-2026
 		if (thing->flags2 & MF2_SPRING) {
+			if (tmthing->eflags & MF_SPRUNG)
+				return false;
+
 			if (thing->info->damage || tmthing->player->homing) {
-				tmthing->player->mo->momx = tmthing->player->mo->momy = tmthing->player->mo->momz = 0;
+				tmthing->player->mo->momx = tmthing->player->mo->momy = 0;
 
 				P_UnsetThingPosition (tmthing);
 				tmthing->player->mo->x = thing->x;
 				tmthing->player->mo->y = thing->y;
-				tmthing->player->mo->z = thing->z + thing->height + 1;
+				
+				if (thing->info->mass > 0)
+					tmthing->player->mo->z = thing->z + thing->height + 1;
 				P_SetThingPosition (tmthing);
 			}
 
 			if (thing->info->mass > 0) {
-				tmthing->player->mo->momz++;
+				tmthing->player->mo->z++;
 				tmthing->player->mo->momz = thing->info->mass;
 				P_SetMobjState (tmthing->player->mo, S_PLAY_PLG1);
 			}
 
+			thing->flags &= ~(MF_SOLID);
+			thing->flags2 &= ~(MF2_SPRING);
+
 			if (thing->info->damage > 0) {
+				if (thing->info->mass == 0)
+				{ // Partially stole this from 2.2 Nozomi 03-28-2026
+					fixed_t offx, offy;
+					// Horizontal springs teleport you in FRONT of them.
+					tmthing->momx = tmthing->momy = 0;
+
+					// Overestimate the distance to position you at
+					offx = P_ReturnThrustX(thing, thing->angle, (thing->radius + tmthing->radius + 1) * 2);
+					offy = P_ReturnThrustY(thing, thing->angle, (thing->radius + tmthing->radius + 1) * 2);
+
+					// Make it square by clipping
+					if (offx > (thing->radius + tmthing->radius + 1))
+						offx = thing->radius + tmthing->radius + 1;
+					else if (offx < -(thing->radius + tmthing->radius + 1))
+						offx = -(thing->radius + tmthing->radius + 1);
+
+					if (offy > (thing->radius + tmthing->radius + 1))
+						offy = thing->radius + tmthing->radius + 1;
+					else if (offy < -(thing->radius + tmthing->radius + 1))
+						offy = -(thing->radius + tmthing->radius + 1);
+
+					// Set position!
+					P_UnsetThingPosition (tmthing);
+					tmthing->player->mo->x = thing->x + offx;
+					tmthing->player->mo->y = thing->y + offy;
+					P_SetThingPosition (tmthing);
+					
+					// force our angle for horiz :)
+					tmthing->player->mo->angle = thing->angle;
+					if (tmthing->player==&players[consoleplayer])
+						localangle = thing->angle;
+				}
+
 				P_InstaThrust(tmthing, thing->angle, thing->info->damage);
 
 				if(!(tmthing->player->cmd.forwardmove || tmthing->player->cmd.sidemove))
@@ -791,13 +832,21 @@ if(tmthing->player) // Is the moving/interacting object the player?
 				}
 			}
 
-			tmthing->player->mfspinning = 0;
-            tmthing->player->mfjumped = 0;
+			// New spring state logic! Nozomi 03-28-2026
+			P_SetMobjState (thing, mobjinfo[thing->type].seestate);
+
+			if (thing->info->mass != 0) {
+				tmthing->player->mfspinning = 0;
+				tmthing->player->mfjumped = 0;
+			}
+
 			tmthing->player->homing = 0; // Don't continue homing in to springs! Nozomi 03-17-2026
             tmthing->player->gliding = 0;
             tmthing->player->glidetime = 0;
             tmthing->player->climbing = 0;
 			tmthing->eflags |= MF_SPRUNG;
+			thing->flags |= MF_SOLID;
+			thing->flags2 |= MF2_SPRING;
 		}
 
 		if((tmthing->player->mfjumped == 1) || (tmthing->player->mfspinning == 1) || (tmthing->player->powers[pw_invulnerability]) || (tmthing->player->powers[pw_super])) // Do you possess the ability to subdue the object?
@@ -822,15 +871,6 @@ if(tmthing->player) // Is the moving/interacting object the player?
 					P_DamageMobj(thing, tmthing, tmthing, 1);
 					}
 					break;
-				case MT_YELLOWDIAG: // Yellow diagonal spring (pointing up from ground)
-                   P_SetMobjState (thing, S_YDIAG2);
-                   break;
-                 case MT_MISC70: // Yellow vertical spring (pointing up)
-                   P_SetMobjState (thing, S_HEADSONSTICK2);
-                   break;
-                 case MT_MISC84: // Red vertical spring (pointing up)
-                   P_SetMobjState (thing, S_COLONGIBS2);
-                   break;
 				 case MT_SPEEDPAD: // Speed Pad
                    tmthing->player->mo->momx = 0;
                    tmthing->player->mo->momy = 0;
@@ -849,9 +889,6 @@ if(tmthing->player) // Is the moving/interacting object the player?
 		{
 			switch(thing->type)
 			{
-				case MT_YELLOWDIAG: // Yellow diagonal spring (pointing up from ground)
-                   P_SetMobjState (thing, S_YDIAG2);
-                   break;
                  case MT_MISC70: // Yellow vertical spring (pointing up)
                    P_SetMobjState (thing, S_HEADSONSTICK2);
                    break;

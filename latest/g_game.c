@@ -122,6 +122,10 @@
 #include "byteptr.h"
 
 #include "i_joy.h"
+#include "info.h"
+
+#include "EXTRAS/srb.h"
+#include "EXTRAS/tetris.h"
 
 // added 8-3-98 increse savegame size from 0x2c000 (180kb) to 512*1024
 #define SAVEGAMESIZE    (512*1024)
@@ -164,6 +168,7 @@ boolean         paused;
 boolean         usergame;               // ok to save / end game
 
 // srb2-nozomi stuff
+boolean nozomi_extra = false;
 boolean nozo_timeattack = false;
 consvar_t cv_nozotimeattacklevel = {"timeattacklevel", "1"};
 
@@ -222,7 +227,7 @@ consvar_t cv_showmessages   = {"showmessages","1",CV_SAVE | CV_CALL | CV_NOINIT,
 consvar_t cv_mousemove      = {"mousemove"   ,"1",CV_SAVE,CV_OnOff};
 consvar_t cv_mousemove2     = {"mousemove2"  ,"1",CV_SAVE,CV_OnOff};
 consvar_t cv_analog			= {"analog"		 ,"0",CV_NETVAR | CV_CALL,CV_OnOff, Analog_OnChange}; // Analog Test Tails 06-10-2001
-
+consvar_t cv_bosslockon	    = {"bosslockon"  ,"0",CV_SAVE,CV_OnOff};
 
 #if MAXPLAYERS>32
 #error please update "player_name" table using the new value for MAXPLAYERS
@@ -1144,6 +1149,7 @@ void G_Ticker (void)
     ULONG       i;
     int         buf;
     ticcmd_t*   cmd;
+	gamestate_t oldgamestate = gamestate;
 
     // do player reborns if needed
     if( gamestate == GS_LEVEL )
@@ -1194,6 +1200,9 @@ void G_Ticker (void)
         }
     }
 
+	if (gamestate != GS_WAITINGPLAYERS)
+		play_srb_nozomi = false;
+
     // do main actions
     switch (gamestate)
     {
@@ -1226,6 +1235,10 @@ void G_Ticker (void)
 
 	  case GS_NOZOMITITLE:
 		  D_PageTicker ();
+		  break;
+
+	  case GS_NOZOMITETRIS:
+		  T_TetrisTicker ();
 		  break;
     }
 }
@@ -2134,6 +2147,7 @@ if(cv_gametype.value != 1)
 players[i].score = 0; // Set score to 0 Tails 03-10-2000
 
 players[i].xtralife = players[i].xtralife2 = 0;
+players[i].sp_score = 0;
 }
 
     // for internal maps only

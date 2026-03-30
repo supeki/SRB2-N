@@ -104,13 +104,20 @@ static  int VID_SetWindowedDisplayMode (viddef_t *lvid, vmode_t *pcurrentmode);
         vmode_t *VID_GetModePtr (int modenum);
         void VID_Init (void);
 
+// Mode ID of the Custom mode
+// TODO - Make it so this is a global variable which is set based on the index of the custom mode at boot, right now it's a hardcoded constant which is not great,
+// but better than just using a number like before
+// Save 22-03-2026
+
 // this holds description of the startup video mode,
 // the resolution is 320x200, windowed on the desktop
-#define NUMSPECIALMODES  3
+#define NUMSPECIALMODES  5
+#define MODE_CUSTOM NUMSPECIALMODES-1
+
 vmode_t specialmodes[NUMSPECIALMODES] = {
         {
             NULL,
-            "320x200W", //faB: W to make sure it's the windowed mode
+            "320x200", 
             320, 200,   //(200.0/320.0)*(320.0/240.0),
             320, 1,     // rowbytes, bytes per pixel
             1, 2,       // windowed (TRUE), numpages
@@ -120,7 +127,7 @@ vmode_t specialmodes[NUMSPECIALMODES] = {
         },
 		{
             NULL,
-            "640x400W", //faB: W to make sure it's the windowed mode
+            "640x400", 
             640, 400,   //(200.0/320.0)*(320.0/240.0),
             640, 1,     // rowbytes, bytes per pixel
             1, 2,       // windowed (TRUE), numpages
@@ -130,7 +137,27 @@ vmode_t specialmodes[NUMSPECIALMODES] = {
         },
 		{
             NULL,
-            "CUSTOM", //faB: W to make sure it's the windowed mode
+            "960x600", 
+            960, 600,   //(200.0/320.0)*(320.0/240.0),
+            960, 1,     // rowbytes, bytes per pixel
+            1, 2,       // windowed (TRUE), numpages
+            NULL,
+            VID_SetWindowedDisplayMode,
+            0          // misc
+        },
+		{
+            NULL,
+            "1280x800", 
+            1280, 800,   //(200.0/320.0)*(320.0/240.0),
+            1280, 1,     // rowbytes, bytes per pixel
+            1, 2,       // windowed (TRUE), numpages
+            NULL,
+            VID_SetWindowedDisplayMode,
+            0          // misc
+        },
+		{
+            NULL,
+            "CUSTOM", 
             320, 200,   //(200.0/320.0)*(320.0/240.0),
             320, 1,     // rowbytes, bytes per pixel
             1, 2,       // windowed (TRUE), numpages
@@ -345,20 +372,18 @@ void I_FinishUpdate (void)
         // 26-12-99 BP: can fail when not active (alt-tab)
         if(LockScreen())
         {
-        //faB: TODO: use directX blit here!!? a blit might use hardware with access
-        //     to main memory on recent hardware, and software blit of directX may be
-        //  optimized for p2 or mmx??
-        VID_BlitLinearScreen (vid.buffer, ScreenPtr,
-            vid.width*vid.bpp, vid.height,
-            vid.width*vid.bpp, ScreenPitch );
+			//faB: TODO: use directX blit here!!? a blit might use hardware with access
+			//     to main memory on recent hardware, and software blit of directX may be
+			//  optimized for p2 or mmx??
+			VID_BlitLinearScreen (vid.buffer, ScreenPtr,
+				vid.width*vid.bpp, vid.height,
+				vid.width*vid.bpp, ScreenPitch );
 
-        UnlockScreen();
+			UnlockScreen();
 
-        // swap screens
-        ScreenFlip(cv_vidwait.value);
-#ifdef HWRENDER
-    }
-#endif
+			// swap screens
+			ScreenFlip(cv_vidwait.value);
+		}
     }
 }
 
@@ -533,9 +558,10 @@ static BOOL GetExtraModesCallback (int width, int height, int bpp)
     }
 
 	// skip non-aspect modes Tails 03-25-2001
-	if(!(width == 640 || width == 320))
+    // Added 1280x800 to this Save 22-03-2026
+	if(!(width == 1280 || width == 640 || width == 320))
 		goto skip;
-	if(!(height == 400 || height == 200))
+	if(!(height == 800 || height == 400 || height == 200))
 		goto skip;
 
     // check if we have space for this mode
@@ -878,7 +904,7 @@ int VID_SetMode (int modenum)  //, unsigned char *palette)
     pnewmode = VID_GetModePtr (modenum);
 
     // dont switch to the same display mode
-    if (pnewmode == pcurrentmode && modenum != 2) {
+    if (pnewmode == pcurrentmode && modenum != MODE_CUSTOM) {
 		CONS_Printf("Already using video mode %d\n", modenum);
 		return 1;
 	}
@@ -887,7 +913,7 @@ int VID_SetMode (int modenum)  //, unsigned char *palette)
     poldmode = pcurrentmode;
     pcurrentmode = pnewmode;
 
-	if (modenum == 2) {
+	if (modenum == MODE_CUSTOM) {
 		// initialize vidbuffer size for setmode
 		vid.width  = cv_scr_width.value;
 		vid.height = cv_scr_height.value;

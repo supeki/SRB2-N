@@ -1744,8 +1744,8 @@ void ST_overlayDrawer (int playernum)
 						name_patch = stuser;
 				}
 
-				if (strlen(skins[plyr->skin].facescale) > 0) {
-					fixed_t scale = (fixed_t)(atof(skins[plyr->skin].facescale) * FRACUNIT);
+				if (skins[plyr->skin].facescale != FRACUNIT) {
+					fixed_t scale = skins[plyr->skin].facescale;
 
 					V_DrawScaledPatch(SCX(52),SCY(192)-(FixedMul(face_patch->height<<FRACBITS, vid.dupy*scale)>>FRACBITS), FG | V_NOSCALESTART,name_patch);
 					V_DrawCustomScaledTranslationPatch(SCX(16),SCY(192)-(FixedMul(face_patch->height<<FRACBITS, vid.dupy*scale)>>FRACBITS), scale, FG | V_NOSCALESTART,face_patch,colormap);

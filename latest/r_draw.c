@@ -63,6 +63,7 @@
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
+#include "info.h" // For skincolor numbers.
 
 #ifdef HWRENDER
 #include "hardware/hw_main.h"
@@ -195,26 +196,27 @@ void R_RecalcFuzzOffsets (void)
 //                   TRANSLATION COLORMAP CODE
 // =========================================================================
 
-char *Color_Names[MAXSKINCOLORS]={
+char *Color_Names[MAXSKINCOLORS+1]={
    "",
    "White",
    "Silver",
    "Gray", 
    "Pink",
-   "Cherry_Blossom",
-   "Bright_Red",
+   "Cherry_Blossom", // I made this color! :D Nozomi Date Unknown
+   "Bright_Red", // Someone asked for this... Nozomi Date Unknown
    "Red",
    "Crimson", 
    "Peach",
-   "Orange",
+   "Apricot", // used to be Orange Nozomi 03-25-2026
    "Beige",
+   "Lemon",
    "Green",
-   "Forest",
+   "Forest", // Take a hint :)
    "Light_Blue",
-   "Blue",
+   "Blue", // An in-between of Light and Deep! Nozomi Date Unknown
    "Deep_Blue",
    "Purple",
-   "Legacy_Army",
+   "Legacy_Army", // MIDIMan jokingly asked me to port this, I did it :D Nozomi Date Unknown
 };
 
 #if MAXSKINCOLORS > 32
@@ -252,91 +254,95 @@ void R_InitTranslationTables (void)
     W_ReadLump( W_GetNumForName("TRANSFIR"), transtables+0x30000 );
     W_ReadLump( W_GetNumForName("TRANSFX1"), transtables+0x40000 );
 
-    translationtables = Z_MallocAlign (256*(MAXSKINCOLORS-1), PU_STATIC, 0, 8);
+    translationtables = Z_MallocAlign (256*(MAXSKINCOLORS), PU_STATIC, 0, 8);
 
     // translate just the 16 green colors
     for (i=0 ; i<256 ; i++)
     {
         if (i >= 0x70 && i<= 0x7f)
         {
-            translationtables [i+2*256] = 0x60 + (i&0xf); // Gray
-			translationtables [i+3*256] = 0x10 + (i&0xf); // Pink
-			translationtables [i+4*256] = 0xa8 + (i&0xf)/3;   // Cherry Blossom by Nozomi
+            translationtables [i+SKINCOLOR_GREY*256] = 0x60 + (i&0xf); // Gray
+			translationtables [i+SKINCOLOR_PINK*256] = 0x10 + (i&0xf); // Pink
+			translationtables [i+SKINCOLOR_CHERRYBLOSSOM*256] = 0xa8 + (i&0xf)/3;   // Cherry Blossom by Nozomi
 			translationtables [i+SKINCOLOR_RED*256] = 0xb0 + (i&0xf); // Red (renamed from Light Red)
-            translationtables [i+7*256] = 0x20 + (i&0xf); // Crimson (renamed from Red)
-			translationtables [i+8*256] = 0x30 + (i&0xf); // Peach
-			translationtables [i+9*256] = 0xd0 + (i&0xf); // Orange
-			translationtables [i+10*256] = 0x80 + (i&0xf); // Beige
-			translationtables [i+11*256] = 0x70 + (i&0xf); // Green
+            translationtables [i+SKINCOLOR_CRIMSON*256] = 0x20 + (i&0xf); // Crimson (renamed from Red)
+			translationtables [i+SKINCOLOR_PEACH*256] = 0x30 + (i&0xf); // Peach
+			translationtables [i+SKINCOLOR_APRICOT*256] = 0xd0 + (i&0xf); // Apricot (renamed from Orange)
+			translationtables [i+SKINCOLOR_BEIGE*256] = 0x80 + (i&0xf); // Beige
+			translationtables [i+SKINCOLOR_GREEN*256] = 0x70 + (i&0xf); // Green
 			translationtables [i+SKINCOLOR_FOREST*256] = 0x78 + (i&0xf)/2; // Forest by Nozomi
-			translationtables [i+SKINCOLOR_LIGHT_BLUE*256] = 0xc0 + (i&0xf); // Light Blue
+			translationtables [i+SKINCOLOR_LIGHTBLUE*256] = 0xc0 + (i&0xf); // Light Blue
 
 			if ((i&0xf) <4)
-               translationtables [i+5*256] = 0xac + (i&0xf);   // Bright Red by Nozomi
+				translationtables [i+SKINCOLOR_BRIGHTRED*256] = 0xac + (i&0xf);   // Bright Red by Nozomi
             else
-               translationtables [i+5*256] = 0xb0-4 + (i&0xf);
+				translationtables [i+SKINCOLOR_BRIGHTRED*256] = 0xb0-4 + (i&0xf);
 
+			if ((i&0xf) < 8)
+				translationtables [i+SKINCOLOR_LEMON*256] = 0xe0 + (i&0xf); // Lemon by Nozomi
+			else
+				translationtables [i+SKINCOLOR_LEMON*256] = 0xa0-8 + (i&0xf);
 
 			if ((i&0xf) < 13)
-				translationtables [i+14*256] = 0xc3 + (i&0xf); // Blue
+				translationtables [i+SKINCOLOR_BLUE*256] = 0xc3 + (i&0xf); // Blue
 			else
-				translationtables [i+14*256] = 0xf0-13 + (i&0xf);
+				translationtables [i+SKINCOLOR_BLUE*256] = 0xf0-13 + (i&0xf);
 
             if ((i&0xf) <9)
-               translationtables [i+15*256] = 0xc7 + (i&0xf);   // Deep Blue (renamed from Dark Blue)
+               translationtables [i+SKINCOLOR_DEEPBLUE*256] = 0xc7 + (i&0xf);   // Deep Blue (renamed from Dark Blue)
             else
-               translationtables [i+15*256] = 0xf0-9 + (i&0xf);
+               translationtables [i+SKINCOLOR_DEEPBLUE*256] = 0xf0-9 + (i&0xf);
 
 			if ((i&0xf) <8)
-               translationtables [i+17*256] = 0x98 + (i&0xf);   // Army by SSNTails circa. 02-19-2000
-            else												// Renamed to Legacy Army by Nozomi
-               translationtables [i+17*256] = 0x90-8 + (i&0xf);
+               translationtables [i+SKINCOLOR_LEGACYARMY*256] = 0x98 + (i&0xf);   // Army by SSNTails circa. 02-19-2000
+            else												                  // Renamed to Legacy Army by Nozomi
+               translationtables [i+SKINCOLOR_LEGACYARMY*256] = 0x90-8 + (i&0xf);
         }
         else
         {
             // Keep all other colors as is.
-            for (j=0;j<(MAXSKINCOLORS-1)*256;j+=256)
+            for (j=0;j<(MAXSKINCOLORS)*256;j+=256)
                 translationtables [i+j] = i;
         }
     }
 
 	// White
 	// Provided by Nozomi
-	translationtables [0x70] = 4;
-	translationtables [0x71] = 4;
-	translationtables [0x72] = 4;
-	translationtables [0x73] = 4;
-	translationtables [0x74] = 4;
-	translationtables [0x75] = 4;
-	translationtables [0x76] = 80;
-	translationtables [0x77] = 81;
-	translationtables [0x78] = 83;
-	translationtables [0x79] = 85;
-	translationtables [0x7a] = 87;
-	translationtables [0x7b] = 89;
-	translationtables [0x7c] = 91;
-	translationtables [0x7d] = 93;
-	translationtables [0x7e] = 95;
-	translationtables [0x7f] = 97;
+	translationtables [0x70+SKINCOLOR_WHITE*256] = 4;
+	translationtables [0x71+SKINCOLOR_WHITE*256] = 4;
+	translationtables [0x72+SKINCOLOR_WHITE*256] = 4;
+	translationtables [0x73+SKINCOLOR_WHITE*256] = 4;
+	translationtables [0x74+SKINCOLOR_WHITE*256] = 4;
+	translationtables [0x75+SKINCOLOR_WHITE*256] = 4;
+	translationtables [0x76+SKINCOLOR_WHITE*256] = 80;
+	translationtables [0x77+SKINCOLOR_WHITE*256] = 81;
+	translationtables [0x78+SKINCOLOR_WHITE*256] = 83;
+	translationtables [0x79+SKINCOLOR_WHITE*256] = 85;
+	translationtables [0x7a+SKINCOLOR_WHITE*256] = 87;
+	translationtables [0x7b+SKINCOLOR_WHITE*256] = 89;
+	translationtables [0x7c+SKINCOLOR_WHITE*256] = 91;
+	translationtables [0x7d+SKINCOLOR_WHITE*256] = 93;
+	translationtables [0x7e+SKINCOLOR_WHITE*256] = 95;
+	translationtables [0x7f+SKINCOLOR_WHITE*256] = 97;
 
 	// Silver
 	// Provided by Nozomi
-	translationtables [0x70+256] = 4;
-	translationtables [0x71+256] = 80;
-	translationtables [0x72+256] = 82;
-	translationtables [0x73+256] = 85;
-	translationtables [0x74+256] = 87;
-	translationtables [0x75+256] = 90;
-	translationtables [0x76+256] = 93;
-	translationtables [0x77+256] = 95; // Windows 95
-	translationtables [0x78+256] = 98; // Windows 98 :fear:
-	translationtables [0x79+256] = 101;
-	translationtables [0x7a+256] = 103;
-	translationtables [0x7b+256] = 106;
-	translationtables [0x7c+256] = 108;
-	translationtables [0x7d+256] = 111;
-	translationtables [0x7e + 256] = 6; // Added spaces to shut GCC up
-	translationtables [0x7f+256] = 0;
+	translationtables [0x70+SKINCOLOR_SILVER*256] = 4;
+	translationtables [0x71+SKINCOLOR_SILVER*256] = 80;
+	translationtables [0x72+SKINCOLOR_SILVER*256] = 82;
+	translationtables [0x73+SKINCOLOR_SILVER*256] = 85;
+	translationtables [0x74+SKINCOLOR_SILVER*256] = 87;
+	translationtables [0x75+SKINCOLOR_SILVER*256] = 90;
+	translationtables [0x76+SKINCOLOR_SILVER*256] = 93;
+	translationtables [0x77+SKINCOLOR_SILVER*256] = 95; // Windows 95
+	translationtables [0x78+SKINCOLOR_SILVER*256] = 98; // Windows 98 :pink_heart:
+	translationtables [0x79+SKINCOLOR_SILVER*256] = 101;
+	translationtables [0x7a+SKINCOLOR_SILVER*256] = 103;
+	translationtables [0x7b+SKINCOLOR_SILVER*256] = 106;
+	translationtables [0x7c+SKINCOLOR_SILVER*256] = 108;
+	translationtables [0x7d+SKINCOLOR_SILVER*256] = 111;
+	translationtables [0x7e+SKINCOLOR_SILVER*256] = 6;
+	translationtables [0x7f+SKINCOLOR_SILVER*256] = 0;
 
 	// Purple
 	// Provided by ova pico

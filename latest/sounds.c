@@ -56,7 +56,8 @@ musicinfo_t S_music[NUMMUSIC] =
     { "drown\0" , 0 }, // drowning Tails 03-06-2000
     { "gmover"  , 0 }, // Tails 03-14-2000
     { "xtlife"  , 0 }, // Tails 03-14-2000
-	{ "inter\0"  , 0 },
+	{ "inter\0" , 0 },
+	{ "supers"  , 0 }, // Super Sonic :) Nozomi 03-28-2026
     { "runnin"  , 0 },
     { "stalks"  , 0 },
     { "countd"  , 0 },
@@ -88,7 +89,7 @@ musicinfo_t S_music[NUMMUSIC] =
     { "shawn3"  , 0 },
     { "openin"  , 0 },
     { "evil\0\0", 0 },
-    { "ultima"  , 0 },
+    { "ultima"  , 0 }
 };
 
 
@@ -184,9 +185,9 @@ sfxinfo_t S_sfx[NUMSFX] =
   { "bspact"   ,  true, 100, 0, -1, -1, 0, -1},
   { "bspwlk"   ,  true, 100, 0, -1, -1, 0, -1},
   { "vilact"   ,  true, 100, 0, -1, -1, 0, -1},
-  { "spndsh"  , false,  78, 0, -1, -1, 0, SKSSPNDSH},
+  { "spndsh"   , false,  78, 0, -1, -1, 0, SKSSPNDSH, 1},
   { "barexp"   , false,  60, 0, -1, -1, 0, -1},
-  { "zoom\0\0"  , false,  64, 0, -1, -1, 0, SKSZOOM},
+  { "zoom\0\0" , false,  64, 0, -1, -1, 0, SKSZOOM, 1},
   { "hoof\0\0" , false,  70, 0, -1, -1, 0, -1},
   { "metal\0"  , false,  70, 0, -1, -1, 0, -1},
   { "chgun\0"  , false,  64, &S_sfx[sfx_menu1], 150, 0, 0, -1},
@@ -210,7 +211,7 @@ sfxinfo_t S_sfx[NUMSFX] =
   { "keendt"   , false,  70, 0, -1, -1, 0, -1},
   { "skeact"   , false,  70, 0, -1, -1, 0, -1},
   { "skesit"   , false,  70, 0, -1, -1, 0, -1},
-  { "bkpoof"   , false,  70, 0, -1, -1, 0, -1},
+  { "bkpoof"   , false,  70, 0, -1, -1, 0, -1, 8},
   { "radio\0"  , false,  60, 0, -1, -1, 0, SKSRADIO},
 
   //added:22-02-98: sound when the player avatar jumps in air 'hmpf!'
@@ -236,13 +237,14 @@ sfxinfo_t S_sfx[NUMSFX] =
   { "steam1"   , false,  64, 0, -1, -1, 0, -1}, // Tails 06-19-2001
   { "steam2"   , false,  64, 0, -1, -1, 0, -1}, // Tails 06-19-2001
   { "cgot\0\0" , true,  120, 0, -1, -1, 0, -1}, // Got Emerald! Tails 09-02-2001
-  { "litng1"   , false, 126, 0, -1, -1, 0, -1},
-  { "litng2"   , false, 126, 0, -1, -1, 0, -1},
-  { "litng3"   , false, 126, 0, -1, -1, 0, -1},
-  { "litng4"   , false, 126, 0, -1, -1, 0, -1},
-  { "athun1"   , false, 126, 0, -1, -1, 0, -1},
-  { "athun2"   , false, 126, 0, -1, -1, 0, -1},
-  { "rainin"   , true,  127, 0, -1, -1, 0, -1},
+  { "litng1"   , false, 126, 0, -1, -1, 0, -1, 2},
+  { "litng2"   , false, 126, 0, -1, -1, 0, -1, 2},
+  { "litng3"   , false, 126, 0, -1, -1, 0, -1, 2},
+  { "litng4"   , false, 126, 0, -1, -1, 0, -1, 2},
+  { "athun1"   , false, 126, 0, -1, -1, 0, -1, 2},
+  { "athun2"   , false, 126, 0, -1, -1, 0, -1, 2},
+  { "rainin"   , true,  127, 0, -1, -1, 0, -1, 2},
+  { "oneup"    , true,  127, 0, -1, -1, 0, -1, 2},
   
   // skin sounds free slots to add sounds at run time (Boris HACK!!!)
   // initialized to NULL

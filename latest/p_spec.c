@@ -287,9 +287,10 @@ void P_FindAnimatedFlat (int animnum)
     endflatnum = W_CheckNumForName (animdefs[animnum].endname);
 
     // note: high word of lumpnum is the wad number
-    if ( (startflatnum>>16) != (endflatnum>>16) )
+    /*if ( (startflatnum>>16) != (endflatnum>>16) )
        I_Error ("AnimatedFlat start %s not in same wad as end %s\n",
                 animdefs[animnum].startname, animdefs[animnum].endname);
+	*/
 
     //
     // now search through the levelflats if this anim flat sequence is used
@@ -835,6 +836,7 @@ P_FindSectorFromLineTag
 {
   start = start >= 0 ? sectors[start].nexttag :
     sectors[(unsigned) line->tag % (unsigned) numsectors].firsttag;
+
   while (start >= 0 && sectors[start].tag != line->tag)
     start = sectors[start].nexttag;
   return start;

@@ -185,6 +185,9 @@
 #include "win32/win_main.h"
 #endif
 
+#include "EXTRAS/srb.h"
+#include "EXTRAS/tetris.h"
+
 //
 //  DEMO LOOP
 //
@@ -270,7 +273,7 @@ void D_ProcessEvents (void)
     {
         ev = &events[eventtail];
         // Menu input
-		if (gamestate != GS_WAITINGPLAYERS)
+		if (gamestate != GS_WAITINGPLAYERS && gamestate != GS_NOZOMITETRIS)
 			if (M_Responder (ev))
 				continue;              // menu ate the event
 
@@ -391,6 +394,9 @@ void D_Display (void)
 	  case GS_NOZOMITITLE:
 		D_PageDrawer (pagename);
 		break;
+	  case GS_NOZOMITETRIS:
+		  T_TetrisDrawer ();
+		  break;
 	  case GS_NULL:
         break;
 
@@ -589,6 +595,16 @@ void D_Display (void)
     } while (!done && I_GetTime()-y<2*TICRATE);
 }
 
+void D_UpdateWindowTitle(void)
+{
+	if (gamestate == GS_LEVEL && strlen(mapheaders[gamemap].name) > 0 && !demoplayback)
+		if (mapheaders[gamemap].act > 0)
+			I_SetWindowTitle(va("Sonic Robo Blast 2 - %s Zone Act %d", mapheaders[gamemap].name, mapheaders[gamemap].act));
+		else
+			I_SetWindowTitle(va("Sonic Robo Blast 2 - %s Zone", mapheaders[gamemap].name));
+	else
+		I_SetWindowTitle("Sonic Robo Blast 2");
+}
 
 
 // =========================================================================
@@ -712,14 +728,6 @@ p = M_CheckParm ("-name");
         else
             if(lastrendered+2<I_GetTime()) // in case the server hang or netsplit
                 D_Display ();
-
-		if (gamestate == GS_LEVEL && strlen(mapheaders[gamemap].name) > 0)
-			if (mapheaders[gamemap].act > 0)
-				I_SetWindowTitle(va("Sonic Robo Blast 2 - %s Zone Act %d", mapheaders[gamemap].name, mapheaders[gamemap].act));
-			else
-				I_SetWindowTitle(va("Sonic Robo Blast 2 - %s Zone", mapheaders[gamemap].name));
-		else
-			I_SetWindowTitle("Sonic Robo Blast 2");
             
         // Win32 exe uses DirectSound..
 #if !defined( __WIN32__) && !defined( __OS2__)
@@ -751,147 +759,6 @@ p = M_CheckParm ("-name");
 //   D_AdvanceDemo
 // =========================================================================
 
-// Sonic Robo-Blast! Nozomi
-
-// Input Variables 
-// The left and right inputs are used to mimic TGF's movement input stuff where if you hold an opposite dir it's ignored
-int srbn_input_left, srbn_input_right, srbn_input_jump = 0;
-
-// Sonic (Earless) Variables
-int srbn_sonic_x, srbn_sonic_y, srbn_sonic_speed, srbn_sonic_momy, srbn_sonic_rings, srbn_sonic_onground = 0; // These start at 0!
-int srbn_sonic_idletimer, srbn_sonic_runtimer, srbn_sonic_jumptimer = 0; // These start at 0 as well! (Because they're animation timers....)
-int srbn_sonic_lives = 3; // Sonic starts with 3 lives in Sonic Robo-Blast! unless you use the 99 lives cheat.
-int srbn_sonic_dir = -1; // Sonic faces left by default in Sonic Robo-Blast!
-int srbn_sonic_hitbox[4];
-
-// Sonic Patches
-static patch_t* srbn_earless[15];
-static patch_t* srbn_hud[12];
-
-// Initialize a bunch of stuff yaya! Nozomi 03-10-2026
-void D_InitSRBNozomi(void) {
-	int i;
-
-	for (i=1; i<15; i++)
-		srbn_earless[i-1] = W_CachePatchName(va("EARLSS%d", i), PU_CACHE);
-
-	for (i=0; i<10; i++)
-		srbn_hud[i] = W_CachePatchName(va("SRBNHUD%d", i), PU_CACHE);
-	srbn_hud[10] = W_CachePatchName("SRBNHUDR", PU_CACHE);
-	srbn_hud[11] = W_CachePatchName("SRBNHUDS", PU_CACHE);
-
-	srbn_sonic_hitbox[0] = 0; // left
-	srbn_sonic_hitbox[1] = 4; // top
-	srbn_sonic_hitbox[2] = srbn_earless[0]->width-1; // right
-	srbn_sonic_hitbox[3] = srbn_earless[0]->height-1; // bottom
-}
-
-// Let's separate our stuff... Nozomi 03-10-2026
-static void SRBN_InputHandle(void) {
-	// movement!! Nozomi 03-10-2026
-	// ...Not yet Nozomi! This is for input now! ~ Future Nozomi
-	if (gamekeydown[gamecontrol[gc_strafeleft][0]] ||
-		gamekeydown[gamecontrol[gc_strafeleft][1]])
-		srbn_input_left++;
-	else
-		srbn_input_left = 0;
-
-	if (gamekeydown[gamecontrol[gc_straferight][0]] ||
-		gamekeydown[gamecontrol[gc_straferight][1]])
-		srbn_input_right++;
-	else
-		srbn_input_right = 0;
-
-	if (gamekeydown[gamecontrol[gc_jump][0]] ||
-		gamekeydown[gamecontrol[gc_jump][1]])
-		srbn_input_jump++;
-	else
-		srbn_input_jump = 0;
-
-	// For that "TGF-like" input detection :3 Nozomi 03-10-2026
-	if (srbn_input_left > srbn_input_right)
-		srbn_input_right = 0;
-	else if (srbn_input_right > srbn_input_left)
-		srbn_input_left = 0;
-}
-
-static void SRBN_PlayerHandle(void) {
-	if (srbn_input_left)
-		srbn_sonic_dir = -1;
-	else if (srbn_input_right)
-		srbn_sonic_dir = 1;
-
-	if (srbn_input_left || srbn_input_right)
-		srbn_sonic_speed++;
-	else if (srbn_sonic_speed > 0)
-		srbn_sonic_speed--;
-
-	if (srbn_sonic_speed > 16)
-		srbn_sonic_speed = 16;
-
-	if (srbn_sonic_onground) {
-		if (srbn_input_left || srbn_input_right || srbn_sonic_speed > 0) {
-			srbn_sonic_runtimer += srbn_sonic_speed;
-			srbn_sonic_idletimer = 0;
-		} else {
-			srbn_sonic_idletimer++;
-			srbn_sonic_runtimer = 0;
-		}
-
-		srbn_sonic_jumptimer = 0;
-
-		if (srbn_input_jump) {
-			srbn_sonic_momy = -11;
-			srbn_sonic_onground = 0;
-		}
-	} else {
-		srbn_sonic_idletimer = 0;
-		srbn_sonic_runtimer = 0;
-
-		{
-			int spd = abs(srbn_sonic_momy) + srbn_sonic_speed;
-			if (spd > 28) 
-				spd = 28;
-			if (spd < 7)
-				spd = 7;
-			srbn_sonic_jumptimer += spd;
-		}
-
-		srbn_sonic_momy++;
-	}
-
-	{
-			int i;
-
-			for (i=0; i < srbn_sonic_speed/2; i++) {
-				srbn_sonic_x += 1*srbn_sonic_dir;
-
-				if (srbn_sonic_x < 0) {
-					srbn_sonic_speed = 0;
-					srbn_sonic_x = 0;
-					break;
-				}
-
-				if (srbn_sonic_x >= 320-srbn_sonic_hitbox[2]) {
-					srbn_sonic_speed = 0;
-					srbn_sonic_x = 320-(srbn_sonic_hitbox[2]+1);
-					break;
-				}
-			}
-
-			for (i=0; i < abs(srbn_sonic_momy); i++) {
-				srbn_sonic_y += srbn_sonic_momy/abs(srbn_sonic_momy);
-
-				if (srbn_sonic_y + srbn_sonic_hitbox[3] >= 200) {
-					srbn_sonic_y = 200 - (srbn_sonic_hitbox[3]+1);
-					srbn_sonic_momy = 0;
-					srbn_sonic_onground = 1;
-					break;
-				}
-			}
-		}
-}
-
 //
 // D_PageTicker
 // Handles timing for warped projection
@@ -901,10 +768,14 @@ void D_PageTicker (void)
 	if (gamestate == GS_WAITINGPLAYERS) {
 		if (netgame && (!server)) {
 			// Sonic Robo-Blast! Nozomi
-			SRBN_InputHandle();
-			SRBN_PlayerHandle();
-		}
 
+			if (nozomi_extra)
+				if (play_srb_nozomi)
+					SRBN_GameplayLoop();
+				else if (gamekeydown[gamecontrol[gc_jump][0]] || gamekeydown[gamecontrol[gc_jump][1]])
+					SRBN_Init();
+		}
+					
 		return;
 	}
 
@@ -943,29 +814,18 @@ void D_PageDrawer (char* lumpname)
 			case GS_WAITINGPLAYERS:
 				if (netgame && (!server)) {
 					// show our server joining status! Nozomi 03-10-2026
+
+					// Sonic Robo-Blast! Nozomi
+					if (nozomi_extra)
+						if (play_srb_nozomi)
+							SRBN_Draw();
+						else
+							V_DrawString(160-strlen("Press JUMP to play a game!")*4, 100-4, "Press JUMP to play a game!");
+
 					if (cl_mode == cl_connected)
 						V_DrawString(160-strlen("connected! waiting on map change!")*4 + 8, 200-12, "connected! waiting on map change!");
 					else
 						V_DrawString(160-strlen("awaiting multiplayer connection")*4, 200-12, "awaiting multiplayer connection");
-
-					// insert fun thing here later~ Nozomi 03-10-2026
-					{
-						int earless_patch = 0;
-
-						if (srbn_sonic_jumptimer > 0)
-							earless_patch = (srbn_sonic_jumptimer / 17) % 4 + 10;
-						else if (srbn_sonic_runtimer > 0)
-							earless_patch = ((srbn_sonic_runtimer / 12) % 4) + 6;
-						else if (srbn_sonic_idletimer > 6.65f)
-							earless_patch = (int)(srbn_sonic_idletimer / 6.65f) % 5 + 1;
-
-						if (srbn_sonic_dir > 0)
-							V_DrawScaledPatch(srbn_sonic_x, srbn_sonic_y, 0, srbn_earless[earless_patch]);
-						else
-							V_DrawScaledPatchFlipped(srbn_sonic_x, srbn_sonic_y, 0, srbn_earless[earless_patch]);
-
-						V_DrawStringWhite(0, 0, va("%d,%d", srbn_sonic_x, srbn_sonic_y));
-					}
 				}
 				break;
 		}
@@ -1101,10 +961,12 @@ void D_DoAdvanceDemo (void)
 void D_StartTitle (void)
 {
     gameaction = ga_nothing;
+	gamestate = GS_NOZOMITITLE;
     playerdeadview = false;
 	nozo_timeattack = false;
     displayplayer = consoleplayer = statusbarplayer = 0;
     demosequence = -1;
+	D_UpdateWindowTitle();
     D_AdvanceDemo ();
     CON_ToggleOff();
 }
@@ -1505,7 +1367,7 @@ void D_DoomMain (void)
     p = M_CheckParm ("-warp");
     if (p && p < myargc-1)
     {
-        startmap = atoi (myargv[p+1]);
+        startmap = M_MapNumber (myargv[p+1][0], myargv[p+1][1]);
         autostart = true;
     }
 
@@ -1705,8 +1567,11 @@ p = M_CheckParm ("-ctfteam"); // Tails 08-04-2001
     CONS_Printf (text[ST_INIT_NUM]);
     ST_Init ();
 
-	// Sonic Robo-Blast! Nozomi
-	D_InitSRBNozomi();
+	// Nozomi's secret Extra games :)
+	if (nozomi_extra) {
+		D_InitSRBNozomi(); // Sonic Robo-Blast! Nozomi
+		D_InitNozomiTetris(); // Nozomi Tetris
+	}
 
     // init all NETWORK
     CONS_Printf (text[D_CHECKNET_NUM]);

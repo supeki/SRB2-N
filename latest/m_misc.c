@@ -351,7 +351,7 @@ void M_SaveConfig (char *filename)
     }
 
     // header message
-    fprintf (f, "// Doom Legacy configuration file.\n");
+    fprintf (f, "// %s %s configuration file.\n", "Sonic Robo Blast 2 Nozomi", VERSIONSTRING);
 
     //FIXME: save key aliases if ever implemented..
 

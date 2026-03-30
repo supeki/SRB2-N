@@ -702,21 +702,6 @@ static void R_DrawVisSprite ( vissprite_t*          vis,
 	frac = vis->startfrac;
 	windowtop = windowbottom = sprbotscreen = MAXINT;
 
-	if (vis->mobj && vis->mobj->skin) {
-		if (skins[R_SkinAvailable(vis->mobj->skin)].spritescale && strlen(skins[R_SkinAvailable(vis->mobj->skin)].spritescale) > 0) {
-			scale = (fixed_t)(atof(skins[R_SkinAvailable(vis->mobj->skin)].spritescale) * FRACUNIT);
-		}
-	}
-
-	if (scale <= 0)
-		scale = FRACUNIT;
-
-	if (scale != FRACUNIT) {
-		vis->scale = FixedMul(vis->scale, scale);
-		vis->xiscale = FixedDiv(vis->xiscale, scale);
-		dc_texturemid = FixedDiv(dc_texturemid, scale);
-	}
-
     spryscale = vis->scale;
     sprtopscreen = centeryfrac - FixedMul(dc_texturemid,spryscale);
 	dc_iscale = FixedDiv (FRACUNIT, vis->scale);
@@ -817,13 +802,11 @@ static void R_ProjectSprite (mobj_t* thing)
         return;
 
     // aspect ratio stuff :
-	if (thing->player) {
-		if (strlen(skins[thing->player->skin].spritescale) > 0) {
-			skinscale = (fixed_t)(atof(skins[thing->player->skin].spritescale) * FRACUNIT);
-		}
-	} else if (thing->skin && strlen(thing->skin) > 0) {
-		if (strlen(skins[R_SkinAvailable(thing->skin)].spritescale) > 0) {
-			skinscale = (fixed_t)(atof(skins[R_SkinAvailable(thing->skin)].spritescale) * FRACUNIT);
+	if (thing->skin) {
+		skin_t* thingskin = (skin_t*)thing->skin;
+
+		if (thingskin->spritescale) {
+			skinscale = thingskin->spritescale;
 		}
 	}
 
@@ -957,6 +940,27 @@ static void R_ProjectSprite (mobj_t* thing)
 
     if (vis->x1 > x1)
         vis->startfrac += vis->xiscale*(vis->x1-x1);
+
+	{
+		fixed_t scale = FRACUNIT;
+
+		if (vis->mobj->skin) {
+			skin_t* visskin = (skin_t*)vis->mobj->skin;
+			char* skinname = "";
+
+			strcpy(skinname, visskin->name);
+			scale = visskin->spritescale;
+		}
+
+		if (scale <= 0)
+			scale = FRACUNIT;
+
+		if (scale != FRACUNIT) {
+			vis->scale = FixedMul(vis->scale, scale);
+			vis->xiscale = FixedDiv(vis->xiscale, scale);
+			vis->texturemid = FixedDiv(vis->texturemid, scale);
+		}
+	}
 
     //Fab: lumppat is the lump number of the patch to use, this is different
     //     than lumpid for sprites-in-pwad : the graphics are patched
@@ -1899,8 +1903,10 @@ void Sk_SetDefaultValue(skin_t *skin)
     //
     memset (skin, 0, sizeof(skin_t));
     strcpy (skin->name, DEFAULTSKIN);
-	strcpy (skin->face, "");
-	strcpy (skin->hudname, "");
+	strcpy (skin->face, "SBOULIFE");
+	strcpy (skin->hudname, "STUSER");
+	skin->spritescale = FRACUNIT;
+	skin->facescale = FRACUNIT;
 	skin->runspeed = 0;
     for (i=0;i<sfx_freeslot0;i++)
         if (S_sfx[i].skinsound!=-1)
@@ -1943,7 +1949,7 @@ int R_SkinAvailable (char* name)
     int  i;
 
 	if (name == NULL)
-		return 0;
+		return -1;
 
     for (i=0;i<numskins;i++)
     {
@@ -2112,14 +2118,12 @@ void R_AddSkins (int wadnum)
 			else
 			if (!stricmp(token,"sprite_scale"))
             {
-                strncpy (skins[numskins].spritescale, value, 8);
-				strupr (skins[numskins].spritescale);
+				skins[numskins].spritescale = (fixed_t)(atof(value) * (float)FRACUNIT);
             }
 			else
 			if (!stricmp(token,"face_scale"))
 			{
-				strncpy (skins[numskins].facescale, value, 8);
-				strupr (skins[numskins].facescale);
+				skins[numskins].facescale = (fixed_t)(atof(value) * (float)FRACUNIT);
 			}
 // start character type identification Tails 03-01-2000
             else
@@ -2191,12 +2195,14 @@ next_token:
 
 mapheader_t mapheaders[NUMMAPHEADERS+1];
 char custom_ttlmusic[9]; 
+char custom_supermusic[9];
 
 void R_InitMapHeaders (void)
 {
     int i;
 
 	strncpy (custom_ttlmusic, "D_DM2TTL", 8);
+	strncpy (custom_supermusic, "D_SUPERS", 8);
 
     for(i=0;i<=NUMMAPHEADERS;i++)
     {
@@ -2304,6 +2310,11 @@ void R_AddMapHeader (int wadnum)
 			if (!stricmp(token, "title_music")) {
 				strncpy(custom_ttlmusic, value, 8);
 				strupr (custom_ttlmusic);
+			}
+
+			if (!stricmp(token, "super_music")) {
+				strncpy(custom_supermusic, value, 8);
+				strupr (custom_supermusic);
 			}
 
 			if (!stricmp(token,"map"))
