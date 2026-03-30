@@ -83,7 +83,7 @@ extern int msg_id;
 #include "s_sound.h"
 #include "w_wad.h"
 #include "z_zone.h"
-#include "srb-nozomi/srb.h"
+#include "EXTRAS/srb.h"
 
 // commands for music and sound servers
 #ifdef MUSSERV

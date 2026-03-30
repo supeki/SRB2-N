@@ -100,7 +100,7 @@ R_ClipVisSprite
 // -----------
 // SKINS STUFF
 // -----------
-#define SKINNAMESIZE 16
+#define SKINNAMESIZE 32
 #define DEFAULTSKIN  "sonic"   // Changed by Tails: 9-13-99
 
 typedef struct

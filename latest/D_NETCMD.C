@@ -452,8 +452,11 @@ void SendNameAndColor(void)
 
     p=buf;
 
+	if (cv_playercolor.value > MAXSKINCOLORS-1)
+		CV_SetValue(&cv_playercolor, 1);
+
 	if (!cv_playercolor.value) {
-		for (i=MAXSKINCOLORS;i>1;i--)
+		for (i=MAXSKINCOLORS-1;i>1;i--)
 			if (Color_Names[i] > 0)
 				break;
 
