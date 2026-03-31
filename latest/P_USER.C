@@ -1047,17 +1047,17 @@ void P_MovePlayer (player_t* player)
 		{
 			if (((player->mo->z+player->mo->height/2) >= player->mo->waterz) && player->powers[pw_underwater])
 			{
-				if (cv_drownmusic.value && player->powers[pw_underwater] >= (12*TICRATE + 1) && !(player->powers[pw_super] || player->powers[pw_invulnerability]))
+				if (cv_drownmusic.value && player->powers[pw_underwater] <= (12*TICRATE + 1) && !(player->powers[pw_super] || player->powers[pw_invulnerability]))
 				{
 					S_ChangeMusic(mus_runnin + gamemap - 1, 1); // Tails 04-04-2000
 					I_PlayCD(gamemap + 1, true); // Tails 04-05-2000
 				}
-				else if ((cv_drownmusic.value && player->powers[pw_underwater] >= (12*TICRATE + 1) && player->powers[pw_invulnerability] && !player->powers[pw_super]))
+				else if ((cv_drownmusic.value && player->powers[pw_underwater] <= (12*TICRATE + 1) && player->powers[pw_invulnerability] && !player->powers[pw_super]))
 				{
 					S_ChangeMusic(mus_invinc, false);
 					I_PlayCD(36, false);
 				}
-				else if ((cv_drownmusic.value && player->powers[pw_underwater] >= (12*TICRATE + 1) && player->powers[pw_super]))
+				else if ((cv_drownmusic.value && player->powers[pw_underwater] <= (12*TICRATE + 1) && player->powers[pw_super]))
 				{
 					S_ChangeMusic(mus_invinc, false);
 					I_PlayCD(36, false);

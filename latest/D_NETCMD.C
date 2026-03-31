@@ -412,6 +412,9 @@ void D_RegisterClientCommands (void)
     COM_AddCommand ("save",Command_Save_f);
     RegisterNetXCmd(XD_SAVEGAME,Got_SaveGamecmd);
 
+	CV_SetValue(&cv_playercolor, SKINCOLOR_LIGHTBLUE+1);
+	CV_SetValue(&cv_playercolor2, SKINCOLOR_APRICOT+1);
+
 /* ideas of commands names from Quake
     "status"
     "notarget"
