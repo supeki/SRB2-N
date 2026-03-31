@@ -654,11 +654,11 @@ void* W_CacheLumpNum ( int lump, int tag )
     //SoM: 4/8/2000: Don't keep doing oporations to the lump variable!
     int           llump = lump & 0xffff;
     int           lfile = lump >> 16;
-
-#ifdef PARANOIA
+ 
     // check return value of a previous W_CheckNumForName()
     //SoM: 4/8/2000: Do better checking. No more SIGSEGV's!
-    if (lfile >= numwadfiles)
+    /*
+	if (lfile >= numwadfiles)
       I_Error("W_CacheLumpNum: %i >= numwadfiles(%i)\n", lfile, numwadfiles);
     if (llump >= wadfiles[lfile]->numlumps)
       I_Error ("W_CacheLumpNum: %i >= numlumps", llump);
@@ -666,7 +666,7 @@ void* W_CacheLumpNum ( int lump, int tag )
       I_Error ("W_CacheLumpNum: -1 passed!\n");
     if(llump < 0)
       I_Error ("W_CacheLumpNum: %i < 0!\n", llump);
-#endif
+	*/
 
     lumpcache = wadfiles[lfile]->lumpcache;
     if (!lumpcache[llump]) {

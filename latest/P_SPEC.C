@@ -1225,6 +1225,20 @@ P_CrossSpecialLine
     //  Triggers that other things can activate
     if (!thing->player)
     {
+        // Things that should NOT trigger specials...
+        switch(thing->type)
+        {
+          case MT_ROCKET:
+          case MT_PLASMA:
+          case MT_BFG:
+          case MT_TROOPSHOT:
+          case MT_HEADSHOT:
+          case MT_BRUISERSHOT:
+            return;
+            break;
+
+          default: break;
+        }
       }
 
     //SoM: 3/7/2000: Check for generalized line types/

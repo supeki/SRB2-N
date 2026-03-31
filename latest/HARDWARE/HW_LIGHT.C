@@ -97,7 +97,7 @@
 //=============================================================================
 //                                                                      DEFINES
 //=============================================================================
-// ï¿½ changer !!!
+// à changer !!!
 #define MIN(x,y) ( ((x)<(y)) ? (x) : (y) )
 #define MAX(x,y) ( ((x)>(y)) ? (x) : (y) )
 
@@ -203,111 +203,197 @@ static light_t lspr[NUMLIGHTS] = {
 
 
 light_t *t_lspr[NUMSPRITES] = {
-	&lspr[NOLIGHT],		// SPR_NULL
-	&lspr[NOLIGHT],		// SPR_PLAY
-	&lspr[NOLIGHT],		// SPR_POSS
-	&lspr[NOLIGHT],		// SPR_SPOS
-	&lspr[NOLIGHT],		// SPR_EGGM
-	&lspr[NOLIGHT],		// SPR_MISL
-	&lspr[NOLIGHT],		// SPR_BON1
-	&lspr[NOLIGHT],		// SPR_STIM
-	&lspr[NOLIGHT],		// SPR_MEDI
-	&lspr[NOLIGHT],		// SPR_EMMY
-	&lspr[NOLIGHT],		// SPR_PINV
-	&lspr[NOLIGHT],		// SPR_GRTV
-	&lspr[NOLIGHT],		// SPR_POL2
-	&lspr[NOLIGHT],		// SPR_SHTV
-	&lspr[NOLIGHT],		// SPR_COL3
-	&lspr[NOLIGHT],		// SPR_BUBL
-	&lspr[NOLIGHT],		// SPR_BLTV
-	&lspr[NOLIGHT],		// SPR_YLTV
-	&lspr[NOLIGHT],		// SPR_COL5
-	&lspr[NOLIGHT],		// SPR_POB1
-	&lspr[NOLIGHT],		// SPR_SMOK
-	&lspr[NOLIGHT],		// SPR_SPLA
-	&lspr[NOLIGHT],		// SPR_BIRD
-	&lspr[NOLIGHT],		// SPR_SQRL
-	&lspr[NOLIGHT],		// SPR_BORB
-	&lspr[NOLIGHT],		// SPR_YORB
-	&lspr[NOLIGHT],		// SPR_GORB
-	&lspr[NOLIGHT],		// SPR_KORB
-	&lspr[NOLIGHT],		// SPR_SPRK
-	&lspr[NOLIGHT],		// SPR_IVSP
-	&lspr[NOLIGHT],		// SPR_IVSQ
-	&lspr[NOLIGHT],		// SPR_BUBP
-	&lspr[NOLIGHT],		// SPR_BUBO
-	&lspr[NOLIGHT],		// SPR_BUBN
-	&lspr[NOLIGHT],		// SPR_BUBM
-	&lspr[NOLIGHT],		// SPR_CNTA
-	&lspr[NOLIGHT],		// SPR_CNTB
-	&lspr[NOLIGHT],		// SPR_CNTC
-	&lspr[NOLIGHT],		// SPR_CNTD
-	&lspr[NOLIGHT],		// SPR_CNTE
-	&lspr[NOLIGHT],		// SPR_CNTF
-	&lspr[NOLIGHT],		// SPR_POPP
-	&lspr[NOLIGHT],		// SPR_PRUP
-	&lspr[NOLIGHT],		// SPR_BKTV
-	&lspr[NOLIGHT],		// SPR_SCRA
-	&lspr[NOLIGHT],		// SPR_SCRB
-	&lspr[NOLIGHT],		// SPR_SCRC
-	&lspr[NOLIGHT],		// SPR_SCRD
-	&lspr[NOLIGHT],		// SPR_SSPK
-	&lspr[NOLIGHT],		// SPR_GRAS
-	&lspr[NOLIGHT],		// SPR_YSPR
-	&lspr[NOLIGHT],		// SPR_RSPR
-	&lspr[NOLIGHT],		// SPR_BSPR
-	&lspr[NOLIGHT],		// SPR_SKIM
-	&lspr[NOLIGHT],		// SPR_MINE
-	&lspr[NOLIGHT],		// SPR_FISH
-	&lspr[NOLIGHT],		// SPR_GARG
-	&lspr[NOLIGHT],		// SPR_SPLH
-	&lspr[NOLIGHT],		// SPR_GTHO
-	&lspr[NOLIGHT],		// SPR_GRTH
-	&lspr[NOLIGHT],		// SPR_PCTH
-	&lspr[NOLIGHT],		// SPR_DRTH
-	&lspr[NOLIGHT],		// SPR_STHO
-	&lspr[NOLIGHT],		// SPR_OTHO
-	&lspr[NOLIGHT],		// SPR_RTHO
-	&lspr[NOLIGHT],		// SPR_BTHO
-	&lspr[NOLIGHT],		// SPR_PTHO
-	&lspr[NOLIGHT],		// SPR_DBTH
-	&lspr[NOLIGHT],		// SPR_BGTH
-	&lspr[NOLIGHT],		// SPR_THZP
-	&lspr[NOLIGHT],		// SPR_SIGN
-	&lspr[NOLIGHT],		// SPR_RRNG
-	&lspr[NOLIGHT],		// SPR_TTAG
-	&lspr[NOLIGHT],		// SPR_STEM
-	&lspr[NOLIGHT],		// SPR_RFLG
-	&lspr[NOLIGHT],		// SPR_BFLG
-	&lspr[NOLIGHT],		// SPR_GFLG
-	&lspr[NOLIGHT],		// SPR_TOKE
-	&lspr[NOLIGHT],		// SPR_CEMG
-	&lspr[NOLIGHT],		// SPR_CEMO
-	&lspr[NOLIGHT],		// SPR_CEMP
-	&lspr[NOLIGHT],		// SPR_CEMB
-	&lspr[NOLIGHT],		// SPR_CEMR
-	&lspr[NOLIGHT],		// SPR_CEML
-	&lspr[NOLIGHT],		// SPR_CEMY
-	&lspr[NOLIGHT],		// SPR_JETB
-	&lspr[NOLIGHT],		// SPR_JETG
-	&lspr[NOLIGHT],		// SPR_JBUL
-	&lspr[NOLIGHT],		// SPR_MOUS
-	&lspr[NOLIGHT],		// SPR_DETN
-	&lspr[NOLIGHT],		// SPR_XPLD
-	&lspr[NOLIGHT],		// SPR_REDX
-	&lspr[NOLIGHT],		// SPR_CHAN
-	&lspr[NOLIGHT],		// SPR_CAPE
-	&lspr[NOLIGHT],		// SPR_SNO1
-	&lspr[NOLIGHT],		// SPR_SANT
-	&lspr[NOLIGHT],		// SPR_EMER
-	&lspr[NOLIGHT],		// SPR_EMES
-	&lspr[NOLIGHT],		// SPR_EMET
-	&lspr[NOLIGHT],		// SPR_SBLL
-	&lspr[NOLIGHT],		// SPR_SPIK
-	&lspr[NOLIGHT],		// SPR_CCOM
-	&lspr[NOLIGHT],		// SPR_MARL
-	&lspr[NOLIGHT],		// SPR_RAIN
-	&lspr[NOLIGHT],		// SPR_NSPR
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    //Fab:
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
+    &lspr[NOLIGHT],     // SPR_TROO
 };
 
 
@@ -326,12 +412,32 @@ extern  float   gr_viewludcos;
 static void  HWR_SetLight( void );
 static float HWR_DistP2D(lvertex3D_t *p1, lvertex3D_t *p2, lvertex3D_t *p3, lvertex3D_t *inter);
 
-void CV_grMonsterDL_OnChange (void){}
+void CV_grMonsterDL_OnChange (void)
+{
+    if (cv_grmblighting.value)
+    {
+        t_lspr[SPR_BAL1] = &lspr[REDBALL_L];
+        t_lspr[SPR_BAL2] = &lspr[REDBALL_L];
+        t_lspr[SPR_MANF] = &lspr[ROCKET_L];
+        t_lspr[SPR_BAL7] = &lspr[GREENBALL_L];
+        t_lspr[SPR_APLS] = &lspr[GREENBALL_L];
+        t_lspr[SPR_APBX] = &lspr[GREENBALL_L];
+    }
+    else
+    {
+        t_lspr[SPR_BAL1] = &lspr[NOLIGHT];
+        t_lspr[SPR_BAL2] = &lspr[NOLIGHT];
+        t_lspr[SPR_MANF] = &lspr[NOLIGHT];
+        t_lspr[SPR_BAL7] = &lspr[NOLIGHT];
+        t_lspr[SPR_APLS] = &lspr[NOLIGHT];
+        t_lspr[SPR_APBX] = &lspr[NOLIGHT];
+    }
+}
 
 // --------------------------------------------------------------------------
-// calcul la projection d'un point sur une droite (determinï¿½e par deux 
-// points) et ensuite calcul la distance (au carrï¿½) de ce point au point
-// projectï¿½ sur cette droite
+// calcul la projection d'un point sur une droite (determinée par deux 
+// points) et ensuite calcul la distance (au carré) de ce point au point
+// projecté sur cette droite
 // --------------------------------------------------------------------------
 static float HWR_DistP2D(lvertex3D_t *p1, lvertex3D_t *p2, lvertex3D_t *p3, lvertex3D_t *inter)
 {
@@ -501,13 +607,13 @@ void HWR_DoCoronasLighting(FOutVector *outVerts, gr_vissprite_t *spr)
     light_t   *p_lspr;
 
     //CONS_Printf("sprite (type): %d (%s)\n", spr->type, sprnames[spr->type]);
-    // who gaf
-    /*p_lspr = t_lspr[spr->type];
+
+    p_lspr = t_lspr[spr->type];
     if( p_lspr == &lspr[ROCKET_L] &&
         spr->mobj->state>=&states[S_EXPLODE1] &&spr->mobj->state<=&states[S_EXPLODE3] )
     {
         p_lspr = &lspr[ROCKETEXP_L];
-    }*/
+    }
 
     if ( cv_grcoronas.value && (p_lspr->type & CORONA_SPR) ) { // it's an object which emits light
         FOutVector      light[4];
@@ -617,6 +723,11 @@ void HWR_DL_AddLight(gr_vissprite_t *spr, GlidePatch_t *patch)
         dynlights->positionnottransformed[dynlights->nb].x = spr->mobj->x*crapmul;
         dynlights->positionnottransformed[dynlights->nb].y = spr->mobj->y*crapmul;
         dynlights->mo[dynlights->nb] = spr->mobj;
+        if( spr->mobj->state>=&states[S_EXPLODE1] && 
+            spr->mobj->state<=&states[S_EXPLODE3] )
+        {
+            p_lspr = &lspr[ROCKETEXP_L];
+        }
 
         dynlights->p_lspr[dynlights->nb] = p_lspr;
         
@@ -733,7 +844,7 @@ void HWR_BuildWallLightmaps(lvertex3D_t *p1, lvertex3D_t *p2, int lighnum, seg_t
     lp->next = line->lightmaps;
     line->lightmaps = lp;
     
-    // (...) encore des bï¿½ calcul bien lourd et on stock tout sa dans la lightmap
+    // (...) encore des bô calcul bien lourd et on stock tout sa dans la lightmap
 }
 
 static void HWR_AddLightMapForLine( int lightnum, seg_t *line)
@@ -887,7 +998,7 @@ void HWR_CreateStaticLightmaps(int bspnum)
 /*
 TODO:
 
-  - Les coronas ne sont pas gï¿½rer avec le nouveau systeme, seul le dynamic lighting l'est
+  - Les coronas ne sont pas gérer avec le nouveau systeme, seul le dynamic lighting l'est
   - calculer l'offset des coronas au chargement du level et non faire la moyenne
     au moment de l'afficher
      BP: euh non en fait il faux encoder la position de la light dans le sprite

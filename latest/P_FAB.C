@@ -98,6 +98,87 @@ void R_SetTrans (statenum_t state1, statenum_t state2, transnum_t transmap)
 //
 void P_SetTranslucencies (void)
 {
+
+    //revenant fireball
+    R_SetTrans (S_TRACER    , S_TRACER2    , tr_transfir);
+    R_SetTrans (S_TRACEEXP1 , S_TRACEEXP3  , tr_transmed);
+                                           
+    //rev. fireball. smoke trail           
+    R_SetTrans (S_SMOKE1    , S_SMOKE5     , tr_transmed);
+                                           
+    //imp fireball                         
+    R_SetTrans (S_TBALL1    , S_TBALL2     , tr_transfir);
+    R_SetTrans (S_TBALLX1   , S_TBALLX3    , tr_transmed);
+                                           
+    //archvile attack                      
+    R_SetTrans (S_FIRE1     , S_FIRE30     , tr_transfir);
+                                           
+    //bfg ball                             
+    R_SetTrans (S_BFGSHOT   , S_BFGSHOT2   , tr_transfir);
+    R_SetTrans (S_BFGLAND   , S_BFGLAND3   , tr_transmed);
+    R_SetTrans (S_BFGLAND4  , S_BFGLAND6   , tr_transmor);
+    R_SetTrans (S_BFGEXP    , 0            , tr_transmed);
+    R_SetTrans (S_BFGEXP2   , S_BFGEXP4    , tr_transmor);
+                                           
+    //plasma bullet                        
+//    R_SetTrans (S_PLASBALL  , S_PLASBALL2  , tr_transfir);
+//    R_SetTrans (S_PLASEXP   , S_PLASEXP2   , tr_transmed);
+//    R_SetTrans (S_PLASEXP3  , S_PLASEXP5   , tr_transmor);
+                                           
+    //bullet puff                          
+    R_SetTrans (S_PUFF1     , S_PUFF4      , tr_transmor);
+                                           
+    //teleport fog                         
+    R_SetTrans (S_TFOG      , S_TFOG5      , tr_transmed);
+    R_SetTrans (S_TFOG6     , S_TFOG10     , tr_transmor);
+                                           
+    //respawn item fog                     
+    R_SetTrans (S_IFOG      , S_IFOG5      , tr_transmed);
+                                           
+    //mobjinfo[MT_EMMY].flags |= MF_SHADOW;         //emerald transies tails
+    R_SetTrans (S_TOKEN, 0, tr_transfir); // emerald transies tails
+    //mobjinfo[MT_INV].flags |= MF_SHADOW;            //invulnerability
+//    R_SetTrans (S_PINV, S_PINV4, tr_transmed);
+                            
+    R_SetTrans (S_GREENTORCH, S_REDTORCH4  , tr_transfx1); // blue torch
+    R_SetTrans (S_RTORCHSHRT4, 0, tr_transfx1); // short blue torch
+
+    // flaming barrel !!
+//    R_SetTrans (S_BBAR1, S_BBAR3, tr_transfx1); Don't make the seaweed trans!! Tails 10-31-99
+
+    //lost soul
+//    R_SetTrans (S_SKULL_STND, S_SKULL_DIE6 , tr_transfx1);
+    //baron shot
+    R_SetTrans (S_BRBALL1   , S_BRBALL2    , tr_transfir);
+     R_SetTrans (S_BRBALLX1 , S_BRBALLX3   , tr_transmed);
+    //demon spawnfire
+    R_SetTrans (S_SPAWNFIRE1, S_SPAWNFIRE3 , tr_transfir);
+    R_SetTrans (S_SPAWNFIRE4, S_SPAWNFIRE8 , tr_transmed);
+    //caco fireball
+    R_SetTrans (S_RBALL1    , S_RBALL2     , tr_transfir);
+    R_SetTrans (S_RBALLX1   , S_RBALLX3    , tr_transmed);
+
+    //arachno shot
+    R_SetTrans (S_ARACH_PLAZ, S_ARACH_PLAZ2, tr_transfir);
+    R_SetTrans (S_ARACH_PLEX, S_ARACH_PLEX2, tr_transmed);
+    R_SetTrans (S_ARACH_PLEX3,S_ARACH_PLEX4, tr_transmor);
+    R_SetTrans (S_ARACH_PLEX5,            0, tr_transhi);
+
+    //blood puffs!
+    //R_SetTrans (S_BLOOD1   ,            0, tr_transmed);
+    //R_SetTrans (S_BLOOD2   , S_BLOOD3    , tr_transmor);
+
+    //eye in symbol
+    R_SetTrans (S_EVILEYE    , S_EVILEYE4  , tr_transmed);
+                                          
+    //mancubus fireball
+    R_SetTrans (S_FATSHOT1   , S_FATSHOT2  , tr_transfir);
+    R_SetTrans (S_FATSHOTX1  , S_FATSHOTX3 , tr_transmed);
+
+    // rockets explosion
+    R_SetTrans (S_EXPLODE1   , S_EXPLODE2  , tr_transfir);
+    R_SetTrans (S_EXPLODE3   ,            0, tr_transmed);
+
     //Fab: lava/slime damage smoke test
     R_SetTrans (S_SMOK1      , S_SMOK5     , tr_transmed);
     R_SetTrans (S_SPLASH1    , S_SPLASH3   , tr_transmor);
@@ -155,6 +236,7 @@ void P_SetTranslucencies (void)
     R_SetTrans (S_LARGEBUBBLE, S_EXTRALARGEBUBBLE, tr_transmed);
     R_SetTrans (S_EXTRALARGEBUBBLE1, 0, tr_transmed);
 
+	// Weather! Nozomi Date Unknown
     R_SetTrans (S_SPLISH1, S_SPLISH2, tr_transmed);
     R_SetTrans (S_SPLISH3, S_SPLISH4, tr_transmed);
     R_SetTrans (S_SPLISH5, S_SPLISH6, tr_transmed);
@@ -165,6 +247,9 @@ void P_SetTranslucencies (void)
 	R_SetTrans (S_AIRPARTICLE5, S_AIRPARTICLE6, tr_transmed);
 	R_SetTrans (S_AIRPARTICLE7, S_AIRPARTICLE8, tr_transmed);
 	R_SetTrans(S_RAIN1, 0, tr_transmed);
+
+	// Make the tokens transparent!
+	R_SetTrans (S_TOKEN, S_TOKEN2, tr_transfx1);
 }
 
 void Translucency_OnChange(void)
@@ -191,10 +276,9 @@ consvar_t cv_bloodtime = {"bloodtime","20",CV_NETVAR|CV_CALL|CV_SAVE,bloodtime_c
 //
 void BloodTime_OnChange (void)
 {
-    // TODO: REMOVE BLOODTIME. WHO CARES???
-    /*states[S_BLOOD1].tics = 8;
+    states[S_BLOOD1].tics = 8;
     states[S_BLOOD2].tics = 8;
-    states[S_BLOOD3].tics = (cv_bloodtime.value*TICRATE) - 16;*/
+    states[S_BLOOD3].tics = (cv_bloodtime.value*TICRATE) - 16;
 
 	// Don't make this show at startup! Tails 03-25-2001
 //    CONS_Printf ("blood lasts for %d seconds\n", cv_bloodtime.value);
