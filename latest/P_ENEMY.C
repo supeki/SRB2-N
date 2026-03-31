@@ -1029,127 +1029,6 @@ void A_SpidRefire (mobj_t* actor)
     }
 }
 
-void A_BspiAttack (mobj_t *actor)
-{
-    if (!actor->target)
-        return;
-
-    A_FaceTarget (actor);
-
-    // launch a missile
-    P_SpawnMissile (actor, actor->target, MT_ARACHPLAZ);
-}
-
-
-//
-// A_TroopAttack
-//
-void A_TroopAttack (mobj_t* actor)
-{
-    int         damage;
-
-    if (!actor->target)
-        return;
-
-    A_FaceTarget (actor);
-    if (P_CheckMeleeRange (actor))
-    {
-        S_StartSound (actor, sfx_claw);
-        damage = (P_Random()%8+1)*3;
-        P_DamageMobj (actor->target, actor, actor, damage);
-        return;
-    }
-
-
-    // launch a missile
-    P_SpawnMissile (actor, actor->target, MT_TROOPSHOT);
-}
-
-
-void A_SargAttack (mobj_t* actor)
-{
-    int         damage;
-
-    if (!actor->target)
-        return;
-
-    A_FaceTarget (actor);
-    if (P_CheckMeleeRange (actor))
-    {
-        damage = ((P_Random()%10)+1)*4;
-        P_DamageMobj (actor->target, actor, actor, damage);
-    }
-}
-
-void A_HeadAttack (mobj_t* actor)
-{
-    int         damage;
-
-    if (!actor->target)
-        return;
-
-    A_FaceTarget (actor);
-    if (P_CheckMeleeRange (actor))
-    {
-        damage = (P_Random()%6+1)*10;
-        P_DamageMobj (actor->target, actor, actor, damage);
-        return;
-    }
-
-    // launch a missile
-    P_SpawnMissile (actor, actor->target, MT_HEADSHOT);
-}
-
-void A_CyberAttack (mobj_t* actor)
-{
-    if (!actor->target)
-        return;
-
-//    A_FaceTarget (actor); // Tails
-    P_SpawnMissile (actor, actor->target, MT_ROCKET);
-}
-
-
-void A_BruisAttack (mobj_t* actor)
-{
-    int         damage;
-
-    if (!actor->target)
-        return;
-
-    if (P_CheckMeleeRange (actor))
-    {
-        S_StartSound (actor, sfx_claw);
-        damage = (P_Random()%8+1)*10;
-        P_DamageMobj (actor->target, actor, actor, damage);
-        return;
-    }
-
-    // launch a missile
-    P_SpawnMissile (actor, actor->target, MT_BRUISERSHOT);
-}
-
-
-//
-// A_SkelMissile
-//
-void A_SkelMissile (mobj_t* actor)
-{
-    mobj_t*     mo;
-
-    if (!actor->target)
-        return;
-
-    A_FaceTarget (actor);
-    actor->z += 16*FRACUNIT;    // so missile spawns higher
-    mo = P_SpawnMissile (actor, actor->target, MT_TRACER);
-    actor->z -= 16*FRACUNIT;    // back to normal
-
-    mo->x += mo->momx;
-    mo->y += mo->momy;
-    mo->tracer = actor->target;
-}
-
 int     TRACEANGLE = 0xc000000;
 
 void A_Tracer (mobj_t* actor, mobj_t* mobj) // specifically used for attracting rings now Tails 03-15-2000
@@ -1436,32 +1315,6 @@ void A_Fire (mobj_t* actor)
 
 
 //
-// A_VileTarget
-// Spawn the hellfire
-//
-void A_VileTarget (mobj_t*      actor)
-{
-    mobj_t*     fog;
-
-    if (!actor->target)
-        return;
-
-    A_FaceTarget (actor);
-
-    fog = P_SpawnMobj (actor->target->x,
-                       actor->target->x,           // Bp: shoul'nt be y ?
-                       actor->target->z, MT_FIRE);
-
-    actor->tracer = fog;
-    fog->target = actor;
-    fog->tracer = actor->target;
-    A_Fire (fog);
-}
-
-
-
-
-//
 // A_VileAttack
 //
 void A_VileAttack (mobj_t* actor)
@@ -1510,62 +1363,6 @@ void A_FatRaise (mobj_t *actor)
     A_FaceTarget (actor);
     S_StartSound (actor, sfx_manatk);
 }
-
-
-void A_FatAttack1 (mobj_t* actor)
-{
-    mobj_t*     mo;
-    int         an;
-
-    A_FaceTarget (actor);
-    // Change direction  to ...
-    actor->angle += FATSPREAD;
-    P_SpawnMissile (actor, actor->target, MT_FATSHOT);
-
-    mo = P_SpawnMissile (actor, actor->target, MT_FATSHOT);
-    mo->angle += FATSPREAD;
-    an = mo->angle >> ANGLETOFINESHIFT;
-    mo->momx = FixedMul (mo->info->speed, finecosine[an]);
-    mo->momy = FixedMul (mo->info->speed, finesine[an]);
-}
-
-void A_FatAttack2 (mobj_t* actor)
-{
-    mobj_t*     mo;
-    int         an;
-
-    A_FaceTarget (actor);
-    // Now here choose opposite deviation.
-    actor->angle -= FATSPREAD;
-    P_SpawnMissile (actor, actor->target, MT_FATSHOT);
-
-    mo = P_SpawnMissile (actor, actor->target, MT_FATSHOT);
-    mo->angle -= FATSPREAD*2;
-    an = mo->angle >> ANGLETOFINESHIFT;
-    mo->momx = FixedMul (mo->info->speed, finecosine[an]);
-    mo->momy = FixedMul (mo->info->speed, finesine[an]);
-}
-
-void A_FatAttack3 (mobj_t*      actor)
-{
-    mobj_t*     mo;
-    int         an;
-
-    A_FaceTarget (actor);
-
-    mo = P_SpawnMissile (actor, actor->target, MT_FATSHOT);
-    mo->angle -= FATSPREAD/2;
-    an = mo->angle >> ANGLETOFINESHIFT;
-    mo->momx = FixedMul (mo->info->speed, finecosine[an]);
-    mo->momy = FixedMul (mo->info->speed, finesine[an]);
-
-    mo = P_SpawnMissile (actor, actor->target, MT_FATSHOT);
-    mo->angle += FATSPREAD/2;
-    an = mo->angle >> ANGLETOFINESHIFT;
-    mo->momx = FixedMul (mo->info->speed, finecosine[an]);
-    mo->momy = FixedMul (mo->info->speed, finesine[an]);
-}
-
 
 //
 // SkullAttack
@@ -2018,153 +1815,17 @@ void A_BrainPain (mobj_t*       mo)
     S_StartSound (NULL,sfx_bospn);
 }
 
-
-void A_BrainScream (mobj_t*     mo)
-{
-    int         x;
-    int         y;
-    int         z;
-    mobj_t*     th;
-
-    for (x=mo->x - 196*FRACUNIT ; x< mo->x + 320*FRACUNIT ; x+= FRACUNIT*8)
-    {
-        y = mo->y - 320*FRACUNIT;
-        z = 128 + P_Random()*2*FRACUNIT;
-        th = P_SpawnMobj (x,y,z, MT_ROCKET);
-        th->momz = P_Random()*512;
-
-        P_SetMobjState (th, S_BRAINEXPLODE1);
-
-        th->tics -= P_Random()&7;
-        if (th->tics < 1)
-            th->tics = 1;
-    }
-
-    S_StartSound (NULL,sfx_bosdth);
-}
-
-
-
-void A_BrainExplode (mobj_t* mo)
-{
-    int         x;
-    int         y;
-    int         z;
-    mobj_t*     th;
-
-    x  = P_Random ();
-    x -= P_Random ();
-    x <<= 11;
-    x += mo->x;
-    y = mo->y;
-    z = 128 + P_Random()*2*FRACUNIT;
-    th = P_SpawnMobj (x,y,z, MT_ROCKET);
-    th->momz = P_Random()*512;
-
-    P_SetMobjState (th, S_BRAINEXPLODE1);
-
-    th->tics -= P_Random()&7;
-    if (th->tics < 1)
-        th->tics = 1;
-}
-
-
 void A_BrainDie (mobj_t*        mo)
 {
     if(cv_allowexitlevel.value)
        G_ExitLevel ();
 }
 
-void A_BrainSpit (mobj_t*       mo)
-{
-    mobj_t*     targ;
-    mobj_t*     newmobj;
-
-    static int  easy = 0;
-
-    easy ^= 1;
-    if (gameskill <= sk_easy && (!easy))
-        return;
-
-    // shoot a cube at current target
-    targ = braintargets[braintargeton];
-    braintargeton = (braintargeton+1)%numbraintargets;
-
-    // spawn brain missile
-    newmobj = P_SpawnMissile (mo, targ, MT_SPAWNSHOT);
-    newmobj->target = targ;
-    newmobj->reactiontime =
-        ((targ->y - mo->y)/newmobj->momy) / newmobj->state->tics;
-
-    S_StartSound(NULL, sfx_bospit);
-}
-
-
-
-void A_SpawnFly (mobj_t* mo);
-
 // travelling cube sound
 void A_SpawnSound (mobj_t* mo)
 {
     S_StartSound (mo,sfx_boscub);
-    A_SpawnFly(mo);
 }
-
-void A_SpawnFly (mobj_t* mo)
-{
-    mobj_t*     newmobj;
-    mobj_t*     fog;
-    mobj_t*     targ;
-    int         r;
-    mobjtype_t  type;
-
-    if (--mo->reactiontime)
-        return; // still flying
-
-    targ = mo->target;
-
-    // First spawn teleport fog.
-    fog = P_SpawnMobj (targ->x, targ->y, targ->z, MT_SPAWNFIRE);
-    S_StartSound (fog, sfx_telept);
-
-    // Randomly select monster to spawn.
-    r = P_Random ();
-
-    // Probability distribution (kind of :),
-    // decreasing likelihood.
-//    if ( r<50 )
-//        type = MT_TROOP;
-//    else if (r<90)
-//        type = MT_SERGEANT;
-/*    else*/ if (r<130)
-        type = MT_DETON;
-//    else if (r<160)
-//        type = MT_HEAD;
-//    else if (r<162)
-//        type = MT_VILE;
-//    else if (r<172)
-//        type = MT_UNDEAD;
-//    else if (r<192)
-//        type = MT_BABY;
-//    else if (r<222)
-//        type = MT_FATSO;
-//    else if (r<246)
-//        type = MT_KNIGHT;
-//    else
-//        type = MT_BRUISER;
-
-    newmobj     = P_SpawnMobj (targ->x, targ->y, targ->z, type);
-    if (P_LookForPlayers (newmobj, true) )
-        P_SetMobjState (newmobj, newmobj->info->seestate);
-
-    // telefrag anything in this spot
-    P_TeleportMove (newmobj, newmobj->x, newmobj->y);
-
-    // remove self (i.e., cube).
-    P_RemoveMobj (mo);
-}
-
-
 
 void A_PlayerScream (mobj_t* mo)
 {
@@ -2667,6 +2328,14 @@ void A_SignPlayer(mobj_t* actor)
 		actor->state->nextstate = S_SIGN52;
 	else
 		actor->state->nextstate = S_SIGN51;
+}
+
+void A_CyberAttack (mobj_t* actor)
+{
+    if (!actor->target)
+        return;
+
+    P_SpawnMissile (actor, actor->target, MT_ROCKET);
 }
 
 // Boss 1 attack determiner Tails 01-18-2001

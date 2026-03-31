@@ -49,96 +49,100 @@
 //  atkstate, i.e. attack/fire/hit frame
 //  flashstate, muzzle flash
 //
+
+// Erm... this is Sonic the FREAKING hedgehog!!
+// Remove allis later
+// Save 01-04-2026
 weaponinfo_t    weaponinfo[NUMWEAPONS] =
 {
     {
         // fist
         am_noammo,
         0,
-        S_PLASMAUP,
-        S_PLASMADOWN,
-        S_PLASMA,
-        S_PLASMA1,
-        S_PLASMAFLASH1
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL
     },
     {
         // pistol
         am_noammo,
         0,
-        S_PLASMAUP,
-        S_PLASMADOWN,
-        S_PLASMA,
-        S_PLASMA1,
-        S_PLASMAFLASH1
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL
     },
     {
         // shotgun
         am_shell,
         1,
-        S_SGUNUP,
-        S_SGUNDOWN,
-        S_SGUN,
-        S_SGUN1,
-        S_SGUNFLASH1
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL
     },
     {
         // chaingun
         am_clip,
         1,
-        S_CHAINUP,
-        S_CHAINDOWN,
-        S_CHAIN,
-        S_CHAIN1,
-        S_CHAINFLASH1
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL
     },
     {
         // missile launcher
         am_misl,
         1,
-        S_MISSILEUP,
-        S_MISSILEDOWN,
-        S_MISSILE,
-        S_MISSILE1,
-        S_MISSILEFLASH1
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL
     },
     {
         // plasma rifle
         am_cell,
         1,
-        S_PLASMAUP,
-        S_PLASMADOWN,
-        S_PLASMA,
-        S_PLASMA1,
-        S_PLASMAFLASH1
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL
     },
     {
         // bfg 9000
         am_cell,
         40,
-        S_BFGUP,
-        S_BFGDOWN,
-        S_BFG,
-        S_BFG1,
-        S_BFGFLASH1
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL
     },
     {
         // chainsaw
         am_noammo,
         0,
-        S_SAWUP,
-        S_SAWDOWN,
-        S_SAW,
-        S_SAW1,
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL,
         S_NULL
     },
     {
         // super shotgun
         am_shell,
         2,
-        S_DSGUNUP,
-        S_DSGUNDOWN,
-        S_DSGUN,
-        S_DSGUN1,
-        S_DSGUNFLASH1
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL,
+        S_NULL
     },
 };
