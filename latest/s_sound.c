@@ -73,6 +73,7 @@ extern int msg_id;
 
 #include "doomdef.h"
 #include "doomstat.h"
+#include "d_main.h"
 #include "command.h"
 #include "g_game.h"
 #include "m_argv.h"
@@ -378,7 +379,7 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
 	if (
 		((players[displayplayer].mo && players[displayplayer].mo->eflags & MF_UNDERWATER)
 		||(players[secondarydisplayplayer].mo && players[secondarydisplayplayer].mo->eflags & MF_UNDERWATER))
-		&& cv_underwaterpitch.value) {
+		&& cv_underwaterpitch.value && gamestate == GS_LEVEL) { // how the fuck is it doing this in the title screen after dsz1 time attack, go my GS
 		pitch = pitch / 4 * 3;
 		volume = volume / 4 * 3;
 	}

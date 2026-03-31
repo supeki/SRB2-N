@@ -526,12 +526,15 @@ void D_Display (void)
         ST_Drawer (viewheight==vid.height, 1);
 #endif
 
+	// draw our title right before menus and the console :3
+	Title_Drawer();
+
     //FIXME: draw either console or menu, not the two
     CON_Drawer ();
 
     // menus go directly to the screen
     M_Drawer ();          // menu is drawn even on top of everything
-    NetUpdate ();         // send out any new accumulation
+	NetUpdate ();         // send out any new accumulation
 
 //
 // normal update
@@ -775,16 +778,17 @@ void D_PageTicker (void)
 	if (gamestate == GS_WAITINGPLAYERS) {
 		if (netgame && (!server)) {
 			// Sonic Robo-Blast! Nozomi
-
-			if (nozomi_extra)
-				if (play_srb_nozomi)
-					SRBN_GameplayLoop();
-				else if (gamekeydown[gamecontrol[gc_jump][0]] || gamekeydown[gamecontrol[gc_jump][1]])
-					SRBN_Init();
+			if (play_srb_nozomi)
+				SRBN_GameplayLoop();
+			else if (gamekeydown[gamecontrol[gc_jump][0]] || gamekeydown[gamecontrol[gc_jump][1]])
+				SRBN_Init();
 		}
 					
 		return;
 	}
+
+	if (gamestate == GS_NOZOMITITLE)
+		F_TitleScreenTicker ();
 
     if (--pagetic < 0)
         D_AdvanceDemo ();
@@ -823,11 +827,10 @@ void D_PageDrawer (char* lumpname)
 					// show our server joining status! Nozomi 03-10-2026
 
 					// Sonic Robo-Blast! Nozomi
-					if (nozomi_extra)
-						if (play_srb_nozomi)
-							SRBN_Draw();
-						else
-							V_DrawString(160-strlen("Press JUMP to play a game!")*4, 100-4, "Press JUMP to play a game!");
+					if (play_srb_nozomi)
+						SRBN_Draw();
+					else
+						V_DrawString(160-strlen("Press JUMP to play a game!")*4, 100-4, "Press JUMP to play a game!");
 
 					if (cl_mode == cl_connected)
 						V_DrawString(160-strlen("connected! waiting on map change!")*4 + 8, 200-12, "connected! waiting on map change!");
@@ -975,6 +978,7 @@ void D_StartTitle (void)
     demosequence = -1;
 	D_UpdateWindowTitle();
     D_AdvanceDemo ();
+	F_StartTitleScreen();
     CON_ToggleOff();
 }
 
@@ -1127,7 +1131,7 @@ void IdentifyVersion (void)
 
 	// Add the maps Nozomi 02-22-2026
 	D_AddFile("maps.wad");
-	
+
 	if ( !access ("extdata.dat",R_OK) )
     {
 		nozomi_extra = true;
@@ -1457,6 +1461,10 @@ void D_DoomMain (void)
     S_RegisterSoundStuff ();
     CV_RegisterVar (&cv_screenslink);
 
+	// Nozomi's Extra games :)
+	D_InitSRBNozomi(); // Sonic Robo-Blast! Nozomi
+	D_InitNozomiTetris(); // Nozomi Tetris
+
     //Fab:29-04-98: do some dirty chatmacros strings initialisation
     HU_HackChatmacros ();
   //--------------------------------------------------------- CONFIG.CFG
@@ -1576,7 +1584,6 @@ p = M_CheckParm ("-ctfteam"); // Tails 08-04-2001
 		D_InitNozomiTetris(); // Nozomi Tetris
         D_InitNozomiPong(); // Nozomi Pong
 	}
-
     // init all NETWORK
     CONS_Printf (text[D_CHECKNET_NUM]);
     D_CheckNetGame ();

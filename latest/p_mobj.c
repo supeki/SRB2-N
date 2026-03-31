@@ -827,21 +827,12 @@ P_NightmareRespawn (mobj_t* mobj)
     // somthing is occupying it's position?
     if (!P_CheckPosition (mobj, x, y) )
         return; // no respwan
-
-    // spawn a teleport fog at old spot
-    // because of removal of the body?
-    mo = P_SpawnMobj (mobj->x,
-                      mobj->y,
-                      mobj->subsector->sector->floorheight , MT_TFOG);
+        
     // initiate teleport sound
     S_StartSound (mo, sfx_telept);
 
     // spawn a teleport fog at the new spot
     ss = R_PointInSubsector (x,y);
-
-    mo = P_SpawnMobj (x, y, ss->sector->floorheight , MT_TFOG);
-
-    S_StartSound (mo, sfx_telept);
 
     // spawn the new monster
     mthing = mobj->spawnpoint;
@@ -1272,12 +1263,12 @@ if(mobj->type == MT_EGGMOBILE && mobj->flags2 & MF2_SKULLFLY)
 		thok->color = 2;
 	}
 
-// Some black shield code Tails 04-08-2000
-if (mobj->type==MT_BFG)
+// I hope this wasn't needed... Save 01-04-2026
+/*if (mobj->type==MT_BFG)
     P_SetMobjState (mobj, S_BFGLAND3);
 
 if (mobj->state == &states[S_BFGLAND3])
-    P_SetMobjState (mobj, S_DISS);
+    P_SetMobjState (mobj, S_DISS);*/
 
 // start bubble dissipate Tails
   if((mobj->type==MT_SMALLBUBBLE || mobj->type==MT_MEDIUMBUBBLE || mobj->type==MT_EXTRALARGEBUBBLE) && (mobj->z >= mobj->waterz || mobj->z + mobj->height >= mobj->ceilingz))
@@ -1881,8 +1872,6 @@ void P_RespawnSpecials (void)
 
     // spawn a teleport fog at the new spot
     ss = R_PointInSubsector (x,y);
-    mo = P_SpawnMobj (x, y, ss->sector->floorheight , MT_IFOG);
-    S_StartSound (mo, sfx_itmbk);
 
     // find which type to spawn
     for (i=0 ; i< NUMMOBJTYPES ; i++)
@@ -1899,87 +1888,12 @@ void P_RespawnSpecials (void)
     else
         z = ONFLOORZ;
 
-    mo = P_SpawnMobj (x,y,z, i);
-    mo->spawnpoint = mthing;
-    mo->angle = ANG45 * (mthing->angle/45);
-
     // pull it from the que
     iquetail = (iquetail+1)&(ITEMQUESIZE-1);
 }
 
 // used when we are going from deathmatch 2 to deathmatch 1
-void P_RespawnWeapons(void)
-{
-    fixed_t             x;
-    fixed_t             y;
-    fixed_t             z;
-
-    subsector_t*        ss;
-    mobj_t*             mo;
-    mapthing_t*         mthing;
-
-    int                 i,j,freeslot;
-
-    freeslot=iquetail;
-    for(j=iquetail;j!=iquehead;j=(j+1)&(ITEMQUESIZE-1))
-    {
-        mthing = itemrespawnque[j];
-
-        i=0;
-        switch(mthing->type) {
-            case 2001 : //mobjinfo[MT_SHOTGUN].doomednum  :
-                 i=MT_SHOTGUN;
-                 break;
-            case 82   : //mobjinfo[MT_SUPERSHOTGUN].doomednum :
-                 i=MT_SUPERSHOTGUN;
-                 break;
-            case 2002 : //mobjinfo[MT_CHAINGUN].doomednum :
-                 i=MT_CHAINGUN;
-                 break;
-            case 2006 : //mobjinfo[MT_BFG9000].doomednum   : // bfg9000
-                 i=MT_BFG9000;
-                 break;
-            case 2004 : //mobjinfo[MT_PLASMAGUNMISC28].doomednum   : // plasma launcher
-                 i=MT_PLASMAGUN;
-                 break;
-            case 2003 : //mobjinfo[MT_ROCKETLAUNCH].doomednum   : // rocket launcher
-                 i=MT_ROCKETLAUNCH;
-                 break;
-            case 2005 : //mobjinfo[MT_SHAINSAW].doomednum   : // shainsaw
-                 i=MT_SHAINSAW;
-                 break;
-            default:
-                 if(freeslot!=j)
-                 {
-                     itemrespawnque[freeslot]=itemrespawnque[j];
-                     itemrespawntime[freeslot]=itemrespawntime[j];
-                 }
-
-                 freeslot=(freeslot+1)&(ITEMQUESIZE-1);
-                 continue;
-        }
-        // respwan it
-        x = mthing->x << FRACBITS;
-        y = mthing->y << FRACBITS;
-
-        // spawn a teleport fog at the new spot
-        ss = R_PointInSubsector (x,y);
-        mo = P_SpawnMobj (x, y, ss->sector->floorheight , MT_IFOG);
-        S_StartSound (mo, sfx_itmbk);
-
-        // spawn it
-        if (mobjinfo[i].flags & MF_SPAWNCEILING)
-            z = ONCEILINGZ;
-        else
-            z = ONFLOORZ;
-
-        mo = P_SpawnMobj (x,y,z, i);
-        mo->spawnpoint = mthing;
-        mo->angle = ANG45 * (mthing->angle/45);
-        // here don't increment freeslot
-    }
-    iquehead=freeslot;
-}
+void P_RespawnWeapons(void){}
 
 extern byte weapontobutton[NUMWEAPONS];
 
@@ -2057,7 +1971,10 @@ void P_SpawnPlayer (mapthing_t* mthing)
     p->fixedcolormap = 0;
 	p->ringtimer = 0;
     p->viewheight = cv_viewheight.value<<FRACBITS;
-    // added 2-12-98
+	if (p == &players[consoleplayer])
+		p->autobrake = cv_playerautobrake.value;
+	if (cv_splitscreen.value && p == &players[secondarydisplayplayer])
+		p->autobrake = cv_playerautobrake2.value;
     p->viewz = p->mo->z + p->viewheight;
 
     // setup gun psprite
@@ -2424,21 +2341,6 @@ void P_SpawnPuff ( fixed_t       x,
                    fixed_t       y,
                    fixed_t       z )
 {
-    mobj_t*     th;
-
-    z += P_Random()<<10;
-    z -= P_Random()<<10;
-
-    th = P_SpawnMobj (x,y,z, MT_PUFF);
-    th->momz = FRACUNIT;
-    th->tics -= P_Random()&3;
-
-    if (th->tics < 1)
-        th->tics = 1;
-
-    // don't make punches spark on the wall
-    if (attackrange == MELEERANGE)
-        P_SetMobjState (th, S_PUFF3);
 }
 
 
@@ -2586,32 +2488,7 @@ void P_SpawnBlood ( fixed_t       x,
                     fixed_t       y,
                     fixed_t       z,
                     int           damage )
-{
-    mobj_t*     th;
-
-    z += P_Random()<<10;
-    z -= P_Random()<<10;
-    th = P_SpawnMobj (x,y,z, MT_BLOOD);
-    if(demoversion>=128)
-    {
-        th->momx  = P_Random()<<12; //faB:19jan99
-        th->momx -= P_Random()<<12; //faB:19jan99
-        th->momy  = P_Random()<<12; //faB:19jan99
-        th->momy -= P_Random()<<12; //faB:19jan99
-    }
-    th->momz = FRACUNIT*2;
-    th->tics -= P_Random()&3;
-
-    if (th->tics < 1)
-        th->tics = 1;
-
-    if (damage <= 12 && damage >= 9)
-        P_SetMobjState (th,S_BLOOD2);
-    else if (damage < 9)
-        P_SetMobjState (th,S_BLOOD3);
-
-    bloodthing = th;
-}
+{}
 
 
 //

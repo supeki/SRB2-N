@@ -98,12 +98,6 @@ void R_SetTrans (statenum_t state1, statenum_t state2, transnum_t transmap)
 //
 void P_SetTranslucencies (void)
 {
-                                         
-    //mobjinfo[MT_EMMY].flags |= MF_SHADOW;         //emerald transies tails
-    R_SetTrans (S_TOKEN, 0, tr_transfir); // emerald transies tails
-    //mobjinfo[MT_INV].flags |= MF_SHADOW;            //invulnerability
-//    R_SetTrans (S_PINV, S_PINV4, tr_transmed);
-                            
     //Fab: lava/slime damage smoke test
     R_SetTrans (S_SMOK1      , S_SMOK5     , tr_transmed);
     R_SetTrans (S_SPLASH1    , S_SPLASH3   , tr_transmor);
@@ -179,9 +173,10 @@ consvar_t cv_bloodtime = {"bloodtime","20",CV_NETVAR|CV_CALL|CV_SAVE,bloodtime_c
 //
 void BloodTime_OnChange (void)
 {
-    states[S_BLOOD1].tics = 8;
+    // TODO: REMOVE BLOODTIME. WHO CARES???
+    /*states[S_BLOOD1].tics = 8;
     states[S_BLOOD2].tics = 8;
-    states[S_BLOOD3].tics = (cv_bloodtime.value*TICRATE) - 16;
+    states[S_BLOOD3].tics = (cv_bloodtime.value*TICRATE) - 16;*/
 
 	// Don't make this show at startup! Tails 03-25-2001
 //    CONS_Printf ("blood lasts for %d seconds\n", cv_bloodtime.value);

@@ -80,6 +80,7 @@ void D_StartTitle (void);
 void D_UpdateWindowTitle(void);
 
 // for... purposes... Nozomi
+extern boolean title_demo;
 extern gamestate_t  wipegamestate;
 
 extern event_t*    ev;

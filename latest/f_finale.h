@@ -53,5 +53,9 @@ void F_Drawer (void);
 
 void F_StartFinale (void);
 
+void F_StartTitleScreen(void);
+void F_TitleScreenTicker(void);
+void Title_Drawer (void);
+
 
 #endif

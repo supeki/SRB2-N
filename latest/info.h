@@ -70,204 +70,111 @@ extern char *Color_Names[MAXSKINCOLORS+1];
 
 typedef enum
 {
-    SPR_SHTG,
-    SPR_PUNG,
-    SPR_PISG,
-    SPR_PISF,
-    SPR_SHTF,
-    SPR_SHT2,
-    SPR_CHGG,
-    SPR_CHGF,
-    SPR_MISG,
-    SPR_MISF,
-    SPR_SAWG,
-    SPR_PLSG,
-    SPR_PLSF,
-    SPR_BFGG,
-    SPR_BFGF,
-    SPR_BLUD,
-    SPR_PUFF,
-    SPR_BAL1,
-    SPR_BAL2,
-    SPR_PLSS,
-    SPR_PLSE,
-    SPR_MISL,
-    SPR_BFS1,
-    SPR_BFE1,
-    SPR_BFE2,
-    SPR_TFOG,
-    SPR_IFOG,
+    SPR_NULL,
     SPR_PLAY,
     SPR_POSS,
     SPR_SPOS,
-    SPR_FIRE,
-    SPR_FATB,
-    SPR_FBXP,
-    SPR_MANF,
-    SPR_BAL7,
-    SPR_APLS,
-    SPR_APBX,
     SPR_EGGM,
-    SPR_BOSF,
-    SPR_BEXP,
-    SPR_FCAN,
+    SPR_MISL,
     SPR_BON1,
-    SPR_BKEY,
-    SPR_RKEY,
-    SPR_YKEY,
-    SPR_BSKU,
-    SPR_RSKU,
-    SPR_YSKU,
     SPR_STIM,
     SPR_MEDI,
-    SPR_EMMY, // emerald test tails
+    SPR_EMMY,
     SPR_PINV,
-    SPR_CLIP,
-    SPR_AMMO,
-    SPR_ROCK,
-    SPR_BROK,
-    SPR_CELL,
-    SPR_CELP,
-    SPR_SHEL,
-    SPR_SBOX,
-    SPR_BPAK,
-    SPR_BFUG,
-    SPR_MGUN,
-    SPR_CSAW,
-    SPR_LAUN,
-    SPR_PLAS,
-    SPR_SHOT,
-    SPR_SGN2,
-    SPR_GRTV, // Tails 9-30-99
-    SPR_SMT2,
+    SPR_GRTV,
     SPR_POL2,
-    SPR_POL5,
-    SPR_POL3,
-    SPR_SHTV, // Tails 9-30-99
-    SPR_POL6,
-    SPR_GOR2,
-    SPR_GOR3,
-    SPR_GOR4,
-    SPR_GOR5,
-    SPR_SMIT,
+    SPR_SHTV,
     SPR_COL3,
-    SPR_BUBL, // water bubble source Tails 03-07-2000
-    SPR_BLTV, // Tails 9-30-99
-    SPR_COL6,
-    SPR_TRE2,
-    SPR_YLTV, // Tails 9-30-99
-    SPR_CEYE,
-    SPR_FSKU,
+    SPR_BUBL,
+    SPR_BLTV,
+    SPR_YLTV,
     SPR_COL5,
-    SPR_TGRN,
-    SPR_TRED,
-    SPR_SMBT,
-    SPR_SMRT,
-    SPR_HDB1,
-    SPR_HDB2,
-    SPR_HDB3,
-    SPR_HDB4,
-    SPR_HDB5,
-    SPR_HDB6,
     SPR_POB1,
-    SPR_POB2,
-    SPR_TLMP,
-    //Fab:
     SPR_SMOK,
     SPR_SPLA,
-    SPR_TNT1, //SoM: 3/8/2000: add invisible sprite
-	SPR_BIRD, // Tails 10-20-99 Birdie freed!
-    SPR_SQRL, // Tails 10-20-99 Squirrel freed!
-    SPR_BORB, // Tails 12-29-99 Blue Shield
-    SPR_YORB, // Tails 12-29-99 Yellow Shield
-    SPR_GORB, // Tails 12-29-99 Green Shield
-    SPR_KORB, // Tails 12-29-99 Black Shield
-    SPR_SPRK, // spark tails
-    SPR_IVSP, // invincibility sparkles tails
-    SPR_IVSQ, // finish invincibility sparkles tails
-    SPR_DISS, // dissipating object tails
-    SPR_BUBP, // Small bubble Tails 03-07-2000
-    SPR_BUBO, // Medium bubble Tails 03-07-2000
-    SPR_BUBN, // Large bubble Tails 03-07-2000
-    SPR_BUBM, // Extra Large (would you like fries with that?) bubble Tails 03-07-2000
-    SPR_CNTA, // Drowning Timer - 0 Tails 03-07-2000
-    SPR_CNTB, // Drowning Timer - 1 Tails 03-07-2000
-    SPR_CNTC, // Drowning Timer - 2 Tails 03-07-2000
-    SPR_CNTD, // Drowning Timer - 3 Tails 03-07-2000
-    SPR_CNTE, // Drowning Timer - 4 Tails 03-07-2000
-    SPR_CNTF, // Drowning Timer - 5 Tails 03-07-2000
-    SPR_POPP, // Extra Large bubble goes POP! Tails 03-08-2000
-    SPR_PRUP, // 1up Box Tails 03-12-2000
-    SPR_BKTV, // Black shield TV Tails 04-08-2000
-    SPR_SCRA, // 100 score logo Tails 04-16-2000
-    SPR_SCRB, // 200 score logo Tails 04-16-2000
-    SPR_SCRC, // 500 score logo Tails 04-16-2000
-    SPR_SCRD, // 1000 score logo Tails 04-16-2000
-    SPR_SSPK, // Super Sonic Spark Tails 04-18-2000
-    SPR_GRAS, // Grass debris Tails 05-14-2000
-    SPR_YSPR, // Yellow Diagonal Spring Tails 05-17-2000
-	SPR_RSPR, // Red Diagonal Spring Nozomi 03-28-2026
-	SPR_BSPR, // Blue Diagonal Spring Nozomi 03-28-2026
-    SPR_WTRA, // Ambient Water Sound 1 Tails 06-10-2000
-    SPR_WTRB, // Ambient Water Sound 2 Tails 06-10-2000
-    SPR_WTRC, // Ambient Water Sound 3 Tails 06-10-2000
-    SPR_WTRD, // Ambient Water Sound 4 Tails 06-10-2000
-    SPR_WTRE, // Ambient Water Sound 5 Tails 06-10-2000
-    SPR_WTRF, // Ambient Water Sound 6 Tails 06-10-2000
-    SPR_WTRG, // Ambient Water Sound 7 Tails 06-10-2000
-    SPR_WTRH, // Ambient Water Sound 8 Tails 06-10-2000
-    SPR_SKIM, // Skim mine dropper Tails 06-13-2000
-    SPR_MINE, // Skim mine Tails 06-13-2000
-    SPR_FISH, // Greenflower Fish Tails 07-03-2000
-    SPR_GARG, // Deep Sea Gargoyle Tails 07-29-2000
-	SPR_SPLH, // Tails 12-08-2000
-    SPR_GTHO, // Tails 12-05-99 Thok! mobj
-    SPR_GRTH, // Tails 12-05-99 Thok! mobj
-    SPR_PCTH, // Tails 12-05-99 Thok! mobj
-    SPR_DRTH, // Tails 12-05-99 Thok! mobj
-    SPR_STHO, // Tails 12-05-99 Thok! mobj
-    SPR_OTHO, // Tails 12-05-99 Thok! mobj
-    SPR_RTHO, // Tails 12-05-99 Thok! mobj
-    SPR_BTHO, // Tails 12-05-99 Thok! mobj
-    SPR_PTHO, // Tails 12-05-99 Thok! mobj
-    SPR_DBTH, // Tails 12-05-99 Thok! mobj
-    SPR_BGTH, // Tails 12-05-99 Thok! mobj
-	SPR_THZP, // Techno Hill Zone Plant Tails 12-19-2000
-	SPR_SIGN, // Level end sign Tails 01-14-2001
-	SPR_RRNG, // Red Ring Tails 03-13-2001
-	SPR_TTAG, // Tag Sign Tails 05-08-2001
-	SPR_STEM, // Steam riser Tails 05-28-2001
-	SPR_RFLG, // Red CTF Flag Tails 07-22-2001
-	SPR_BFLG, // Blue CTF Flag Tails 07-22-2001
-	SPR_GFLG, // Got Flag sign Tails 07-22-2001
-	SPR_TOKE, // Special Stage Token Tails 08-11-2001
-	SPR_CEMG, // Chaos Emerald (intangible) Tails 08-18-2001
-	SPR_CEMO, // Chaos Emerald (intangible) Tails 08-18-2001
-	SPR_CEMP, // Chaos Emerald (intangible) Tails 08-18-2001
-	SPR_CEMB, // Chaos Emerald (intangible) Tails 08-18-2001
-	SPR_CEMR, // Chaos Emerald (intangible) Tails 08-18-2001
-	SPR_CEML, // Chaos Emerald (intangible) Tails 08-18-2001
-	SPR_CEMY, // Chaos Emerald (intangible) Tails 08-18-2001
-	SPR_JETB, // Jetty-Syn Bomber Tails 08-18-2001
-	SPR_JETG, // Jetty-Syn Gunner Tails 08-25-2001
-	SPR_JBUL, // Jetty-Syn Bullet Tails 08-25-2001
-	SPR_MOUS, // Mouse Tails 08-26-2001
-	SPR_DETN, // Deton Tails 08-26-2001
-	SPR_XPLD, // Robot Explosion Tails 08-26-2001
-	SPR_REDX, // RedXVI
-	SPR_CHAN, // CEZ Chain Tails 11-02-2001
-	SPR_CAPE, // Fake little Super Sonic cape Tails 11-12-2001
-	SPR_SNO1, // Snowflake Tails 12-02-2001
-	SPR_SANT, // Santa Tails 12-12-2001
-	SPR_EMER, // Emerald Hunt 1 Tails 12-12-2001
-	SPR_EMES, // Emerald Hunt 2 Tails 12-12-2001
-	SPR_EMET, // Emerald Hunt 3 Tails 12-12-2001
-	SPR_SBLL, // Snow Ball for Snow Buster Tails 12-12-2001
-	SPR_SPIK, // Spike Ball Tails 12-18-2001
-	SPR_CCOM, // Crawla Commander Tails 12-30-2001
-	SPR_MARL, // maril unfinished sprite for whatever Nozomi 03-13-2026
+    SPR_BIRD,
+    SPR_SQRL,
+    SPR_BORB,
+    SPR_YORB,
+    SPR_GORB,
+    SPR_KORB,
+    SPR_SPRK,
+    SPR_IVSP,
+    SPR_IVSQ,
+    SPR_BUBP,
+    SPR_BUBO,
+    SPR_BUBN,
+    SPR_BUBM,
+    SPR_CNTA,
+    SPR_CNTB,
+    SPR_CNTC,
+    SPR_CNTD,
+    SPR_CNTE,
+    SPR_CNTF,
+    SPR_POPP,
+    SPR_PRUP,
+    SPR_BKTV,
+    SPR_SCRA,
+    SPR_SCRB,
+    SPR_SCRC,
+    SPR_SCRD,
+    SPR_SSPK,
+    SPR_GRAS,
+    SPR_YSPR,
+    SPR_RSPR,
+    SPR_BSPR,
+    SPR_SKIM,
+    SPR_MINE,
+    SPR_FISH,
+    SPR_GARG,
+    SPR_SPLH,
+    SPR_GTHO,
+    SPR_GRTH,
+    SPR_PCTH,
+    SPR_DRTH,
+    SPR_STHO,
+    SPR_OTHO,
+    SPR_RTHO,
+    SPR_BTHO,
+    SPR_PTHO,
+    SPR_DBTH,
+    SPR_BGTH,
+    SPR_THZP,
+    SPR_SIGN,
+    SPR_RRNG,
+    SPR_TTAG,
+    SPR_STEM,
+    SPR_RFLG,
+    SPR_BFLG,
+    SPR_GFLG,
+    SPR_TOKE,
+    SPR_CEMG,
+    SPR_CEMO,
+    SPR_CEMP,
+    SPR_CEMB,
+    SPR_CEMR,
+    SPR_CEML,
+    SPR_CEMY,
+    SPR_JETB,
+    SPR_JETG,
+    SPR_JBUL,
+    SPR_MOUS,
+    SPR_DETN,
+    SPR_XPLD,
+    SPR_REDX,
+    SPR_CHAN,
+    SPR_CAPE,
+    SPR_SNO1,
+    SPR_SANT,
+    SPR_EMER,
+    SPR_EMES,
+    SPR_EMET,
+    SPR_SBLL,
+    SPR_SPIK,
+    SPR_CCOM,
+    SPR_MARL,
     SPR_RAIN,
-	SPR_NSPR, // new springs! Nozomi 03-28-2026
+    SPR_NSPR,
 	NUMSPRITES
 
 } spritenum_t;
@@ -275,154 +182,6 @@ typedef enum
 typedef enum
 {
     S_NULL,
-    S_LIGHTDONE,
-    S_PUNCH,
-    S_PUNCHDOWN,
-    S_PUNCHUP,
-    S_PUNCH1,
-    S_PUNCH2,
-    S_PUNCH3,
-    S_PUNCH4,
-    S_PUNCH5,
-    S_PISTOL,
-    S_PISTOLDOWN,
-    S_PISTOLUP,
-    S_PISTOL1,
-    S_PISTOL2,
-    S_PISTOL3,
-    S_PISTOL4,
-    S_PISTOLFLASH,
-    S_SGUN,
-    S_SGUNDOWN,
-    S_SGUNUP,
-    S_SGUN1,
-    S_SGUN2,
-    S_SGUN3,
-    S_SGUN4,
-    S_SGUN5,
-    S_SGUN6,
-    S_SGUN7,
-    S_SGUN8,
-    S_SGUN9,
-    S_SGUNFLASH1,
-    S_SGUNFLASH2,
-    S_DSGUN,
-    S_DSGUNDOWN,
-    S_DSGUNUP,
-    S_DSGUN1,
-    S_DSGUN2,
-    S_DSGUN3,
-    S_DSGUN4,
-    S_DSGUN5,
-    S_DSGUN6,
-    S_DSGUN7,
-    S_DSGUN8,
-    S_DSGUN9,
-    S_DSGUN10,
-    S_DSNR1,
-    S_DSNR2,
-    S_DSGUNFLASH1,
-    S_DSGUNFLASH2,
-    S_CHAIN,
-    S_CHAINDOWN,
-    S_CHAINUP,
-    S_CHAIN1,
-    S_CHAIN2,
-    S_CHAIN3,
-    S_CHAINFLASH1,
-    S_CHAINFLASH2,
-    S_MISSILE,
-    S_MISSILEDOWN,
-    S_MISSILEUP,
-    S_MISSILE1,
-    S_MISSILE2,
-    S_MISSILE3,
-    S_MISSILEFLASH1,
-    S_MISSILEFLASH2,
-    S_MISSILEFLASH3,
-    S_MISSILEFLASH4,
-    S_SAW,
-    S_SAWB,
-    S_SAWDOWN,
-    S_SAWUP,
-    S_SAW1,
-    S_SAW2,
-    S_SAW3,
-    S_PLASMA,
-    S_PLASMADOWN,
-    S_PLASMAUP,
-    S_PLASMA1,
-    S_PLASMA2,
-    S_PLASMAFLASH1,
-    S_PLASMAFLASH2,
-    S_BFG,
-    S_BFGDOWN,
-    S_BFGUP,
-    S_BFG1,
-    S_BFG2,
-    S_BFG3,
-    S_BFG4,
-    S_BFGFLASH1,
-    S_BFGFLASH2,
-    S_BLOOD1,
-    S_BLOOD2,
-    S_BLOOD3,
-    S_PUFF1,
-    S_PUFF2,
-    S_PUFF3,
-    S_PUFF4,
-    S_TBALL1,
-    S_TBALL2,
-    S_TBALLX1,
-    S_TBALLX2,
-    S_TBALLX3,
-    S_RBALL1,
-    S_RBALL2,
-    S_RBALLX1,
-    S_RBALLX2,
-    S_RBALLX3,
-    S_PLASBALL,
-    S_PLASBALL2,
-    S_PLASEXP,
-    S_PLASEXP2,
-    S_PLASEXP3,
-    S_PLASEXP4,
-    S_PLASEXP5,
-    S_ROCKET,
-    S_BFGSHOT,
-    S_BFGSHOT2,
-    S_BFGLAND,
-    S_BFGLAND2,
-    S_BFGLAND3,
-    S_BFGLAND4,
-    S_BFGLAND5,
-    S_BFGLAND6,
-    S_BFGEXP,
-    S_BFGEXP2,
-    S_BFGEXP3,
-    S_BFGEXP4,
-    S_EXPLODE1,
-    S_EXPLODE2,
-    S_EXPLODE3,
-    S_TFOG,
-    S_TFOG01,
-    S_TFOG02,
-    S_TFOG2,
-    S_TFOG3,
-    S_TFOG4,
-    S_TFOG5,
-    S_TFOG6,
-    S_TFOG7,
-    S_TFOG8,
-    S_TFOG9,
-    S_TFOG10,
-    S_IFOG,
-    S_IFOG01,
-    S_IFOG02,
-    S_IFOG2,
-    S_IFOG3,
-    S_IFOG4,
-    S_IFOG5,
     S_PLAY,
     S_PLAY_TAP1, // Tails 12-03-99
     S_PLAY_TAP2, // Tails 12-03-99
@@ -512,64 +271,6 @@ typedef enum
     S_SPOS_DIE2,
     S_SPOS_DIE3,
     S_SPOS_DIE4,
-// XDIE frames deleted Tails 10-25-99
-    S_FIRE1,
-    S_FIRE2,
-    S_FIRE3,
-    S_FIRE4,
-    S_FIRE5,
-    S_FIRE6,
-    S_FIRE7,
-    S_FIRE8,
-    S_FIRE9,
-    S_FIRE10,
-    S_FIRE11,
-    S_FIRE12,
-    S_FIRE13,
-    S_FIRE14,
-    S_FIRE15,
-    S_FIRE16,
-    S_FIRE17,
-    S_FIRE18,
-    S_FIRE19,
-    S_FIRE20,
-    S_FIRE21,
-    S_FIRE22,
-    S_FIRE23,
-    S_FIRE24,
-    S_FIRE25,
-    S_FIRE26,
-    S_FIRE27,
-    S_FIRE28,
-    S_FIRE29,
-    S_FIRE30,
-    S_SMOKE1,
-    S_SMOKE2,
-    S_SMOKE3,
-    S_SMOKE4,
-    S_SMOKE5,
-    S_TRACER,
-    S_TRACER2,
-    S_TRACEEXP1,
-    S_TRACEEXP2,
-    S_TRACEEXP3,
-    S_FATSHOT1,
-    S_FATSHOT2,
-    S_FATSHOTX1,
-    S_FATSHOTX2,
-    S_FATSHOTX3,
-    S_BRBALL1,
-    S_BRBALL2,
-    S_BRBALLX1,
-    S_BRBALLX2,
-    S_BRBALLX3,
-    S_ARACH_PLAZ,
-    S_ARACH_PLAZ2,
-    S_ARACH_PLEX,
-    S_ARACH_PLEX2,
-    S_ARACH_PLEX3,
-    S_ARACH_PLEX4,
-    S_ARACH_PLEX5,
     S_EGGMOBILE_STND, // Boss 1 Tails 11-29-99
     S_EGGMOBILE_STND2, // Boss 1 Tails 11-29-99
     S_EGGMOBILE_RUN1, // Boss 1 Tails 11-29-99
@@ -604,33 +305,10 @@ typedef enum
     S_EGGMOBILE_DIE12, // Boss 1 Tails 11-29-99
     S_EGGMOBILE_DIE13, // Boss 1 Tails 11-29-99
     S_EGGMOBILE_DIE14, // Boss 1 Tails 11-29-99
-    S_SPAWN1,
-    S_SPAWN2,
-    S_SPAWN3,
-    S_SPAWN4,
-    S_SPAWNFIRE1,
-    S_SPAWNFIRE2,
-    S_SPAWNFIRE3,
-    S_SPAWNFIRE4,
-    S_SPAWNFIRE5,
-    S_SPAWNFIRE6,
-    S_SPAWNFIRE7,
-    S_SPAWNFIRE8,
-    S_BRAINEXPLODE1,
-    S_BRAINEXPLODE2,
-    S_BRAINEXPLODE3,
-    S_BEXP,
-    S_BEXP2,
-    S_BEXP3,
-    S_BEXP4,
-    S_BEXP5,
-    S_BBAR1,
-    S_BBAR2,
-    S_BBAR3,
-    S_BBAR4, // Tails 10-31-99
-    S_BBAR5, // Tails 10-31-99
-    S_BBAR6, // Tails 10-31-99
-    S_BBAR7, // Tails 10-31-99
+    S_ROCKET,
+    S_EXPLODE1,
+    S_EXPLODE2,
+    S_EXPLODE3,
     S_BON1,
     S_BON1A,
     S_BON1B,
@@ -655,18 +333,6 @@ typedef enum
     S_BON1U,  //Tails 10-29-99
     S_BON1V,  //Tails 10-29-99
     S_BON1W,  //Tails 10-29-99
-    S_BKEY,
-    S_BKEY2,
-    S_RKEY,
-    S_RKEY2,
-    S_YKEY,
-    S_YKEY2,
-    S_BSKULL,
-    S_BSKULL2,
-    S_RSKULL,
-    S_RSKULL2,
-    S_YSKULL,
-    S_YSKULL2,
     S_STIM,
     S_STIM1, // Tails 9-30-99
     S_STIM2, // Tails 9-30-99
@@ -701,22 +367,6 @@ typedef enum
     S_PINV7,
     S_PINV8,
     S_PINV9, // end invincibility box tails
-    S_CLIP,
-    S_AMMO,
-    S_ROCK,
-    S_BROK,
-    S_CELL,
-    S_CELP,
-    S_SHEL,
-    S_SBOX,
-    S_BPAK,
-    S_BFUG,
-    S_MGUN,
-    S_CSAW,
-    S_LAUN,
-    S_PLAS,
-    S_SHOT,
-    S_SHOT2,
     S_GRTV, // Tails 9-30-99
     S_GRTV1, // Tails 9-30-99
     S_GRTV2, // Tails 9-30-99
@@ -726,9 +376,6 @@ typedef enum
     S_GRTV6, // Tails 9-30-99
     S_GRTV7, // Tails 9-30-99
     S_GRTV8, // Tails 2-13-00
-    S_STALAG,
-    S_DEADTORSO,
-    S_DEADBOTTOM,
     S_HEADSONSTICK,
     S_HEADSONSTICK2, // Tails 11-06-99
     S_HEADSONSTICK3, // Tails 11-06-99
@@ -737,9 +384,6 @@ typedef enum
     S_HEADSONSTICK6, // Tails 11-06-99
     S_HEADSONSTICK7, // Tails 11-06-99
     S_HEADSONSTICK8, // Tails 11-06-99
-    S_GIBS,
-    S_HEADCANDLES,
-    S_HEADCANDLES2,
     S_SHTV, // Tails 9-30-99
     S_SHTV1, // Tails 9-30-99
     S_SHTV2, // Tails 9-30-99
@@ -749,13 +393,6 @@ typedef enum
     S_SHTV6, // Tails 9-30-99
     S_SHTV7, // Tails 9-30-99
     S_SHTV8, // Tails 2-13-00
-    S_LIVESTICK,
-    S_LIVESTICK2,
-    S_MEAT2,
-    S_MEAT3,
-    S_MEAT4,
-    S_MEAT5,
-    S_STALAGTITE,
     S_TALLREDCOL, // It's da fan! Tails 12-05-99
     S_TALLREDCOL2, // It's da fan! Tails 12-05-99
     S_TALLREDCOL3, // It's da fan! Tails 12-05-99
@@ -777,8 +414,6 @@ typedef enum
     S_BLTV6, // Tails 9-30-99
     S_BLTV7, // Tails 9-30-99
     S_BLTV8, // Tails 2-13-00
-    S_SKULLCOL,
-    S_BIGTREE,
     S_YLTV, // Tails 9-30-99
     S_YLTV1, // Tails 9-30-99
     S_YLTV2, // Tails 9-30-99
@@ -788,37 +423,8 @@ typedef enum
     S_YLTV6, // Tails 9-30-99
     S_YLTV7, // Tails 9-30-99
     S_YLTV8, // Tails 2-13-00
-    S_EVILEYE,
-    S_EVILEYE2,
-    S_EVILEYE3,
-    S_EVILEYE4,
-    S_FLOATSKULL,
-    S_FLOATSKULL2,
-    S_FLOATSKULL3,
     S_HEARTCOL,
     S_HEARTCOL2,
-    S_GREENTORCH,
-    S_GREENTORCH2,
-    S_GREENTORCH3,
-    S_GREENTORCH4,
-    S_REDTORCH,
-    S_REDTORCH2,
-    S_REDTORCH3,
-    S_REDTORCH4,
-    S_BTORCHSHRT,
-    S_BTORCHSHRT2,
-    S_BTORCHSHRT3,
-    S_BTORCHSHRT4,
-    S_RTORCHSHRT,
-    S_RTORCHSHRT2,
-    S_RTORCHSHRT3,
-    S_RTORCHSHRT4,
-    S_HANGNOGUTS,
-    S_HANGBNOBRAIN,
-    S_HANGTLOOKDN,
-    S_HANGTSKULL,
-    S_HANGTLOOKUP,
-    S_HANGTNOBRAIN,
     S_COLONGIBS,
     S_COLONGIBS2, // Tails 11-07-99
     S_COLONGIBS3, // Tails 11-07-99
@@ -827,11 +433,6 @@ typedef enum
     S_COLONGIBS6, // Tails 11-07-99
     S_COLONGIBS7, // Tails 11-07-99
     S_COLONGIBS8, // Tails 11-07-99
-    S_SMALLPOOL,
-    S_TECHLAMP,
-    S_TECHLAMP2,
-    S_TECHLAMP3,
-    S_TECHLAMP4,
     //Fab: added lava/slime damage burn smoke
     S_SMOK1,
     S_SMOK2,
@@ -842,7 +443,6 @@ typedef enum
     S_SPLASH1,
     S_SPLASH2,
     S_SPLASH3,
-    S_TNT1,   //SoM: 3/9/2000: add state for invisible sprite
 	S_BIRD1, // Tails 10-20-99 Birdie free!
     S_BIRD2, // Tails 10-20-99 Birdie free!
     S_BIRD3, // Tails 10-23-99 Birdie free!
@@ -1280,97 +880,24 @@ typedef enum {
     MT_PLAYER,
     MT_BLUECRAWLA,
     MT_REDCRAWLA,
-    MT_FIRE,
-    MT_TRACER,
-    MT_SMOKE,
-    MT_FATSHOT,
-    MT_BRUISERSHOT,
     MT_EGGMOBILE,
-    MT_SPAWNSHOT,
-    MT_SPAWNFIRE,
-    MT_TROOPSHOT,
-    MT_HEADSHOT,
     MT_ROCKET,
-    MT_PLASMA,
-    MT_BFG,
-    MT_ARACHPLAZ,
-    MT_PUFF,
-    MT_BLOOD,
-    MT_TFOG,
-    MT_IFOG,
     MT_TELEPORTMAN,
-    MT_EXTRABFG,
     MT_MISC2,
-    MT_MISC4,
-    MT_MISC5,
-    MT_MISC6,
-    MT_MISC7,
-    MT_MISC8,
-    MT_MISC9,
     MT_MISC10,
     MT_MISC11,
     MT_EMMY, // emerald tails
     MT_INV,
-    MT_CLIP,
-    MT_MISC17,
-    MT_MISC18,
-    MT_MISC19,
-    MT_MISC20,
-    MT_MISC21,
-    MT_MISC22,
-    MT_MISC23,
-    MT_MISC24,
-    MT_BFG9000,
-    MT_CHAINGUN,
-    MT_SHAINSAW,
-    MT_ROCKETLAUNCH,
-    MT_PLASMAGUN,
-    MT_SHOTGUN,
-    MT_SUPERSHOTGUN,
-    MT_MISC29,
     MT_MISC31,
     MT_MISC34,
 	MT_REDFAN,
     MT_BUBBLES, // Bubble source Tails 03-07-2000
-    MT_MISC36,
     MT_MISC37,
-    MT_MISC38,
-    MT_MISC39,
-    MT_MISC42,
-    MT_MISC43,
-    MT_MISC44,
-    MT_MISC46,
-    MT_MISC47,
     MT_MISC48,
     MT_MISC50,
-    MT_MISC52,
-    MT_MISC53,
-    MT_MISC54,
-    MT_MISC55,
-    MT_MISC56,
-    MT_MISC57,
-    MT_MISC58,
-    MT_MISC59,
-    MT_MISC62,
-    MT_MISC63,
-    MT_MISC67,
-    MT_MISC68,
-    MT_MISC69,
     MT_MISC70,
-    MT_MISC71,
-    MT_MISC73,
     MT_MISC74,
-    MT_MISC75,
-    MT_MISC76,
-    MT_MISC77,
-    MT_MISC78,
-    MT_MISC79,
-    MT_MISC80,
-    MT_MISC81,
-    MT_MISC82,
-    MT_MISC83,
     MT_MISC84,
-    MT_MISC85,
     MT_CHASECAM,
     MT_SPIRIT,
     MT_SMOK,        // test lave/slime damage smoke

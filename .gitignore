@@ -1,4 +1,11 @@
-objs
+assets/*.exe
+assets/*.cfg
+assets/*.txt
+assets/*.lmp
+assets/*.bak
+assets/*.dbs
+assets/*.backup*
+*.ilk
 *.plg
 *.opt
 *.ncb
@@ -21,3 +28,6 @@ assets/config.cfg
 latest/build/*
 latest/win32/wlegacy.ncb
 latest/win32/wlegacy.opt
+assets/srb2sav1.ssg
+assets/srb2sav0.ssg
+assets/srb2-nozomi.exe

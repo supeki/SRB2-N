@@ -128,6 +128,12 @@ void V_DrawScaledTranslationPatch ( int           x,
                               patch_t*      patch,
                               byte*         colormap );
 
+void V_DrawScaledTranslationPatchFlipped ( int           x,
+                              int           y,
+                              int           scrn,
+                              patch_t*      patch,
+                              byte*         colormap );
+
 void V_DrawCustomScaledTranslationPatch ( int           x,
                               int           y,
 							  fixed_t		scale,
