@@ -1,7 +1,10 @@
 objs
-assets/srb2win.exe
-assets/config.cfg
-assets/srb2win_debug.exe
-assets/errlog.txt
+assets/*.exe
+assets/*.cfg
+assets/*.txt
+assets/*.lmp
+assets/*.bak
+assets/*.dbs
+assets/*.backup*
 *.ilk
 *.plg
