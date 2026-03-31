@@ -379,7 +379,7 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
 	if (
 		((players[displayplayer].mo && players[displayplayer].mo->eflags & MF_UNDERWATER)
 		||(players[secondarydisplayplayer].mo && players[secondarydisplayplayer].mo->eflags & MF_UNDERWATER))
-		&& cv_underwaterpitch.value) {
+		&& cv_underwaterpitch.value && gamestate == GS_LEVEL) { // how the fuck is it doing this in the title screen after dsz1 time attack, go my GS_LEVELs
 		pitch = pitch / 4 * 3;
 		volume = volume / 4 * 3;
 	}

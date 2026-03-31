@@ -115,8 +115,8 @@ void T_TetrisDrawer(void)
 	V_DrawStringWhite(160 - (4*15) - 2, 8, "PLACEHOLDER TEXT");
 
 	// Placeholder mino draw.
-	colormap = translationtables - 256 + (tetris_playingpiece.type->color<<8);
 	piece = tetris_playingpiece.type; 
+	colormap = translationtables - 256 + (piece->color<<8);
 
 	for (y=0; y<4; y++)
 	{
