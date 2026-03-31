@@ -4,8 +4,10 @@
 #include "../console.h"
 #include "../doomdef.h"
 #include "../d_main.h"
+#include "../g_game.h"
 #include "../g_input.h"
 #include "../g_state.h"
+#include "../r_draw.h"
 #include "../r_main.h"
 #include "../s_sound.h"
 #include "../v_video.h"
@@ -434,10 +436,14 @@ static void SRBN_DrawSonikku(void)
 	else if (srbn_sonic_idletimer > 6.65f)
 		earless_patch = (int)(srbn_sonic_idletimer / 6.65f) % 5 + 1;
 
-	if (srbn_sonic_dir > 0)
-		V_DrawScaledPatch(srbn_sonic_x, srbn_sonic_y - srbn_sonic_momy, 0, srbn_earless[earless_patch]);
-	else
-		V_DrawScaledPatchFlipped(srbn_sonic_x, srbn_sonic_y - srbn_sonic_momy, 0, srbn_earless[earless_patch]);
+	{
+		byte* sonikku_colormap = translationtables - 256 + (cv_playercolor.value<<8);
+
+		if (srbn_sonic_dir > 0)
+			V_DrawScaledTranslationPatch(srbn_sonic_x, srbn_sonic_y - srbn_sonic_momy, 0, srbn_earless[earless_patch], sonikku_colormap);
+		else
+			V_DrawScaledTranslationPatchFlipped(srbn_sonic_x, srbn_sonic_y - srbn_sonic_momy, 0, srbn_earless[earless_patch], sonikku_colormap);
+	}
 
 	V_DrawStringWhite(0, 0, va("%d,%d", srbn_sonic_x, srbn_sonic_y));
 }

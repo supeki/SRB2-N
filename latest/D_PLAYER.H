@@ -362,5 +362,6 @@ typedef struct
 
 } wbstartstruct_t;
 
+extern player_t *plyr;
 
 #endif
