@@ -82,4 +82,6 @@ void D_UpdateWindowTitle(void);
 // for... purposes... Nozomi
 extern gamestate_t  wipegamestate;
 
+extern event_t*    ev;
+
 #endif //__D_MAIN__

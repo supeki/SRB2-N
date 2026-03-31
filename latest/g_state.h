@@ -62,7 +62,8 @@ typedef enum
 	// nozomi
 	GS_NOZOMITITLE,
 	GS_NOZOMITETRIS,				// don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask
-	GS_SRBNOZOMI // dedicated srb-nozomi gamestate
+	GS_SRBNOZOMI, // dedicated srb-nozomi gamestate
+    GS_NOZOMIPONG // "we GOTTA make pong-nozomi" -xdf
 } gamestate_t;
 
 typedef enum

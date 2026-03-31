@@ -52,6 +52,7 @@
 boolean M_Responder (event_t *ev);
 
 extern consvar_t* setupm_cvname;
+extern consvar_t* setupm_cvskin;
 extern consvar_t* setupm_cvcolor;
 
 extern int menu_anim;

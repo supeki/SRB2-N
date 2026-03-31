@@ -83,6 +83,7 @@ list(APPEND SOURCES
     z_zone.c
     EXTRAS/srb.c
     EXTRAS/tetris.c
+    EXTRAS/pong.c
 )
 
 if (NOT(BACKEND STREQUAL "DSi"))

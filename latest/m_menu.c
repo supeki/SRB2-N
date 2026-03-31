@@ -590,7 +590,7 @@ static  state_t*  multi_state;
 // for either player 1 or 2
 static  char       setupm_name[MAXPLAYERNAME+1];
 static  player_t*  setupm_player;
-static  consvar_t* setupm_cvskin;
+consvar_t* setupm_cvskin;
 consvar_t* setupm_cvcolor; // :)
 consvar_t* setupm_cvname; // :)
 
@@ -2534,7 +2534,7 @@ void M_HostSERVER(int choice)
 	netgame = true;
     multiplayer = true;*/
 	menuactive = false;
-    COM_BufAddText ("srbnozomi\n");
+    COM_BufAddText ("pong\n");
 }
 
 

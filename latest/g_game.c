@@ -126,6 +126,7 @@
 
 #include "EXTRAS/srb.h"
 #include "EXTRAS/tetris.h"
+#include "EXTRAS/pong.h"
 
 // added 8-3-98 increse savegame size from 0x2c000 (180kb) to 512*1024
 #define SAVEGAMESIZE    (512*1024)
@@ -1239,6 +1240,10 @@ void G_Ticker (void)
 
 	  case GS_NOZOMITETRIS:
 		  T_TetrisTicker ();
+		  break;
+
+	  case GS_NOZOMIPONG:
+		  T_PongTicker ();
 		  break;
 		  
 	  case GS_SRBNOZOMI:

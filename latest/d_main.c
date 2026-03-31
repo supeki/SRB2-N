@@ -187,6 +187,7 @@
 
 #include "EXTRAS/srb.h"
 #include "EXTRAS/tetris.h"
+#include "EXTRAS/pong.h"
 
 //
 //  DEMO LOOP
@@ -273,7 +274,7 @@ void D_ProcessEvents (void)
     {
         ev = &events[eventtail];
         // Menu input
-		if (gamestate != GS_WAITINGPLAYERS && gamestate != GS_NOZOMITETRIS)
+		if (gamestate != GS_WAITINGPLAYERS && gamestate != GS_NOZOMITETRIS && gamestate != GS_NOZOMIPONG)
 			if (M_Responder (ev))
 				continue;              // menu ate the event
 
@@ -399,6 +400,9 @@ void D_Display (void)
 		break;
 	  case GS_NOZOMITETRIS:
 		  T_TetrisDrawer ();
+		  break;
+	  case GS_NOZOMIPONG:
+		  T_PongDrawer();
 		  break;
 	  case GS_NULL:
         break;
@@ -1570,6 +1574,7 @@ p = M_CheckParm ("-ctfteam"); // Tails 08-04-2001
 	if (nozomi_extra) {
 		D_InitSRBNozomi(); // Sonic Robo-Blast! Nozomi
 		D_InitNozomiTetris(); // Nozomi Tetris
+        D_InitNozomiPong(); // Nozomi Pong
 	}
 
     // init all NETWORK
