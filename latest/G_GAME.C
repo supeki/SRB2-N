@@ -1462,6 +1462,7 @@ boolean G_CheckSpot ( int           playernum,
     fixed_t             y;
     subsector_t*        ss;
     unsigned            an;
+    mobj_t*             mo;
     int                 i;
 
     // added 25-4-98 : maybe there is no player start
@@ -1495,10 +1496,6 @@ boolean G_CheckSpot ( int           playernum,
     // spawn a teleport fog
     ss = R_PointInSubsector (x,y);
     an = ( ANG45 * (mthing->angle/45) ) >> ANGLETOFINESHIFT;
-
-    mo = P_SpawnMobj (x+20*finecosine[an], y+20*finesine[an]
-                      , ss->sector->floorheight
-                      , MT_TFOG);
 
     //added:16-01-98:consoleplayer -> displayplayer (hear snds from viewpt)
     // removed 9-12-98: why not ????
@@ -2189,79 +2186,14 @@ players[i].sp_score = 0;
 }
 
 
-//added:03-02-98:
-//
-//  'Downgrade' the game engine so that it is compatible with older demo
-//   versions. This will probably get harder and harder with each new
-//   'feature' that we add to the game. This will stay until it cannot
-//   be done a 'clean' way, then we'll have to forget about old demos..
-//
+// Just remove this whole freaking function.
+// Why would we want to support Legacy 1.11 demos in SRB2-Nozomi v1.5???
+// Screw off.
+// Save 01-04-2026
 boolean G_Downgrade(int version)
 {
     int i;
-
-    if (version<109)
-        return false;
-
-    // smoke trails for skull head attack since v1.25
-    if (version<125)
-    {
-        states[S_ROCKET].action.acv = NULL;
-
-//        states[S_SKULL_ATK3].action.acv = NULL;
-//        states[S_SKULL_ATK4].action.acv = NULL;
-    }
-    else
-    {
-        //activate rocket trails by default
-        states[S_ROCKET].action.acv     = A_SmokeTrailer;
-/*
-        // smoke trails behind the skull heads
-        states[S_SKULL_ATK3].action.acv = A_SmokeTrailer;
-        states[S_SKULL_ATK4].action.acv = A_SmokeTrailer;*/
-    }
-
-    //hmmm.. first time I see an use to the switch without break...
-    switch (version)
-    {
-      case 109:
-        // disable rocket trails
-        states[S_ROCKET].action.acv = NULL; //NULL like in Doom2 v1.9
-
-        // Boris : for older demos, initalise the new skincolor value
-        //         also disable the new preferred weapons order.
-        for(i=0;i<4;i++)
-        {
-            players[i].skincolor = i % MAXSKINCOLORS;
-            players[i].originalweaponswitch=true;
-        }//eof Boris
-
-      case 111:
-        //added:16-02-98: make sure autoaim is used for older
-        //                demos not using mouse aiming
-        for(i=0;i<MAXPLAYERS;i++)
-            players[i].autoaim_toggle = true;
-
-      default:
-        break;
-    }
-
-
-    //SoM: 3/17/2000: Demo compatability
-    if(version < 129) {
-      boomsupport = 0;
-      allow_pushers = 0;
-      variable_friction = 0;
-      }
-    else {
-      boomsupport = 1;
-      allow_pushers = 1;
-      variable_friction = 1;
-      }
-
-    // always true now, might be false in the future, if couldn't
-    // go backward and disable all the features...
-    demoversion = version;
+    return true;
 }
 
 

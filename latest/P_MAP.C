@@ -2089,7 +2089,7 @@ fixed_t P_AimLineAttack ( mobj_t*       t1,
 //added:16-02-98: Fab comments...
 //                t1       est l'attaquant (player ou monstre)
 //                angle    est l'angle de tir sur le plan x,y (orientation)
-//                distance est la port‚e maximale de la balle
+//                distance est la portï¿½e maximale de la balle
 //                slope    est la pente vers la destination (up/down)
 //                damage   est les degats infliges par la balle
 void P_LineAttack ( mobj_t*       t1,
@@ -2353,7 +2353,7 @@ boolean PIT_ChangeSector (mobj_t*       thing)
     // crunch bodies to giblets
     if (thing->health <= 0)
     {
-        P_SetMobjState (thing, S_GIBS);
+        // P_SetMobjState (thing, S_GIBS); Nope.
 
         thing->flags &= ~MF_SOLID;
         thing->height = 0;

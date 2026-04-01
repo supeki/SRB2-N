@@ -1242,16 +1242,16 @@ void M_HandleTimeAttack (int choice)
 //added:10-02-98: note: alphaKey member is the y offset
 menuitem_t OptionsMenu[]=
 {
-//    {IT_STRING | IT_CVAR,"Messages:"       ,&cv_showmessages      ,0},
-//    {IT_STRING | IT_CVAR,"Always Run"      ,&cv_autorun           ,10},
-//    {IT_STRING | IT_CVAR,"Crosshair"       ,&cv_crosshair         ,20},
-//    {IT_STRING | IT_CVAR,"Autoaim"         ,&cv_autoaim           ,30},
-	{IT_CALL    | IT_STRING,"Setup Controls...",M_SetupControlsMenu ,10},
-	{IT_STRING  | IT_CVAR,  "Control per key"  ,&cv_controlperkey   ,20},
-	{IT_SUBMENU | IT_STRING,"Mouse Options..." ,&MouseOptionsDef    ,40},
-    {IT_CALL    | IT_STRING,"Game Options..."  ,M_GameOption        ,50},
-    {IT_SUBMENU | IT_STRING,"Video Options..." ,&VideoOptionsDef    ,60},
-	{IT_SUBMENU | IT_STRING,"Sound Options..." ,&SoundOptionsDef    ,70},
+//    {IT_STRING | IT_CVAR,"Messages:"       ,&cv_showmessages    ,0},
+//    {IT_STRING | IT_CVAR,"Always Run"      ,&cv_autorun         ,10},
+//    {IT_STRING | IT_CVAR,"Crosshair"       ,&cv_crosshair       ,20},
+//    {IT_STRING | IT_CVAR,"Autoaim"         ,&cv_autoaim         ,30},
+	{IT_CALL    | IT_STRING,"Setup Controls...",M_SetupControlsMenu,10},
+	{IT_STRING | IT_CVAR,"Control per key" ,&cv_controlperkey   ,20},
+	{IT_SUBMENU | IT_STRING,"Mouse Options..." ,&MouseOptionsDef,40},
+    {IT_CALL    | IT_STRING,"Game Options..."  ,M_GameOption,50},
+    {IT_SUBMENU | IT_STRING,"Video Options..." ,&VideoOptionsDef,60},
+	{IT_SUBMENU | IT_STRING,"Sound Options..." ,&SoundOptionsDef,70},
 };
 
 menu_t  OptionsDef =
@@ -1352,10 +1352,15 @@ menu_t  MouseOptionsDef =
 
 menuitem_t GameOptionsMenu[]=
 {
-    {IT_STRING | IT_CVAR,   "Enemy Respawn"      ,&cv_respawnmonsters     ,20},
-    {IT_STRING | IT_CVAR,   "Enemy Respawn time" ,&cv_respawnmonsterstime ,30},
-    {IT_STRING | IT_CVAR,   "Fast Enemies"       ,&cv_fastmonsters        ,40},
-    {IT_CALL   | IT_STRING, "Network Options..." ,M_NetOption             ,110}
+//    {IT_STRING | IT_CVAR,"Item Respawn"        ,&cv_itemrespawn        ,0},
+//    {IT_STRING | IT_CVAR,"Item Respawn time"   ,&cv_itemrespawntime    ,10},
+    {IT_STRING | IT_CVAR,"Enemy Respawn"     ,&cv_respawnmonsters    ,20}, // Tails
+    {IT_STRING | IT_CVAR,"Enemy Respawn time",&cv_respawnmonsterstime,30}, // Tails
+    {IT_STRING | IT_CVAR,"Fast Enemies"       ,&cv_fastmonsters       ,40}, // Tails
+//    {IT_STRING | IT_CVAR,"Gravity"             ,&cv_gravity            ,50},
+//    {IT_STRING | IT_CVAR,"Solid corpse"        ,&cv_solidcorpse        ,60},
+//    {IT_STRING | IT_CVAR,"BloodTime"           ,&cv_bloodtime          ,70},
+    {IT_CALL   | IT_STRING,"Network Options..."  ,M_NetOption     ,110} // Tails
 };
 
 menu_t  GameOptionDef =
@@ -1373,7 +1378,7 @@ void M_GameOption(int choice)
 {
     if(!server)
     {
-        M_StartMessage("You are not the server!\nOnly the Server may change\nGame Options.\n",NULL,false);
+        M_StartMessage("You are not the server\nYou can't change the options\n",NULL,false);
         return;
     }
     M_SetupNextMenu(&GameOptionDef);
@@ -1385,12 +1390,20 @@ void M_GameOption(int choice)
 
 menuitem_t NetOptionsMenu[]=
 {
-    {IT_STRING | IT_CVAR,   "Allow exitlevel",   &cv_allowexitlevel ,40},
-    {IT_STRING | IT_CVAR,   "Allow join player", &cv_allownewplayer ,50},
-    {IT_STRING | IT_CVAR,   "Timelimit",         &cv_timelimit      ,90},
-    {IT_STRING | IT_CVAR,   "Game Type",         &cv_gametype       ,100},
-    {IT_STRING | IT_CVAR,   "Maxplayers",        &cv_maxplayers     ,110},
-    {IT_CALL   | IT_STRING, "Game Options...",   M_GameOption       ,130},
+//    {IT_STRING | IT_CVAR,"Allow Jump"      ,&cv_allowjump       ,0},
+    //SoM: 3/28/2000
+//    {IT_STRING | IT_CVAR,"Allow Rocket Jump",&cv_allowrocketjump,10},
+//    {IT_STRING | IT_CVAR,"Allow autoaim"   ,&cv_allowautoaim    ,20},
+//    {IT_STRING | IT_CVAR,"Allow turbo"     ,&cv_allowturbo      ,30},
+    {IT_STRING | IT_CVAR,"Allow exitlevel" ,&cv_allowexitlevel  ,40},
+    {IT_STRING | IT_CVAR,"Allow join player",&cv_allownewplayer ,50},
+//    {IT_STRING | IT_CVAR,"Teamplay"        ,&cv_teamplay        ,60}, // Tails
+//    {IT_STRING | IT_CVAR,"TeamDamage"      ,&cv_teamdamage      ,70},
+//    {IT_STRING | IT_CVAR,"Fraglimit"       ,&cv_fraglimit       ,80},
+    {IT_STRING | IT_CVAR,"Timelimit"       ,&cv_timelimit       ,90},
+    {IT_STRING | IT_CVAR,"Game Type" ,&cv_gametype      ,100}, // Tails
+    {IT_STRING | IT_CVAR,"Maxplayers"      ,&cv_maxplayers      ,110},
+    {IT_CALL   | IT_STRING,"Game Options..." ,M_GameOption,130}, // Tails
 };
 
 menu_t  NetOptionDef =
@@ -1449,7 +1462,19 @@ menu_t  ReadDef1 =
 //
 void M_DrawReadThis1(void)
 {
-    V_DrawScaledPatch (0,0,0,W_CachePatchName("HELP",PU_CACHE));
+    switch ( gamemode )
+    {
+      case commercial:
+        V_DrawScaledPatch (0,0,0,W_CachePatchName("HELP",PU_CACHE));
+        break;
+      case shareware:
+      case registered:
+      case retail:
+        V_DrawScaledPatch (0,0,0,W_CachePatchName("HELP1",PU_CACHE));
+        break;
+      default:
+        break;
+    }
     return;
 }
 
@@ -1485,7 +1510,20 @@ menu_t  ReadDef2 =
 //
 void M_DrawReadThis2(void)
 {
-    V_DrawScaledPatch (0,0,0,W_CachePatchName("CREDIT",PU_CACHE));
+    switch ( gamemode )
+    {
+      case retail:
+      case commercial:
+        // This hack keeps us from having to change menus.
+        V_DrawScaledPatch (0,0,0,W_CachePatchName("CREDIT",PU_CACHE));
+        break;
+      case shareware:
+      case registered:
+        V_DrawScaledPatch (0,0,0,W_CachePatchName("HELP2",PU_CACHE));
+        break;
+      default:
+        break;
+    }
     return;
 }
 
