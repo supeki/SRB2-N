@@ -747,8 +747,9 @@ void R_DrawTranslatedTranslucentColumn_8(void)
 				dest += vid.width;
 				frac += fracstep;
 			}
-			if (count & 1)
-				*dest = dc_colormap[*(dc_transmap + (dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]] <<8) + (*dest))];
+			if (count & 1 && count >= 0)
+				*dest = dc_colormap[*(dc_transmap
+					+ (dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]]<<8) + (*dest))];
 		}
 	}
 }
