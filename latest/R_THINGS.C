@@ -112,6 +112,7 @@
 #include "st_stuff.h"
 #include "w_wad.h"
 #include "z_zone.h"
+#include "p_local.h"
 
 #include "m_misc.h" // For M_MapNumber Nozomi 03-11-2026
 
@@ -830,7 +831,20 @@ static void R_ProjectSprite (mobj_t* thing)
 
     //Fab:02-08-98: 'skin' override spritedef currently used for skin
     if (thing->skin)
-        sprdef = &((skin_t *)thing->skin)->spritedef;
+		if (!cv_superman.value && thing->player && thing->player->powers[pw_super] && skins[thing->player->skin].no_super_sprites == 0)
+			sprdef = &((skin_t *)thing->skin)->superspritedef;
+		else if (
+			!cv_superman.value
+			&& thing->type == MT_THOK 
+			&& thing->sprite == SPR_PLAY
+			&& thing->target 
+			&& thing->target->player 
+			&& thing->target->player->powers[pw_super]
+			&& skins[thing->target->player->skin].no_super_sprites == 0
+		) // large ass hack for the ghosts :3 Nozomi
+			sprdef = &((skin_t *)thing->target->skin)->superspritedef;
+		else
+			sprdef = &((skin_t *)thing->skin)->spritedef;
     else
         sprdef = &sprites[thing->sprite];
 
@@ -1914,6 +1928,7 @@ void Sk_SetDefaultValue(skin_t *skin)
             skin->soundsid[S_sfx[i].skinsound] = i;
         }
     memcpy(&skins[0].spritedef, &sprites[SPR_PLAY], sizeof(spritedef_t));
+	memcpy(&skins[0].superspritedef, &sprites[SPR_SUPR], sizeof(spritedef_t));
 }
 
 //
@@ -2142,6 +2157,16 @@ void R_AddSkins (int wadnum)
             {
                 skins[numskins].runspeed = atoi(value);
             }
+			else
+			if (!stricmp(token,"no_super"))
+            {
+                skins[numskins].no_super = atoi(value);
+            }
+			else
+			if (!stricmp(token,"no_super_sprites"))
+            {
+                skins[numskins].no_super_sprites = atoi(value);
+            }
 // end character type identification Tails 03-01-2000
             else
             {
@@ -2182,6 +2207,23 @@ next_token:
 
         // allocate (or replace) sprite frames, and set spritedef
         R_AddSingleSpriteDef (sprname, &skins[numskins].spritedef, wadnum, lumpnum, lastlump);
+
+		if (!skins[numskins].no_super_sprites) 
+		{
+			// get the base name of this skin's super sprite (4 chars)
+			lumpnum++;
+			lumpinfo = wadfiles[wadnum]->lumpinfo;
+			sprname = lumpinfo[lumpnum].name;
+			intname = *(int *)sprname;
+
+			// skip to end of this skin's frames
+			lastlump = lumpnum;
+			while (*(int *)lumpinfo[lastlump].name == intname)
+				lastlump++;
+
+			// allocate (or replace) sprite frames, and set spritedef
+			R_AddSingleSpriteDef (sprname, &skins[numskins].superspritedef, wadnum, lumpnum, lastlump);
+		}
 
         CONS_Printf ("added skin '%s'\n", skins[numskins].name);
 #ifdef SKINVALUES

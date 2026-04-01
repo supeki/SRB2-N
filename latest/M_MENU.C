@@ -686,7 +686,7 @@ void M_DrawSetupMultiPlayerMenu(void)
 		strcpy(colorname, setupm_cvcolor->string);
 		for (i=0; i<((int)strlen(colorname)); i++)
 			if (colorname[i] == '_')
-				colorname[i] = ' ';
+				colorname[i] = '\n'; // pulling this from the DSi port
 		V_DrawString (mx+90+PLBOXW*8+16, my+16, colorname);
 	}
 

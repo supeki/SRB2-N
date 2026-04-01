@@ -63,6 +63,9 @@ boolean  P_HomingAttack (player_t* player, mobj_t* enemy);
 void D_StartTitle(); // Tails
 void P_FindEmerald();
 
+// For Jisk ... Nozomi
+consvar_t cv_superman = {"superman", "0", CV_NETVAR|CV_SAVE, CV_OnOff};
+
 
 // Index of the special effects (INVUL inverse) map.
 #define INVERSECOLORMAP         32
@@ -940,12 +943,10 @@ void P_MovePlayer (player_t* player)
 //////////////////////////
 
 // Does player have all emeralds? If so, flag the "Ready For Super!" Tails 04-08-2000
-		if((player->emerald1) && (player->emerald2) && (player->emerald3) && (player->emerald4) && (player->emerald5) && (player->emerald6) && (player->emerald7) && (player->health > 50))
+		if((player->emerald1) && (player->emerald2) && (player->emerald3) && (player->emerald4) && (player->emerald5) && (player->emerald6) && (player->emerald7) && (player->health > 50) && skins[player->skin].no_super == 0)
 			player->superready = true;
 		else
 			player->superready = false;
-
-
 
 		if(player->powers[pw_super])
 		{
@@ -953,6 +954,16 @@ void P_MovePlayer (player_t* player)
 			// This is fucking stupid. Nozomi 03-16-2026
 			/*if(!(player->skin == 0))
 				player->powers[pw_super] = 0;*/
+
+			// Change your color to flash!
+			if (!cv_superman.value)
+				player->mo->color = SKINCOLOR_SUPER + abs((((signed)leveltime >> 1) % 9) - 4) + 1;
+			else if (player->mo->color > MAXSKINCOLORS)
+				player->mo->color = player->skincolor;
+
+			// Force animation frames if standing...
+			if (!cv_superman.value && player->mo->state == &states[S_PLAY] && !strcmp(skins[player->skin].name, "sonic"))
+				player->mo->frame = (leveltime / (TICRATE/2)) % 2;
 
 			// Deplete one ring every second while super
 			if((leveltime % TICRATE == 0) && !(player->exiting))
@@ -971,6 +982,9 @@ void P_MovePlayer (player_t* player)
 
 				if (cv_supermusic.value)
 					S_ChangeMusic(mus_runnin + gamemap - 1, 1);
+
+				// Restore your skincolor.
+				player->mo->color = player->skincolor;
 
 				// If you had a shield, restore its visual significance.
 				if(player->powers[pw_blueshield])
@@ -1290,20 +1304,11 @@ void P_MovePlayer (player_t* player)
 				{
 					case 0:
 						// Now it's Sonic's abilities turn!
-						if (player->mfjumped)
+						if (player->mfjumped && (!player->superready || player->powers[pw_super]))
 						{
 							if(player->powers[pw_super])		// If you're Super Sonic,
 							{									// do a little upward boost
 								player->mo->momz += 2*FRACUNIT; // instead!
-							}
-							else if(player->superready) // If you can turn into Super
-							{							// and aren't, do it!
-								// Insert flashy transformation animation here.
-								player->powers[pw_super] = true;
-								P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z + player->mo->height, MT_CAPE)->target = player->mo; // A cape... "Super" Sonic, get it? Ha...ha...
-							
-								if (cv_supermusic.value)
-									S_ChangeMusic(mus_supers, true);
 							}
 							else if(!player->homing) // Otherwise, THOK!
 							{
@@ -1336,7 +1341,7 @@ void P_MovePlayer (player_t* player)
 					case 1:
 						// If currently in the air from a jump, and you pressed the
 						// button again and have the ability to fly, do so!
-						if(!(player->powers[pw_tailsfly]) && (player->mfjumped))
+						if(!(player->powers[pw_tailsfly]) && (player->mfjumped) && !player->superready)
 						{
 							P_SetMobjState (player->mo, S_PLAY_ABL1); // Change to the flying animation
 							player->jumpdown = true;
@@ -1357,7 +1362,7 @@ void P_MovePlayer (player_t* player)
 
 					case 2:
 						// Now Knuckles-type abilities are checked.
-						if (player->mfjumped)
+						if (player->mfjumped && !player->superready)
 						{
 							player->gliding = 1;
 							player->glidetime = 0;
@@ -1370,6 +1375,18 @@ void P_MovePlayer (player_t* player)
 						break;
 					default:
 						break;
+				}
+
+				if(player->mfjumped && player->superready && !player->powers[pw_super]) // If you can turn into Super
+				{							// and aren't, do it!
+					// Insert flashy transformation animation here.
+					player->powers[pw_super] = true;
+
+					if (cv_superman.value) // Jisk got upset when I said I wanted to remove the cape ... Nozomi
+						P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z + player->mo->height, MT_CAPE)->target = player->mo; // A cape... "Super" Sonic, get it? Ha...ha...
+				
+					if (cv_supermusic.value)
+						S_ChangeMusic(mus_supers, true);
 				}
 			}
 		}
@@ -1791,8 +1808,8 @@ void P_MovePlayer (player_t* player)
 			}
 	}
 
-	// Display a ghost if you have Speed Sneakers and are going fast enough! Nozomi Date Unknown
-	if (((player->speed + abs(player->mo->momz/FRACUNIT)) > normalspeed/3*2 && player->powers[pw_strength]) || player->homing) {
+	// Display a ghost if you have Speed Sneakers (or are Super!) and are going fast enough! Nozomi Date Unknown
+	if (((player->speed + abs(player->mo->momz/FRACUNIT)) > normalspeed/3*2 && (player->powers[pw_strength] || player->powers[pw_super])) || player->homing) {
 		mobj_t* ghost;
 		ghost = P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z, MT_THOK);
 		ghost->skin = player->mo->skin;
@@ -1801,6 +1818,7 @@ void P_MovePlayer (player_t* player)
 		ghost->color = player->mo->color;
 		ghost->angle = player->mo->angle;
 		ghost->flags |= MF_TRANSLATION;
+		ghost->target = player->mo;
 		if (player->homing)
 			ghost->fuse = 4;
 		else

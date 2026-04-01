@@ -107,6 +107,7 @@ typedef struct
 {
     char        name[SKINNAMESIZE+1];   // short descriptive name of the skin
     spritedef_t spritedef;
+	spritedef_t superspritedef; // super sprites!! Nozomi
     int         ability; // ability definition Tails 11-15-2000 changed to int by Nozomi
 	char		speed[9]; // speed definition Tails 11-15-2000
 	int 		runspeed; // runspeed Nozomi
@@ -114,6 +115,8 @@ typedef struct
 	char		hudname[9];
 	fixed_t		spritescale; // spritescale Nozomi
 	fixed_t		facescale; // facescale Nozomi
+	byte		no_super; // we should only need a byte right Nozomi
+	byte		no_super_sprites;
 
     // specific sounds per skin
     short       soundsid[NUMSKINSOUNDS]; // sound # in S_sfx table

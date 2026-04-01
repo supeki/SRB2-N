@@ -216,6 +216,7 @@ char *Color_Names[MAXSKINCOLORS+1]={
    "Apricot", // used to be Orange Nozomi 03-25-2026
    "Beige",
    "Lemon",
+   "Yellow",
    "Green",
    "Forest", // Take a hint :)
    "Light_Blue",
@@ -260,114 +261,223 @@ void R_InitTranslationTables (void)
     W_ReadLump( W_GetNumForName("TRANSFIR"), transtables+0x30000 );
     W_ReadLump( W_GetNumForName("TRANSFX1"), transtables+0x40000 );
 
-    translationtables = Z_MallocAlign (256*(MAXSKINCOLORS), PU_STATIC, 0, 8);
+    translationtables = Z_MallocAlign (256*(MAXSKINCOLORS+MAXSUPERCOLORS), PU_STATIC, 0, 8);
 
     // translate just the 16 green colors
     for (i=0 ; i<256 ; i++)
     {
         if (i >= 0x70 && i<= 0x7f)
         {
-            translationtables [i+SKINCOLOR_GREY*256] = 0x60 + (i&0xf); // Gray
-			translationtables [i+SKINCOLOR_PINK*256] = 0x10 + (i&0xf); // Pink
-			translationtables [i+SKINCOLOR_CHERRYBLOSSOM*256] = 0xa8 + (i&0xf)/3;   // Cherry Blossom by Nozomi
-			translationtables [i+SKINCOLOR_RED*256] = 0xb0 + (i&0xf); // Red (renamed from Light Red)
-            translationtables [i+SKINCOLOR_CRIMSON*256] = 0x20 + (i&0xf); // Crimson (renamed from Red)
-			translationtables [i+SKINCOLOR_PEACH*256] = 0x30 + (i&0xf); // Peach
-			translationtables [i+SKINCOLOR_APRICOT*256] = 0xd0 + (i&0xf); // Apricot (renamed from Orange)
-			translationtables [i+SKINCOLOR_BEIGE*256] = 0x80 + (i&0xf); // Beige
-			translationtables [i+SKINCOLOR_GREEN*256] = 0x70 + (i&0xf); // Green
-			translationtables [i+SKINCOLOR_FOREST*256] = 0x78 + (i&0xf)/2; // Forest by Nozomi
-			translationtables [i+SKINCOLOR_LIGHTBLUE*256] = 0xc0 + (i&0xf); // Light Blue
+            translationtables [i + SKINCOLOR_GREY*256] = 0x60 + (i&0xf); // Gray
+			translationtables [i + SKINCOLOR_PINK*256] = 0x10 + (i&0xf); // Pink
+			translationtables [i + SKINCOLOR_CHERRYBLOSSOM*256] = 0xa8 + (i&0xf)/3;   // Cherry Blossom by Nozomi
+			translationtables [i + SKINCOLOR_RED*256] = 0xb0 + (i&0xf); // Red (renamed from Light Red)
+            translationtables [i + SKINCOLOR_CRIMSON*256] = 0x20 + (i&0xf); // Crimson (renamed from Red)
+			translationtables [i + SKINCOLOR_PEACH*256] = 0x30 + (i&0xf); // Peach
+			translationtables [i + SKINCOLOR_APRICOT*256] = 0xd0 + (i&0xf); // Apricot (renamed from Orange)
+			translationtables [i + SKINCOLOR_BEIGE*256] = 0x80 + (i&0xf); // Beige
+			translationtables [i + SKINCOLOR_GREEN*256] = 0x70 + (i&0xf); // Green
+			translationtables [i + SKINCOLOR_FOREST*256] = 0x78 + (i&0xf)/2; // Forest by Nozomi
+			translationtables [i + SKINCOLOR_LIGHTBLUE*256] = 0xc0 + (i&0xf); // Light Blue
 
 			if ((i&0xf) <4)
-				translationtables [i+SKINCOLOR_BRIGHTRED*256] = 0xac + (i&0xf);   // Bright Red by Nozomi
+				translationtables [i + SKINCOLOR_BRIGHTRED*256] = 0xac + (i&0xf);   // Bright Red by Nozomi
             else
-				translationtables [i+SKINCOLOR_BRIGHTRED*256] = 0xb0-4 + (i&0xf);
+				translationtables [i + SKINCOLOR_BRIGHTRED*256] = 0xb0-4 + (i&0xf);
 
 			if ((i&0xf) < 8)
-				translationtables [i+SKINCOLOR_LEMON*256] = 0xe0 + (i&0xf); // Lemon by Nozomi
+				translationtables [i + SKINCOLOR_LEMON*256] = 0xe0 + (i&0xf); // Lemon by Nozomi
 			else
-				translationtables [i+SKINCOLOR_LEMON*256] = 0xa0-8 + (i&0xf);
+				translationtables [i + SKINCOLOR_LEMON*256] = 0xa0-8 + (i&0xf);
 
 			if ((i&0xf) < 13)
-				translationtables [i+SKINCOLOR_BLUE*256] = 0xc3 + (i&0xf); // Blue
+				translationtables [i + SKINCOLOR_BLUE*256] = 0xc3 + (i&0xf); // Blue
 			else
-				translationtables [i+SKINCOLOR_BLUE*256] = 0xf0-13 + (i&0xf);
+				translationtables [i + SKINCOLOR_BLUE*256] = 0xf0-13 + (i&0xf);
 
             if ((i&0xf) <9)
-               translationtables [i+SKINCOLOR_DEEPBLUE*256] = 0xc7 + (i&0xf);   // Deep Blue (renamed from Dark Blue)
+               translationtables [i + SKINCOLOR_DEEPBLUE*256] = 0xc7 + (i&0xf);   // Deep Blue (renamed from Dark Blue)
             else
-               translationtables [i+SKINCOLOR_DEEPBLUE*256] = 0xf0-9 + (i&0xf);
+               translationtables [i + SKINCOLOR_DEEPBLUE*256] = 0xf0-9 + (i&0xf);
 
 			if ((i&0xf) <8)
-               translationtables [i+SKINCOLOR_LEGACYARMY*256] = 0x98 + (i&0xf);   // Army by SSNTails circa. 02-19-2000
+               translationtables [i + SKINCOLOR_LEGACYARMY*256] = 0x98 + (i&0xf);   // Army by SSNTails circa. 02-19-2000
             else												                  // Renamed to Legacy Army by Nozomi
-               translationtables [i+SKINCOLOR_LEGACYARMY*256] = 0x90-8 + (i&0xf);
+               translationtables [i + SKINCOLOR_LEGACYARMY*256] = 0x90-8 + (i&0xf);
         }
         else
         {
             // Keep all other colors as is.
-            for (j=0;j<(MAXSKINCOLORS)*256;j+=256)
+            for (j=0;j<(MAXSKINCOLORS+MAXSUPERCOLORS)*256;j+=256)
                 translationtables [i+j] = i;
         }
     }
 
 	// White
 	// Provided by Nozomi
-	translationtables [0x70+SKINCOLOR_WHITE*256] = 4;
-	translationtables [0x71+SKINCOLOR_WHITE*256] = 4;
-	translationtables [0x72+SKINCOLOR_WHITE*256] = 4;
-	translationtables [0x73+SKINCOLOR_WHITE*256] = 4;
-	translationtables [0x74+SKINCOLOR_WHITE*256] = 4;
-	translationtables [0x75+SKINCOLOR_WHITE*256] = 4;
-	translationtables [0x76+SKINCOLOR_WHITE*256] = 80;
-	translationtables [0x77+SKINCOLOR_WHITE*256] = 81;
-	translationtables [0x78+SKINCOLOR_WHITE*256] = 83;
-	translationtables [0x79+SKINCOLOR_WHITE*256] = 85;
-	translationtables [0x7a+SKINCOLOR_WHITE*256] = 87;
-	translationtables [0x7b+SKINCOLOR_WHITE*256] = 89;
-	translationtables [0x7c+SKINCOLOR_WHITE*256] = 91;
-	translationtables [0x7d+SKINCOLOR_WHITE*256] = 93;
-	translationtables [0x7e+SKINCOLOR_WHITE*256] = 95;
-	translationtables [0x7f+SKINCOLOR_WHITE*256] = 97;
+	translationtables [0x70 + SKINCOLOR_WHITE*256] = 4;
+	translationtables [0x71 + SKINCOLOR_WHITE*256] = 4;
+	translationtables [0x72 + SKINCOLOR_WHITE*256] = 4;
+	translationtables [0x73 + SKINCOLOR_WHITE*256] = 4;
+	translationtables [0x74 + SKINCOLOR_WHITE*256] = 4;
+	translationtables [0x75 + SKINCOLOR_WHITE*256] = 4;
+	translationtables [0x76 + SKINCOLOR_WHITE*256] = 80;
+	translationtables [0x77 + SKINCOLOR_WHITE*256] = 81;
+	translationtables [0x78 + SKINCOLOR_WHITE*256] = 83;
+	translationtables [0x79 + SKINCOLOR_WHITE*256] = 85;
+	translationtables [0x7a + SKINCOLOR_WHITE*256] = 87;
+	translationtables [0x7b + SKINCOLOR_WHITE*256] = 89;
+	translationtables [0x7c + SKINCOLOR_WHITE*256] = 91;
+	translationtables [0x7d + SKINCOLOR_WHITE*256] = 93;
+	translationtables [0x7e + SKINCOLOR_WHITE*256] = 95;
+	translationtables [0x7f + SKINCOLOR_WHITE*256] = 97;
 
 	// Silver
 	// Provided by Nozomi
-	translationtables [0x70+SKINCOLOR_SILVER*256] = 4;
-	translationtables [0x71+SKINCOLOR_SILVER*256] = 80;
-	translationtables [0x72+SKINCOLOR_SILVER*256] = 82;
-	translationtables [0x73+SKINCOLOR_SILVER*256] = 85;
-	translationtables [0x74+SKINCOLOR_SILVER*256] = 87;
-	translationtables [0x75+SKINCOLOR_SILVER*256] = 90;
-	translationtables [0x76+SKINCOLOR_SILVER*256] = 93;
-	translationtables [0x77+SKINCOLOR_SILVER*256] = 95; // Windows 95
-	translationtables [0x78+SKINCOLOR_SILVER*256] = 98; // Windows 98 :pink_heart:
-	translationtables [0x79+SKINCOLOR_SILVER*256] = 101;
-	translationtables [0x7a+SKINCOLOR_SILVER*256] = 103;
-	translationtables [0x7b+SKINCOLOR_SILVER*256] = 106;
-	translationtables [0x7c+SKINCOLOR_SILVER*256] = 108;
-	translationtables [0x7d+SKINCOLOR_SILVER*256] = 111;
-	translationtables [0x7e+SKINCOLOR_SILVER*256] = 6;
-	translationtables [0x7f+SKINCOLOR_SILVER*256] = 0;
+	translationtables [0x70 + SKINCOLOR_SILVER*256] = 4;
+	translationtables [0x71 + SKINCOLOR_SILVER*256] = 80;
+	translationtables [0x72 + SKINCOLOR_SILVER*256] = 82;
+	translationtables [0x73 + SKINCOLOR_SILVER*256] = 85;
+	translationtables [0x74 + SKINCOLOR_SILVER*256] = 87;
+	translationtables [0x75 + SKINCOLOR_SILVER*256] = 90;
+	translationtables [0x76 + SKINCOLOR_SILVER*256] = 93;
+	translationtables [0x77 + SKINCOLOR_SILVER*256] = 95; // Windows 95
+	translationtables [0x78 + SKINCOLOR_SILVER*256] = 98; // Windows 98 :pink_heart:
+	translationtables [0x79 + SKINCOLOR_SILVER*256] = 101;
+	translationtables [0x7a + SKINCOLOR_SILVER*256] = 103;
+	translationtables [0x7b + SKINCOLOR_SILVER*256] = 106;
+	translationtables [0x7c + SKINCOLOR_SILVER*256] = 108;
+	translationtables [0x7d + SKINCOLOR_SILVER*256] = 111;
+	translationtables [0x7e + SKINCOLOR_SILVER*256] = 6;
+	translationtables [0x7f + SKINCOLOR_SILVER*256] = 0;
+
+	// Yellow
+	// Provided by Nozomi
+	translationtables [0x70 + SKINCOLOR_YELLOW*256] = 227;
+	translationtables [0x71 + SKINCOLOR_YELLOW*256] = 230;
+	translationtables [0x72 + SKINCOLOR_YELLOW*256] = 231;
+	translationtables [0x73 + SKINCOLOR_YELLOW*256] = 160;
+	translationtables [0x74 + SKINCOLOR_YELLOW*256] = 160;
+	translationtables [0x75 + SKINCOLOR_YELLOW*256] = 161;
+	translationtables [0x76 + SKINCOLOR_YELLOW*256] = 162;
+	translationtables [0x77 + SKINCOLOR_YELLOW*256] = 163;
+	translationtables [0x78 + SKINCOLOR_YELLOW*256] = 164;
+	translationtables [0x79 + SKINCOLOR_YELLOW*256] = 164;
+	translationtables [0x7a + SKINCOLOR_YELLOW*256] = 164;
+	translationtables [0x7b + SKINCOLOR_YELLOW*256] = 149;
+	translationtables [0x7c + SKINCOLOR_YELLOW*256] = 150;
+	translationtables [0x7d + SKINCOLOR_YELLOW*256] = 151;
+	translationtables [0x7e + SKINCOLOR_YELLOW*256] = 7;
+	translationtables [0x7f + SKINCOLOR_YELLOW*256] = 0;
 
 	// Purple
 	// Provided by ova pico
-	translationtables [0x70+SKINCOLOR_PURPLE*256] = 4;
-	translationtables [0x71+SKINCOLOR_PURPLE*256] = 51;
-	translationtables [0x72+SKINCOLOR_PURPLE*256] = 250;
-	translationtables [0x73+SKINCOLOR_PURPLE*256] = 251;
-	translationtables [0x74+SKINCOLOR_PURPLE*256] = 251;
-	translationtables [0x75+SKINCOLOR_PURPLE*256] = 252;
-	translationtables [0x76+SKINCOLOR_PURPLE*256] = 252;
-	translationtables [0x77+SKINCOLOR_PURPLE*256] = 253;
-	translationtables [0x78+SKINCOLOR_PURPLE*256] = 253;
-	translationtables [0x79+SKINCOLOR_PURPLE*256] = 254;
-	translationtables [0x7a+SKINCOLOR_PURPLE*256] = 254;
-	translationtables [0x7b+SKINCOLOR_PURPLE*256] = 254;
-	translationtables [0x7c+SKINCOLOR_PURPLE*256] = 109;
-	translationtables [0x7d+SKINCOLOR_PURPLE*256] = 79;
-	translationtables [0x7e+SKINCOLOR_PURPLE*256] = 7;
-	translationtables [0x7f+SKINCOLOR_PURPLE*256] = 0;
+	translationtables [0x70 + SKINCOLOR_PURPLE*256] = 4;
+	translationtables [0x71 + SKINCOLOR_PURPLE*256] = 51;
+	translationtables [0x72 + SKINCOLOR_PURPLE*256] = 250;
+	translationtables [0x73 + SKINCOLOR_PURPLE*256] = 251;
+	translationtables [0x74 + SKINCOLOR_PURPLE*256] = 251;
+	translationtables [0x75 + SKINCOLOR_PURPLE*256] = 252;
+	translationtables [0x76 + SKINCOLOR_PURPLE*256] = 252;
+	translationtables [0x77 + SKINCOLOR_PURPLE*256] = 253;
+	translationtables [0x78 + SKINCOLOR_PURPLE*256] = 253;
+	translationtables [0x79 + SKINCOLOR_PURPLE*256] = 254;
+	translationtables [0x7a + SKINCOLOR_PURPLE*256] = 254;
+	translationtables [0x7b + SKINCOLOR_PURPLE*256] = 254;
+	translationtables [0x7c + SKINCOLOR_PURPLE*256] = 109;
+	translationtables [0x7d + SKINCOLOR_PURPLE*256] = 79;
+	translationtables [0x7e + SKINCOLOR_PURPLE*256] = 7;
+	translationtables [0x7f + SKINCOLOR_PURPLE*256] = 0;
+
+	// Start Super Skincolors! Nozomi
+
+	// deadass copying lemon first, i'm sowwi
+	translationtables [0x70 + SKINCOLOR_SUPER*256] = 0xe0;
+	translationtables [0x71 + SKINCOLOR_SUPER*256] = 0xe1;
+	translationtables [0x72 + SKINCOLOR_SUPER*256] = 0xe2;
+	translationtables [0x73 + SKINCOLOR_SUPER*256] = 0xe3;
+	translationtables [0x74 + SKINCOLOR_SUPER*256] = 0xe4;
+	translationtables [0x75 + SKINCOLOR_SUPER*256] = 0xe5;
+	translationtables [0x76 + SKINCOLOR_SUPER*256] = 0xe6;
+	translationtables [0x77 + SKINCOLOR_SUPER*256] = 0xe7;
+	translationtables [0x78 + SKINCOLOR_SUPER*256] = 0xa0;
+	translationtables [0x79 + SKINCOLOR_SUPER*256] = 0xa1;
+	translationtables [0x7a + SKINCOLOR_SUPER*256] = 0xa2;
+	translationtables [0x7b + SKINCOLOR_SUPER*256] = 0xa3;
+	translationtables [0x7c + SKINCOLOR_SUPER*256] = 0xa4;
+	translationtables [0x7d + SKINCOLOR_SUPER*256] = 0xa5;
+	translationtables [0x7e + SKINCOLOR_SUPER*256] = 0xa6;
+	translationtables [0x7f + SKINCOLOR_SUPER*256] = 0xa7;
+
+	translationtables [0x70 + SKINCOLOR_SUPER2*256] = 0xe2;
+	translationtables [0x71 + SKINCOLOR_SUPER2*256] = 0xe2;
+	translationtables [0x72 + SKINCOLOR_SUPER2*256] = 0xe3;
+	translationtables [0x73 + SKINCOLOR_SUPER2*256] = 0xe4;
+	translationtables [0x74 + SKINCOLOR_SUPER2*256] = 0xe5;
+	translationtables [0x75 + SKINCOLOR_SUPER2*256] = 0xe5;
+	translationtables [0x76 + SKINCOLOR_SUPER2*256] = 0xe6;
+	translationtables [0x77 + SKINCOLOR_SUPER2*256] = 0xe7;
+	translationtables [0x78 + SKINCOLOR_SUPER2*256] = 0xa0;
+	translationtables [0x79 + SKINCOLOR_SUPER2*256] = 0xa1;
+	translationtables [0x7a + SKINCOLOR_SUPER2*256] = 0xa2;
+	translationtables [0x7b + SKINCOLOR_SUPER2*256] = 0xa3;
+	translationtables [0x7c + SKINCOLOR_SUPER2*256] = 0xa4;
+	translationtables [0x7d + SKINCOLOR_SUPER2*256] = 0xa5;
+	translationtables [0x7e + SKINCOLOR_SUPER2*256] = 0xa6;
+	translationtables [0x7f + SKINCOLOR_SUPER2*256] = 0xa7;
+
+	translationtables [0x70 + SKINCOLOR_SUPER3*256] = 0xe5;
+	translationtables [0x71 + SKINCOLOR_SUPER3*256] = 0xe6;
+	translationtables [0x72 + SKINCOLOR_SUPER3*256] = 0xe7;
+	translationtables [0x73 + SKINCOLOR_SUPER3*256] = 0xe7;
+	translationtables [0x74 + SKINCOLOR_SUPER3*256] = 0xa0;
+	translationtables [0x75 + SKINCOLOR_SUPER3*256] = 0xa0;
+	translationtables [0x76 + SKINCOLOR_SUPER3*256] = 0xa1;
+	translationtables [0x77 + SKINCOLOR_SUPER3*256] = 0xa1;
+	translationtables [0x78 + SKINCOLOR_SUPER3*256] = 0xa2;
+	translationtables [0x79 + SKINCOLOR_SUPER3*256] = 0xa2;
+	translationtables [0x7a + SKINCOLOR_SUPER3*256] = 0xa3;
+	translationtables [0x7b + SKINCOLOR_SUPER3*256] = 0xa4;
+	translationtables [0x7c + SKINCOLOR_SUPER3*256] = 0xa5;
+	translationtables [0x7d + SKINCOLOR_SUPER3*256] = 0xa6;
+	translationtables [0x7e + SKINCOLOR_SUPER3*256] = 0xa7;
+	translationtables [0x7f + SKINCOLOR_SUPER3*256] = 0xa7;
+
+	translationtables [0x70 + SKINCOLOR_SUPER4*256] = 0xe7;
+	translationtables [0x71 + SKINCOLOR_SUPER4*256] = 0xe7;
+	translationtables [0x72 + SKINCOLOR_SUPER4*256] = 0xa0;
+	translationtables [0x73 + SKINCOLOR_SUPER4*256] = 0xa0;
+	translationtables [0x74 + SKINCOLOR_SUPER4*256] = 0xa1;
+	translationtables [0x75 + SKINCOLOR_SUPER4*256] = 0xa1;
+	translationtables [0x76 + SKINCOLOR_SUPER4*256] = 0xa2;
+	translationtables [0x77 + SKINCOLOR_SUPER4*256] = 0xa2;
+	translationtables [0x78 + SKINCOLOR_SUPER4*256] = 0xa3;
+	translationtables [0x79 + SKINCOLOR_SUPER4*256] = 0xa4;
+	translationtables [0x7a + SKINCOLOR_SUPER4*256] = 0xa4;
+	translationtables [0x7b + SKINCOLOR_SUPER4*256] = 0xa5;
+	translationtables [0x7c + SKINCOLOR_SUPER4*256] = 0xa6;
+	translationtables [0x7d + SKINCOLOR_SUPER4*256] = 0xa6;
+	translationtables [0x7e + SKINCOLOR_SUPER4*256] = 0xa7;
+	translationtables [0x7f + SKINCOLOR_SUPER4*256] = 0xa7;
+
+	translationtables [0x70 + SKINCOLOR_SUPER5*256] = 0xa0;
+	translationtables [0x71 + SKINCOLOR_SUPER5*256] = 0xa0;
+	translationtables [0x72 + SKINCOLOR_SUPER5*256] = 0xa1;
+	translationtables [0x73 + SKINCOLOR_SUPER5*256] = 0xa1;
+	translationtables [0x74 + SKINCOLOR_SUPER5*256] = 0xa2;
+	translationtables [0x75 + SKINCOLOR_SUPER5*256] = 0xa2;
+	translationtables [0x76 + SKINCOLOR_SUPER5*256] = 0xa3;
+	translationtables [0x77 + SKINCOLOR_SUPER5*256] = 0xa3;
+	translationtables [0x78 + SKINCOLOR_SUPER5*256] = 0xa4;
+	translationtables [0x79 + SKINCOLOR_SUPER5*256] = 0xa4;
+	translationtables [0x7a + SKINCOLOR_SUPER5*256] = 0xa5;
+	translationtables [0x7b + SKINCOLOR_SUPER5*256] = 0xa5;
+	translationtables [0x7c + SKINCOLOR_SUPER5*256] = 0xa6;
+	translationtables [0x7d + SKINCOLOR_SUPER5*256] = 0xa6;
+	translationtables [0x7e + SKINCOLOR_SUPER5*256] = 0xa7;
+	translationtables [0x7f + SKINCOLOR_SUPER5*256] = 0xa7;
+
+	// End Super Skincolors! Nozomi
 }
 
 

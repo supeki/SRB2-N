@@ -71,7 +71,7 @@ char *sprnames[NUMSPRITES+1] = {
 	"RRNG","TTAG","STEM","RFLG","BFLG","GFLG","TOKE","CEMG","CEMO","CEMP",
 	"CEMB","CEMR","CEML","CEMY","JETB","JETG","JBUL","MOUS","DETN","XPLD",
 	"REDX","CHAN","CAPE","SNO1","SANT","EMER","EMES","EMET","SBLL","SPIK",
-	"CCOM","MARL","RAIN","NSPR",// Tails 03-13-2001
+	"CCOM","MARL","RAIN","NSPR","SUPR",// Tails 03-13-2001
     NULL /* shit! 19990907 by Kin */
 };
 

@@ -70,6 +70,7 @@ extern int MAXHEALTH;   // 100
 
 // default viewheight is changeable at console
 extern consvar_t cv_viewheight; // p_mobj.c
+extern consvar_t cv_superman;
 
 // mapblocks are used to check movement
 // against lines and things
