@@ -2279,19 +2279,20 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	else
 	//P_SpawnMapThing tmp
 	// Nozomi Fake Player Additions
-	// 9996 - Standing Sonic
-	// 9997 - Tired Tails
-	// 9998 - Knuckles?
-	if (mthing->type >= 9996 && mthing->type < 9999) {
-		int skin = mthing->type-9996;
+	// 9995 - Standing Sonic
+	// 9996 - Tired Tails
+	// 9997 - Knuckles?
+	if (mthing->type >= 9995 && mthing->type < 9998) {
+		int skin = mthing->type-9995;
 		mobj = P_SpawnMobj (x,y,z, MT_PLAYER);
 		mobj->spawnpoint = mthing;
 
 		mobj->skin = &skins[skin];
+
 		mobj->color = (skin == 0) ? SKINCOLOR_LIGHTBLUE : (skin == 1) ? SKINCOLOR_APRICOT : SKINCOLOR_GREEN;
 		mobj->flags |= MF_TRANSLATION;
 		P_SetMobjState(mobj, (skin == 0) ? S_DUMMY_STND : (skin == 1) ? S_PLAY_TAP1 : S_DUMMY_STND);
-		mobj->angle = ANG45 * (mthing->angle/45);
+		mobj->angle = FixedAngle(mthing->angle*FRACUNIT);
 	}
 	else
 	{

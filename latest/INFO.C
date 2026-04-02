@@ -62,17 +62,17 @@ char *sprnames[NUMSPRITES+1] = {
     "COL3","BUBL","BLTV","COL6","TRE2","YLTV","CEYE","FSKU",
     "COL5","TGRN","TRED","SMBT","SMRT","HDB1","HDB2","HDB3",
     "HDB4","HDB5","HDB6","POB1","POB2","TLMP","SMOK","SPLA",
-    "TNT1","BIRD","SQRL","BORB","YORB","GORB","KORB","SPRK","IVSP", //SoM: 4/8/2000: INVISIBLE SPRITE!
+    "TNT1","BIRD","SQRL","BORB","YORB","GORB","KORB","SPRK","IVSP",
 	"IVSQ","DISS","BUBP","BUBO","BUBN","BUBM","CNTA","CNTB",
 	"CNTC","CNTD","CNTE","CNTF","POPP","PRUP","BKTV","SCRA","SCRB","SCRC",
 	"SCRD","SSPK","GRAS","YSPR","RSPR","BSPR","WTRA","WTRB","WTRC","WTRD","WTRE","WTRF",
 	"WTRG","WTRH","SKIM","MINE","FISH","GARG","SPLH","GTHO","GRTH","PCTH",
-	"DRTH","STHO","OTHO","RTHO","BTHO","PTHO","DBTH","BGTH","THZP","SIGN",// Tails 10-20-99
+	"DRTH","STHO","OTHO","RTHO","BTHO","PTHO","DBTH","BGTH","THZP","SIGN",
 	"RRNG","TTAG","STEM","RFLG","BFLG","GFLG","TOKE","CEMG","CEMO","CEMP",
 	"CEMB","CEMR","CEML","CEMY","JETB","JETG","JBUL","MOUS","DETN","XPLD",
 	"REDX","CHAN","CAPE","SNO1","SANT","EMER","EMES","EMET","SBLL","SPIK",
-	"CCOM","MARL","RAIN","NSPR","SUPR",// Tails 03-13-2001
-    NULL /* shit! 19990907 by Kin */
+	"CCOM","MARL","RAIN","NSPR","SUPR","CRUK",
+    NULL
 };
 
 
@@ -1298,6 +1298,7 @@ state_t states[NUMSTATES] = {
     {SPR_NSPR, 18,  1, {NULL},   S_SPRING_HORIZ7}, // S_SPRING_HORIZ6
     {SPR_NSPR, 19,  1, {NULL},   S_SPRING_HORIZ8}, // S_SPRING_HORIZ7
     {SPR_NSPR, 20,  1, {NULL},   S_SPRING_HORIZ},  // S_SPRING_HORIZ8
+	{SPR_CRUK,  0, -1, {NULL},   S_CRUCKS}, // S_CRUCKS
 };
 
 mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
@@ -6432,7 +6433,32 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
         MF_SOLID|MF_TRANSLATION|MF_NOGRAVITY,               // flags
         S_NULL,          // raisestate
 		MF2_SPRING
-    }
+    },
+	{
+		9998,
+		S_CRUCKS,
+		1000,
+		S_CRUCKS,
+		sfx_None,
+		0,
+		sfx_None,
+		S_CRUCKS,
+		0,
+		sfx_None,
+		S_CRUCKS,
+		S_CRUCKS,
+		S_CRUCKS,
+		S_CRUCKS,
+		sfx_None,
+		0,
+		16*FRACUNIT,
+		48*FRACUNIT,
+		1000,
+		0,
+		sfx_None,
+		MF_SOLID,
+		S_CRUCKS
+	}
 // end new springs Nozomi 03-28-2026
 };
 

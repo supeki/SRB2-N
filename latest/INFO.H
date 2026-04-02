@@ -282,6 +282,7 @@ typedef enum
     SPR_RAIN,
 	SPR_NSPR, // new springs! Nozomi 03-28-2026
 	SPR_SUPR, // super sprites! Nozomi
+	SPR_CRUK, // omg is that crucks mark the beige banana hedgehog
 	NUMSPRITES
 
 } spritenum_t;
@@ -1268,6 +1269,7 @@ typedef enum
 	S_SPRING_HORIZ6,
 	S_SPRING_HORIZ7,
 	S_SPRING_HORIZ8,
+	S_CRUCKS,
     NUMSTATES
 } statenum_t;
 
@@ -1486,6 +1488,7 @@ typedef enum {
 	MT_NOZOMI_YHORIZSPRING,
 	MT_NOZOMI_RHORIZSPRING,
 	MT_NOZOMI_BHORIZSPRING,
+	MT_CRUCKS,
     NUMMOBJTYPES
 
 } mobjtype_t;
