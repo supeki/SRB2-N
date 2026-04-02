@@ -950,6 +950,12 @@ void P_MovePlayer (player_t* player)
 			// Change your color to flash!
 			if (!cv_superman.value)
 				player->mo->color = SKINCOLOR_SUPER + abs((((signed)leveltime >> 1) % 9) - 4) + 1;
+				
+				// UNCOMMENT THIS WHEN HYPER IS IMPLEMENTED!!! Nozomi
+				/*if (leveltime % 6 < 3)
+					player->mo->color = SKINCOLOR_HYPER+1;
+				else
+					player->mo->color = SKINCOLOR_HYPER2 + floor(leveltime/6 % 6) + 1;*/
 			else if (player->mo->color > MAXSKINCOLORS)
 				player->mo->color = player->skincolor;
 
@@ -1793,7 +1799,7 @@ void P_MovePlayer (player_t* player)
 	}
 
 	// Display a ghost if you have Speed Sneakers (or are Super!) and are going fast enough! Nozomi Date Unknown
-	if (((player->speed + abs(player->mo->momz/FRACUNIT)) > normalspeed/3*2 && (player->powers[pw_strength] || player->powers[pw_super])) || player->homing) {
+	if (((player->speed + abs(player->mo->momz/FRACUNIT)) > normalspeed/3*2 && (player->powers[pw_strength] || player->powers[pw_super])) || player->homing || (player->mo->color > SKINCOLOR_HYPER && (player->speed > 2 + abs(player->mo->momz/FRACUNIT)))) {
 		mobj_t* ghost;
 		ghost = P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z, MT_THOK);
 		ghost->skin = player->mo->skin;
@@ -1807,6 +1813,25 @@ void P_MovePlayer (player_t* player)
 			ghost->fuse = 4;
 		else
 			ghost->fuse = 2;
+
+		// Add a second one if you're Hyper!
+		if (player->mo->color > SKINCOLOR_HYPER)
+		{
+			mobj_t* ghost2;
+			// Make this ghost lag behind a bit..
+			ghost2 = P_SpawnMobj(player->mo->x-player->mo->momx, player->mo->y-player->mo->momy, player->mo->z-player->mo->momz, MT_THOK);
+			ghost2->skin = player->mo->skin;
+			ghost2->sprite = player->mo->sprite;
+			ghost2->frame = player->mo->frame; // This one isn't translucent!
+			ghost2->color = player->mo->color;
+			ghost2->angle = player->mo->angle;
+			ghost2->flags |= MF_TRANSLATION;
+			ghost2->target = player->mo;
+			if (player->homing)
+				ghost2->fuse = 4;
+			else
+				ghost2->fuse = 2;
+		}
 	}
 }
 
@@ -2714,8 +2739,11 @@ void P_PlayerThink (player_t* player)
     if (player->powers[pw_tailsfly]) // tails fly
         player->powers[pw_tailsfly]--; // counter Tails 03-05-2000
 
-    if (player->powers[pw_underwater]) // underwater
+	// Don't drown if you're Hyper!
+    if (player->powers[pw_underwater] && player->mo->color < SKINCOLOR_HYPER) // underwater
         player->powers[pw_underwater]--; // timer Tails 03-06-2000
+	else if (player->powers[pw_underwater] && player->mo->color > SKINCOLOR_HYPER)
+		player->powers[pw_underwater] = 30*TICRATE;
 
     if (player->powers[pw_extralife]) // what's it look like pal?
         player->powers[pw_extralife]--; // duuuuh Tails 03-14-2000

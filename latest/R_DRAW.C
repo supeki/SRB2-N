@@ -482,6 +482,141 @@ void R_InitTranslationTables (void)
 
 	// End Super Skincolors! Nozomi
 
+	// Start Hyper Skincolors! Nozomi
+
+	// Yellow, swapped indexes with White for ease of access.
+	translationtables [0x70 + SKINCOLOR_HYPER2*256] = 0xe2;
+	translationtables [0x71 + SKINCOLOR_HYPER2*256] = 0xe2;
+	translationtables [0x72 + SKINCOLOR_HYPER2*256] = 0xe3;
+	translationtables [0x73 + SKINCOLOR_HYPER2*256] = 0xe4;
+	translationtables [0x74 + SKINCOLOR_HYPER2*256] = 0xe5;
+	translationtables [0x75 + SKINCOLOR_HYPER2*256] = 0xe5;
+	translationtables [0x76 + SKINCOLOR_HYPER2*256] = 0xe6;
+	translationtables [0x77 + SKINCOLOR_HYPER2*256] = 0xe7;
+	translationtables [0x78 + SKINCOLOR_HYPER2*256] = 0xa0;
+	translationtables [0x79 + SKINCOLOR_HYPER2*256] = 0xa1;
+	translationtables [0x7a + SKINCOLOR_HYPER2*256] = 0xa2;
+	translationtables [0x7b + SKINCOLOR_HYPER2*256] = 0xa3;
+	translationtables [0x7c + SKINCOLOR_HYPER2*256] = 0xa4;
+	translationtables [0x7d + SKINCOLOR_HYPER2*256] = 0xa5;
+	translationtables [0x7e + SKINCOLOR_HYPER2*256] = 0xa6;
+	translationtables [0x7f + SKINCOLOR_HYPER2*256] = 0xa7;
+
+	// White
+	translationtables [0x70 + SKINCOLOR_HYPER*256] = 168;
+	translationtables [0x71 + SKINCOLOR_HYPER*256] = 168;
+	translationtables [0x72 + SKINCOLOR_HYPER*256] = 0x50;
+	translationtables [0x73 + SKINCOLOR_HYPER*256] = 0x51;
+	translationtables [0x74 + SKINCOLOR_HYPER*256] = 0x52;
+	translationtables [0x75 + SKINCOLOR_HYPER*256] = 0x52;
+	translationtables [0x76 + SKINCOLOR_HYPER*256] = 0x53;
+	translationtables [0x77 + SKINCOLOR_HYPER*256] = 0x54;
+	translationtables [0x78 + SKINCOLOR_HYPER*256] = 0x55;
+	translationtables [0x79 + SKINCOLOR_HYPER*256] = 0x56;
+	translationtables [0x7a + SKINCOLOR_HYPER*256] = 0x57;
+	translationtables [0x7b + SKINCOLOR_HYPER*256] = 0x58;
+	translationtables [0x7c + SKINCOLOR_HYPER*256] = 0x59;
+	translationtables [0x7d + SKINCOLOR_HYPER*256] = 0x5a;
+	translationtables [0x7e + SKINCOLOR_HYPER*256] = 0x5b;
+	translationtables [0x7f + SKINCOLOR_HYPER*256] = 0x5c;
+
+	// Pink (I'm just going to copy Cherry Blossom a bit...)
+	translationtables [0x70 + SKINCOLOR_HYPER3*256] = translationtables [0x71 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x71 + SKINCOLOR_HYPER3*256] = translationtables [0x71 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x72 + SKINCOLOR_HYPER3*256] = translationtables [0x72 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x73 + SKINCOLOR_HYPER3*256] = translationtables [0x72 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x74 + SKINCOLOR_HYPER3*256] = translationtables [0x72 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x75 + SKINCOLOR_HYPER3*256] = translationtables [0x73 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x76 + SKINCOLOR_HYPER3*256] = translationtables [0x73 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x77 + SKINCOLOR_HYPER3*256] = translationtables [0x73 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x78 + SKINCOLOR_HYPER3*256] = translationtables [0x73 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x79 + SKINCOLOR_HYPER3*256] = translationtables [0x73 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x7a + SKINCOLOR_HYPER3*256] = translationtables [0x73 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x7b + SKINCOLOR_HYPER3*256] = translationtables [0x74 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x7c + SKINCOLOR_HYPER3*256] = translationtables [0x74 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x7d + SKINCOLOR_HYPER3*256] = translationtables [0x74 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x7e + SKINCOLOR_HYPER3*256] = translationtables [0x74 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x7f + SKINCOLOR_HYPER3*256] = translationtables [0x74 + SKINCOLOR_CHERRYBLOSSOM*256];
+
+	// Pastel...? I can't really make this color with what I have... We're using purple.
+
+	translationtables [0x70 + SKINCOLOR_HYPER4*256] = 168;
+	translationtables [0x71 + SKINCOLOR_HYPER4*256] = 168;
+	translationtables [0x72 + SKINCOLOR_HYPER4*256] = 169;
+	translationtables [0x73 + SKINCOLOR_HYPER4*256] = 169;
+	translationtables [0x74 + SKINCOLOR_HYPER4*256] = 169;
+	translationtables [0x75 + SKINCOLOR_HYPER4*256] = 250;
+	translationtables [0x76 + SKINCOLOR_HYPER4*256] = 250;
+	translationtables [0x77 + SKINCOLOR_HYPER4*256] = 250;
+	translationtables [0x78 + SKINCOLOR_HYPER4*256] = 250;
+	translationtables [0x79 + SKINCOLOR_HYPER4*256] = 250;
+	translationtables [0x7a + SKINCOLOR_HYPER4*256] = 250;
+	translationtables [0x7b + SKINCOLOR_HYPER4*256] = 251;
+	translationtables [0x7c + SKINCOLOR_HYPER4*256] = 251;
+	translationtables [0x7d + SKINCOLOR_HYPER4*256] = 251;
+	translationtables [0x7e + SKINCOLOR_HYPER4*256] = 251;
+	translationtables [0x7f + SKINCOLOR_HYPER4*256] = 251;
+
+	// Blue
+
+	translationtables [0x70 + SKINCOLOR_HYPER5*256] = 192;
+	translationtables [0x71 + SKINCOLOR_HYPER5*256] = 192;
+	translationtables [0x72 + SKINCOLOR_HYPER5*256] = 193;
+	translationtables [0x73 + SKINCOLOR_HYPER5*256] = 193;
+	translationtables [0x74 + SKINCOLOR_HYPER5*256] = 193;
+	translationtables [0x75 + SKINCOLOR_HYPER5*256] = 194;
+	translationtables [0x76 + SKINCOLOR_HYPER5*256] = 194;
+	translationtables [0x77 + SKINCOLOR_HYPER5*256] = 194;
+	translationtables [0x78 + SKINCOLOR_HYPER5*256] = 194;
+	translationtables [0x79 + SKINCOLOR_HYPER5*256] = 194;
+	translationtables [0x7a + SKINCOLOR_HYPER5*256] = 194;
+	translationtables [0x7b + SKINCOLOR_HYPER5*256] = 195;
+	translationtables [0x7c + SKINCOLOR_HYPER5*256] = 195;
+	translationtables [0x7d + SKINCOLOR_HYPER5*256] = 195;
+	translationtables [0x7e + SKINCOLOR_HYPER5*256] = 195;
+	translationtables [0x7f + SKINCOLOR_HYPER5*256] = 195;
+
+	// Green
+
+	translationtables [0x70 + SKINCOLOR_HYPER6*256] = 192;
+	translationtables [0x71 + SKINCOLOR_HYPER6*256] = 192;
+	translationtables [0x72 + SKINCOLOR_HYPER6*256] = 112;
+	translationtables [0x73 + SKINCOLOR_HYPER6*256] = 112;
+	translationtables [0x74 + SKINCOLOR_HYPER6*256] = 112;
+	translationtables [0x75 + SKINCOLOR_HYPER6*256] = 113;
+	translationtables [0x76 + SKINCOLOR_HYPER6*256] = 113;
+	translationtables [0x77 + SKINCOLOR_HYPER6*256] = 113;
+	translationtables [0x78 + SKINCOLOR_HYPER6*256] = 113;
+	translationtables [0x79 + SKINCOLOR_HYPER6*256] = 113;
+	translationtables [0x7a + SKINCOLOR_HYPER6*256] = 113;
+	translationtables [0x7b + SKINCOLOR_HYPER6*256] = 114;
+	translationtables [0x7c + SKINCOLOR_HYPER6*256] = 114;
+	translationtables [0x7d + SKINCOLOR_HYPER6*256] = 114;
+	translationtables [0x7e + SKINCOLOR_HYPER6*256] = 114;
+	translationtables [0x7f + SKINCOLOR_HYPER6*256] = 114;
+
+	// Merky Yellow
+
+	translationtables [0x70 + SKINCOLOR_HYPER7*256] = 209;
+	translationtables [0x71 + SKINCOLOR_HYPER7*256] = 209;
+	translationtables [0x72 + SKINCOLOR_HYPER7*256] = 160;
+	translationtables [0x73 + SKINCOLOR_HYPER7*256] = 160;
+	translationtables [0x74 + SKINCOLOR_HYPER7*256] = 160;
+	translationtables [0x75 + SKINCOLOR_HYPER7*256] = 161;
+	translationtables [0x76 + SKINCOLOR_HYPER7*256] = 161;
+	translationtables [0x77 + SKINCOLOR_HYPER7*256] = 161;
+	translationtables [0x78 + SKINCOLOR_HYPER7*256] = 161;
+	translationtables [0x79 + SKINCOLOR_HYPER7*256] = 161;
+	translationtables [0x7a + SKINCOLOR_HYPER7*256] = 161;
+	translationtables [0x7b + SKINCOLOR_HYPER7*256] = 162;
+	translationtables [0x7c + SKINCOLOR_HYPER7*256] = 162;
+	translationtables [0x7d + SKINCOLOR_HYPER7*256] = 162;
+	translationtables [0x7e + SKINCOLOR_HYPER7*256] = 162;
+	translationtables [0x7f + SKINCOLOR_HYPER7*256] = 162;
+
+
+	// End Hyper Skincolors! Nozomi
+
 	// Start Fade Tables! Nozomi
 
 	// Initializing them because lazy nya~ Nozomi
@@ -582,6 +717,8 @@ void R_InitTranslationTables (void)
 	for (i=240; i<248; i++)
 		for (j=1; j<9; j++)
 			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 248.0f) ) )/((float)(j)));
+
+	// End Fade Tables! Nozomi
 }
 
 
