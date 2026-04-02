@@ -407,7 +407,7 @@ static int titletimer;
 
 void Title_Drawer(void) 
 {
-	if (gamestate != GS_NOZOMITITLE && !demoplayback)
+	if (gamestate != GS_NOZOMITITLE)
 		return;
 
 	if (!demoplayback) {

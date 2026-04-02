@@ -469,7 +469,7 @@ void P_MovePlayer (player_t* player)
 					movepushside >>= 2;
 			}
 			// Allow a bit of movement while spinning
-			else if (player->mfspinning)
+			else if (player->mfspinning) // This can like, cause speed gain but idrc Nozomi
 			{
 				if (player->mfstartdash)
 					movepushside = 0;
