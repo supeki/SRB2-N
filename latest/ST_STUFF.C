@@ -2054,11 +2054,41 @@ static void ST_DrawTitleCard(int playernum) {
 #define anim1end 40 // OLD: 7
 #define anim2start 80 //OLD: 104
 #define anim2end 105 //OLD: 109
+#define titlebarx 48
 
 	if (leveltime >= anim1end && leveltime < anim1end+18)
 		V_DrawFadeScreen((leveltime-anim1end) / 3);
 	else if (leveltime < anim1end)
 		V_DrawFadeScreen(0);
+
+	if (leveltime >= 8 && leveltime < 21)
+	{
+		int div = FixedDiv((leveltime-8)*FRACUNIT, 21*FRACUNIT);
+		int lvlttlypos = Easing_OutQuint(div, 0, 140);
+		V_DrawFill(titlebarx, 0, 64, lvlttlypos, 182);
+		if (lvlttlypos >= 14)
+			V_DrawString(titlebarx+8, lvlttlypos-14, "NOZOMI");
+		if (lvlttlypos >= 24)
+			V_DrawString(titlebarx+8, lvlttlypos-24, "SRB2");
+	}
+	else if (leveltime >= 21 && leveltime < anim2start) 
+	{
+		V_DrawFill(titlebarx, 0, 64, 140, 182);
+		V_DrawString(titlebarx+8, 116, "SRB2");
+		V_DrawString(titlebarx+8, 126, "NOZOMI");
+	}
+	else if (leveltime >= anim2start && leveltime < anim2start + 17)
+	{
+		int div = FixedDiv((leveltime-anim2start)*FRACUNIT, 17*FRACUNIT);
+		int lvlttlypos = Easing_OutQuint(div, 140, 0);
+		V_DrawFill(titlebarx, 0, 64, lvlttlypos, 182);
+		if (lvlttlypos >= 14)
+			V_DrawString(titlebarx+8, lvlttlypos-14, "NOZOMI");
+		if (lvlttlypos >= 24)
+			V_DrawString(titlebarx+8, lvlttlypos-24, "SRB2");
+	}
+
+
 
 	if (leveltime < anim1end)
 	{
@@ -2097,6 +2127,7 @@ static void ST_DrawTitleCard(int playernum) {
 #undef anim2start
 #undef anim2end
 #undef titledrawtime
+#undef titlebarx
 }
 
 static void ST_EmeraldHuntDrawer(int playernum) {

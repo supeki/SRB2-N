@@ -1483,7 +1483,6 @@ void V_DrawString (int x, int y, char* string)
     }
 }
 
-
 //
 //added:03-02-98: V_DrawString, using a colormap to display the text in
 //                brighter colors.

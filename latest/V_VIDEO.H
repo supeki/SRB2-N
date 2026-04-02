@@ -206,6 +206,7 @@ void V_DrawCharacter (int x, int y, int c);
 
 //added:05-02-98: draw a string using the hu_font
 void V_DrawString (int x, int y, char* string);
+
 //added:05-02-98: V_DrawString which remaps text color to whites
 void V_DrawStringWhite (int x, int y, char* string);
 
