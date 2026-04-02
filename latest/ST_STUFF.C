@@ -1681,642 +1681,542 @@ static inline int SCX( int x )
 //  Draw the status bar overlay, customisable : the user choose which
 //  kind of information to overlay
 //
+
+static void ST_DrawTitleCard(int playernum);
+static void ST_EmeraldHuntDrawer(int playernum);
+
+// No more cv_stbaroverlay please!! Nozomi
 void ST_overlayDrawer (int playernum)
 {
-    char*  cmds;
-    char   c;
     int    i;
 
 	if (cv_hidehud.value)
 		return;
 
-    cmds = cv_stbaroverlay.string;
+	// Draw the Score HUD! Nozomi
+	{
+		int hud_score = plyr->score;
 
-    while ((c=*cmds++))
-    {
-       if (c>='A' && c<='Z')
-           c = c + 'a' - 'A';
-       switch (c)
-       {
-         case 'h': // draw health
-			// start GAME OVER pic Tails 03-11-2000
-			if(plyr->lives <= 0)
+		if (mapheaders[gamemap].special == 2) // SCORE ATTACK!!
+			hud_score = plyr->sp_score + (plyr->mo->health-1)*100;
+	
+		ST_drawOverlayNum(SCX(128), SCY(10), hud_score, tallnum, NULL); // Draw Score Num Nozomi 03-01-2026
+		V_DrawScaledPatch (SCX(16),SCY(10), FG | V_NOSCALESTART,sbofrags); // Draw SCORE Tails 03-01-2000
+	}
+
+	// Draw the Time HUD! Nozomi
+	// The Time hud isn't drawn in Special Stages since we already have a Special Stage timer.
+	if (!(mapheaders[gamemap].special)) {
+		if(cv_timetic.value) // Special option to show tics instead of MM:SS
+		{
+			ST_drawOverlayNum(SCX(112), // Tails 02-29-2000
+					 SCY(42)-(16*vid.dupy), // Draw the current single seconds time Tails 02-29-2000
+					 leveltime,
+					 tallnum,NULL);
+		}
+		else
+		{
+			if(plyr->seconds < 10)
 			{
-				V_DrawScaledPatch (SCX(32),SCY(100)-(sboover->height*vid.dupy), FG | V_NOSCALESTART,sboover); // Tails 03-11-2000
-			}
-			// end GAME OVER pic Tails 03-11-2000
-
-			// start lives status Tails 03-12-2000
-			if ((!cv_gametype.value || cv_gametype.value == 2) && !nozo_timeattack)
-			{
-				patch_t* face_patch;
-				patch_t* name_patch;
-				byte* colormap;
-
-				if (plyr->skincolor==0)
-					colormap = colormaps;
-				else if (plyr->mo)
-					colormap = translationtables - 256 + (plyr->mo->color<<8);
-				else
-					colormap = translationtables - 256 + (plyr->skincolor<<8);
-
-				if (plyr->skin == 0)
-				{
-				   name_patch = stsonic;
-				   face_patch = sboslife;
-
-				   if (plyr->powers[pw_super])
-					   face_patch = suprlife;
-				}
-				else if (plyr->skin == 1)
-				{
-				   name_patch = sttails;
-				   face_patch = sbotlife;
-				}
-				else if (plyr->skin == 2)
-				{
-				   name_patch = stknux;
-				   face_patch = sboklife;
-				}
-				else
-				{
-					if (strlen(skins[plyr->skin].face) > 0) 
-						face_patch = W_CachePatchName(skins[plyr->skin].face, PU_STATIC);
-					else
-						face_patch = sboulife;
-
-					if (plyr->powers[pw_super] && strlen(skins[plyr->skin].superface) > 0)
-					   face_patch = W_CachePatchName(skins[plyr->skin].superface, PU_STATIC);
-
-					if (strlen(skins[plyr->skin].hudname) > 0)
-						name_patch = W_CachePatchName(skins[plyr->skin].hudname, PU_STATIC);
-					else
-						name_patch = stuser;
-				}
-
-				if (skins[plyr->skin].facescale != FRACUNIT) {
-					fixed_t scale = skins[plyr->skin].facescale;
-
-					V_DrawScaledPatch(SCX(52),SCY(192)-(FixedMul(face_patch->height<<FRACBITS, vid.dupy*scale)>>FRACBITS), FG | V_NOSCALESTART,name_patch);
-					V_DrawCustomScaledTranslationPatch(SCX(16),SCY(192)-(FixedMul(face_patch->height<<FRACBITS, vid.dupy*scale)>>FRACBITS), scale, FG | V_NOSCALESTART,face_patch,colormap);
-				}
-				else {
-					V_DrawScaledPatch(SCX(52),SCY(192)-(face_patch->height*vid.dupy), FG | V_NOSCALESTART,name_patch);
-					V_DrawScaledTranslationPatch(SCX(16),SCY(192)-(face_patch->height*vid.dupy), FG | V_NOSCALESTART,face_patch,colormap);
-				}
-
-				// draw the number of lives
-				ST_drawOverlayNum(SCX(88), // was 50 Tails 10-31-99
-								SCY(197)-(16*vid.dupy),
-								plyr->lives,
-								tallnum,NULL);
-
-				// now draw the "x"
-				V_DrawScaledPatch (SCX(56),SCY(184), FG | V_NOSCALESTART, stlivex);
-			}
-			// end lives status Nozomi 03-01-2026
-			
-			// start rings status Nozomi 03-01-2026
-			{
-				int hud_rings = plyr->health-1;
-				int x_pos = 112;
-				int y_pos = 58;
-
-				if (hud_rings < 0)
-					hud_rings++;
-
-				if (mapheaders[gamemap].special) {
-					y_pos -= 16;
-
-					if (mapheaders[gamemap].special == 2)
-						V_DrawStringWhite(116, y_pos-14, "x 100");
-				}
-
-				ST_drawOverlayNum(SCX(x_pos), SCY(y_pos)-(16*vid.dupy), hud_rings, tallnum, NULL);
-
-				if(plyr->health <= 1 && leveltime/5 & 1)
-					V_DrawScaledPatch (SCX(16),SCY(y_pos)-(16*vid.dupy), FG | V_NOSCALESTART,rrings); // Tails 03-14-2000
-				else
-					V_DrawScaledPatch (SCX(16),SCY(y_pos)-(16*vid.dupy), FG | V_NOSCALESTART,sbohealth); // Was a number I forget and 198 =) Tails 10-31-99
-			}
-			// end rings status Nozomi 03-01-2026
-			break;
-
-		case 'f': // draw score Nozomi 03-01-2026
-			{
-				int hud_score = plyr->score;
-
-				if (mapheaders[gamemap].special == 2) // SCORE ATTACK!!
-					hud_score = plyr->sp_score + (plyr->mo->health-1)*100;
-			
-				ST_drawOverlayNum(SCX(128), SCY(10), hud_score, tallnum, NULL); // Draw Score Num Nozomi 03-01-2026
-				V_DrawScaledPatch (SCX(16),SCY(10), FG | V_NOSCALESTART,sbofrags); // Draw SCORE Tails 03-01-2000
-			}
-			break;
-		case 'a': // draw ammo
-           break;
-
-        case 'k': // draw keys
-           break;
-
-        case 'm': // Draw time hud Nozomi 03-01-2026
-			if (!(mapheaders[gamemap].special)) {
-				if(cv_timetic.value) // Special option to show tics instead of MM:SS
-				{
-					ST_drawOverlayNum(SCX(112), // Tails 02-29-2000
-							 SCY(42)-(16*vid.dupy), // Draw the current single seconds time Tails 02-29-2000
-							 leveltime,
-							 tallnum,NULL);
-				}
-				else
-				{
-					if(plyr->seconds < 10)
-					{
-						ST_drawOverlayNum(SCX(104), // Tails 02-29-2000
-							 SCY(42)-(16*vid.dupy), // Draw the current single seconds time Tails 02-29-2000
-							 0,
-							 tallnum,NULL);
-					}
-
-					ST_drawOverlayNum(SCX(112), // Tails 02-29-2000
-							 SCY(42)-(16*vid.dupy), // Draw the current single seconds time Tails 02-29-2000
-							 plyr->seconds,
-							 tallnum,NULL);
-
-					ST_drawOverlayNum(SCX(88), // Tails 02-29-2000
-							 SCY(42)-(16*vid.dupy), // Draw the current single seconds time Tails 02-29-2000
-							 plyr->minutes,
-							 tallnum,NULL);
-
-					V_DrawScaledPatch (SCX(88),SCY(42)-(16*vid.dupy), FG | V_NOSCALESTART,sbocolon); // colon location Tails 02-29-2000
-				}
-
-			   V_DrawScaledPatch (SCX(17),SCY(26), FG | V_NOSCALESTART,sbotime); // TIME location Tails 02-29-2000
-
+				ST_drawOverlayNum(SCX(104), // Tails 02-29-2000
+					 SCY(42)-(16*vid.dupy), // Draw the current single seconds time Tails 02-29-2000
+					 0,
+					 tallnum,NULL);
 			}
 
-			if(plyr->redxvi > 1)
+			ST_drawOverlayNum(SCX(112), // Tails 02-29-2000
+					 SCY(42)-(16*vid.dupy), // Draw the current single seconds time Tails 02-29-2000
+					 plyr->seconds,
+					 tallnum,NULL);
+
+			ST_drawOverlayNum(SCX(88), // Tails 02-29-2000
+					 SCY(42)-(16*vid.dupy), // Draw the current single seconds time Tails 02-29-2000
+					 plyr->minutes,
+					 tallnum,NULL);
+
+			V_DrawScaledPatch (SCX(88),SCY(42)-(16*vid.dupy), FG | V_NOSCALESTART,sbocolon); // colon location Tails 02-29-2000
+		}
+
+	   V_DrawScaledPatch (SCX(17),SCY(26), FG | V_NOSCALESTART,sbotime); // TIME location Tails 02-29-2000
+	}
+
+	// Draw the Rings HUD! Nozomi
+	{
+		int hud_rings = plyr->health-1;
+		int x_pos = 112;
+		int y_pos = 58;
+
+		if (hud_rings < 0)
+			hud_rings++;
+
+		if (mapheaders[gamemap].special) {
+			y_pos -= 16;
+
+			if (mapheaders[gamemap].special == 2)
+				V_DrawStringWhite(116, y_pos-14, "x 100");
+		}
+
+		ST_drawOverlayNum(SCX(x_pos), SCY(y_pos)-(16*vid.dupy), hud_rings, tallnum, NULL);
+
+		if(plyr->health <= 1 && leveltime/5 & 1)
+			V_DrawScaledPatch (SCX(16),SCY(y_pos)-(16*vid.dupy), FG | V_NOSCALESTART,rrings); // Tails 03-14-2000
+		else
+			V_DrawScaledPatch (SCX(16),SCY(y_pos)-(16*vid.dupy), FG | V_NOSCALESTART,sbohealth); // Was a number I forget and 198 =) Tails 10-31-99
+	}
+
+	// Draw the Lives HUD! Nozomi
+	if ((!cv_gametype.value || cv_gametype.value == 2) && !nozo_timeattack)
+	{
+		patch_t* face_patch;
+		patch_t* name_patch;
+		byte* colormap;
+
+		if (plyr->skincolor==0)
+			colormap = colormaps;
+		else if (plyr->mo)
+			colormap = translationtables - 256 + (plyr->mo->color<<8);
+		else
+			colormap = translationtables - 256 + (plyr->skincolor<<8);
+
+		if (plyr->skin == 0)
+		{
+		   name_patch = stsonic;
+		   face_patch = sboslife;
+
+		   if (plyr->powers[pw_super])
+			   face_patch = suprlife;
+		}
+		else if (plyr->skin == 1)
+		{
+		   name_patch = sttails;
+		   face_patch = sbotlife;
+		}
+		else if (plyr->skin == 2)
+		{
+		   name_patch = stknux;
+		   face_patch = sboklife;
+		}
+		else
+		{
+			if (strlen(skins[plyr->skin].face) > 0) 
+				face_patch = W_CachePatchName(skins[plyr->skin].face, PU_STATIC);
+			else
+				face_patch = sboulife;
+
+			if (plyr->powers[pw_super] && strlen(skins[plyr->skin].superface) > 0)
+			   face_patch = W_CachePatchName(skins[plyr->skin].superface, PU_STATIC);
+
+			if (strlen(skins[plyr->skin].hudname) > 0)
+				name_patch = W_CachePatchName(skins[plyr->skin].hudname, PU_STATIC);
+			else
+				name_patch = stuser;
+		}
+
+		if (skins[plyr->skin].facescale != FRACUNIT) {
+			fixed_t scale = skins[plyr->skin].facescale;
+
+			V_DrawScaledPatch(SCX(52),SCY(192)-(FixedMul(face_patch->height<<FRACBITS, vid.dupy*scale)>>FRACBITS), FG | V_NOSCALESTART,name_patch);
+			V_DrawCustomScaledTranslationPatch(SCX(16),SCY(192)-(FixedMul(face_patch->height<<FRACBITS, vid.dupy*scale)>>FRACBITS), scale, FG | V_NOSCALESTART,face_patch,colormap);
+		}
+		else {
+			V_DrawScaledPatch(SCX(52),SCY(192)-(face_patch->height*vid.dupy), FG | V_NOSCALESTART,name_patch);
+			V_DrawScaledTranslationPatch(SCX(16),SCY(192)-(face_patch->height*vid.dupy), FG | V_NOSCALESTART,face_patch,colormap);
+		}
+
+		// draw the number of lives
+		ST_drawOverlayNum(SCX(88), // was 50 Tails 10-31-99
+						SCY(197)-(16*vid.dupy),
+						plyr->lives,
+						tallnum,NULL);
+
+		// now draw the "x"
+		V_DrawScaledPatch (SCX(56),SCY(184), FG | V_NOSCALESTART, stlivex);
+	}
+
+	// Draw the Special Stage HUDs! Nozomi
+	if(mapheaders[gamemap].special)
+	{
+		int pos_x = 112;
+		int pos_y = 56;
+
+		if (mapheaders[gamemap].special == 2) {
+			pos_x += 16;
+			pos_y += 16;
+			V_DrawStringWhite(16, 44, "Req. Score:");
+		}
+
+		ST_drawOverlayNum(SCX(pos_x),SCY(pos_y)-(16*vid.dupy), totalrings, tallnum, NULL);
+		
+		// leaving this here for reference Nozomi 03-03-2026
+		/*if(leveltime < 5*TICRATE)
+		{
+			V_DrawScaledPatch (SCX(100),SCY(90), FG | V_NOSCALESTART,getall); // Tails 08-11-2001
+			ST_drawOverlayNum(SCX(160), SCY(93), totalrings, tallnum, NULL);
+		}*/
+
+		// My version of the above, disappears when the titlecard does Nozomi 03-03-2026
+		if (leveltime < 110) {
+			if (mapheaders[gamemap].special == 2)
+				V_DrawString(160 - (strlen("score attack!")-1)*4, 140, "score attack!");
+			else
+				V_DrawString(160 - (strlen(va("get %d rings!", totalrings))-1)*4, 140, va("get %d rings!", totalrings));
+		}
+
+		if(plyr->sstimer)
+		{
+			// Draw how much time we have left.
+			V_DrawString(124,160,"TIME LEFT");
+			ST_drawOverlayNum(SCX(168), SCY(192)-(16*vid.dupy), plyr->sstimer/TICRATE, tallnum, NULL);
+		}
+		else
+			V_DrawScaledPatch (SCX(125),SCY(90), FG | V_NOSCALESTART,timeup); // Draw TIME UP if we're out of time.
+	}
+
+	ST_EmeraldHuntDrawer(playernum); // Moved to a separate function because it's super long.
+
+	// Draw the GAME OVER patch if we're out of lives! Nozomi
+	if(plyr->lives <= 0)
+	{
+		V_DrawScaledPatch (SCX(32),SCY(100)-(sboover->height*vid.dupy), FG | V_NOSCALESTART,sboover); // Tails 03-11-2000
+	}
+
+	if(plyr->redxvi > 1)
+	{
+		V_DrawString(52,80, "That's for buggering around");
+		V_DrawString(56,96, "in my fangame, MAdventure!");
+		V_DrawString(112,112, "Now sod off!");
+	}
+
+	// Countdown timer for Race Mode Tails 04-25-2001
+	if(plyr->countdown)
+	{
+		char scountdown[33];
+		sprintf(scountdown, "%i", plyr->countdown/TICRATE);
+		V_DrawString(154, 176, scountdown);
+	}
+	// End Countdown timer for Race Mode Tails 04-25-2001
+
+	// Start Tag display for Tag Mode Tails 05-09-2001
+	if(plyr->tagit && cv_gametype.value == 3)
+	{
+		char stagit[33];
+		sprintf(stagit, "%i", plyr->tagit/TICRATE);
+
+		V_DrawString(120, 176, "YOU'RE IT!");
+		V_DrawString(158-((int)strlen(stagit)*8)/2, 184, stagit);
+	}
+
+	if(plyr->tagzone && cv_gametype.value == 3)
+	{
+		char stagzone[33];
+		sprintf(stagzone, "%i", plyr->tagzone/TICRATE);
+		V_DrawString(104, 160, "IN NO-TAG ZONE");
+		V_DrawString(158-((int)strlen(stagzone)*8)/2, 168, stagzone);
+	}
+
+	if(plyr->taglag && cv_gametype.value == 3)
+	{
+		char staglag[33];
+		sprintf(staglag, "%i", plyr->taglag/TICRATE);
+		V_DrawString(120, 160, "NO-TAG LAG");
+		V_DrawString(158-((int)strlen(staglag)*8)/2, 168, staglag);
+	}
+	// End Tag display for Tag Mode Tails 05-09-2001
+
+
+	// CTF HUD Stuff Tails 07-31-2001
+	if(cv_gametype.value == 4)
+	{
+		int team;
+		int whichflag;
+		team = whichflag = 0;
+
+		for(i=0; i<MAXPLAYERS; i++)
+		{
+			if(players[i].gotflag == 1)
 			{
-				V_DrawString(52,80, "That's for buggering around");
-				V_DrawString(56,96, "in my fangame, MAdventure!");
-				V_DrawString(112,112, "Now sod off!");
+				team = players[i].ctfteam;
+				whichflag = players[i].gotflag;
+				break; // break, don't continue.
 			}
+		}
 
-			// Countdown timer for Race Mode Tails 04-25-2001
-			if(plyr->countdown)
+		if(plyr->ctfteam != team && team > 0 && plyr->ctfteam == whichflag)
+			V_DrawStringWhite(128, 168, "OTHER TEAM HAS YOUR FLAG!");
+		else if (plyr->ctfteam == team && team > 0)
+		{
+			if(plyr->ctfteam == whichflag)
+				V_DrawString(128, 168, "YOUR TEAM HAS YOUR FLAG!");
+			else
+				V_DrawString(128, 176, "YOUR TEAM HAS ENEMY FLAG!");
+		}
+
+		team = whichflag = 0;
+
+		for(i=0; i<MAXPLAYERS; i++)
+		{
+			if(players[i].gotflag == 2)
 			{
-				char scountdown[33];
-				sprintf(scountdown, "%i", plyr->countdown/TICRATE);
-				V_DrawString(154, 176, scountdown);
+				team = players[i].ctfteam;
+				whichflag = players[i].gotflag;
+				break; // break, don't continue.
 			}
-			// End Countdown timer for Race Mode Tails 04-25-2001
+		}
+		if(plyr->ctfteam != team && team > 0 && plyr->ctfteam == whichflag)
+			V_DrawStringWhite(128, 168, "OTHER TEAM HAS YOUR FLAG!");
+		else if (plyr->ctfteam == team && team > 0)
+		{
+			if(plyr->ctfteam == whichflag)
+				V_DrawString(128, 168, "YOUR TEAM HAS YOUR FLAG!");
+			else
+				V_DrawString(128, 176, "YOUR TEAM HAS ENEMY FLAG!");
+		}
 
-			// Start Tag display for Tag Mode Tails 05-09-2001
-			if(plyr->tagit && cv_gametype.value == 3)
-			{
-				char stagit[33];
-				sprintf(stagit, "%i", plyr->tagit/TICRATE);
+		if(plyr->ctfteam == 1)
+			V_DrawString(128, 192, "YOU'RE ON THE RED TEAM");
+		else if(plyr->ctfteam == 2)
+			V_DrawString(128, 192, "YOU'RE ON THE BLUE TEAM");
 
-				V_DrawString(120, 176, "YOU'RE IT!");
-				V_DrawString(158-((int)strlen(stagit)*8)/2, 184, stagit);
-			}
+		if(plyr->gotflag == 1)
+			V_DrawString(128, 184, "YOU HAVE THE RED FLAG");
+		else if (plyr->gotflag == 2)
+			V_DrawString(128, 184, "YOU HAVE THE BLUE FLAG");
+	}
 
-			if(plyr->tagzone && cv_gametype.value == 3)
-			{
-				char stagzone[33];
-				sprintf(stagzone, "%i", plyr->tagzone/TICRATE);
-				V_DrawString(104, 160, "IN NO-TAG ZONE");
-				V_DrawString(158-((int)strlen(stagzone)*8)/2, 168, stagzone);
-			}
+	// Draw the title card over everything, including the GAME OVER text.
+	#define titledrawtime 106
+	if(leveltime < titledrawtime)
+		ST_DrawTitleCard(playernum); // Thanks by the way Jisk for making the new titlecard anim. Nozomi
+}
 
-			if(plyr->taglag && cv_gametype.value == 3)
-			{
-				char staglag[33];
-				sprintf(staglag, "%i", plyr->taglag/TICRATE);
-				V_DrawString(120, 160, "NO-TAG LAG");
-				V_DrawString(158-((int)strlen(staglag)*8)/2, 168, staglag);
-			}
-			// End Tag display for Tag Mode Tails 05-09-2001
+// The rest of the status bar stuff separated into functions by importance.
 
+// Draw the current level's title card.
+// Smooth anim by Jisk.
 
-			// CTF HUD Stuff Tails 07-31-2001
-			if(cv_gametype.value == 4)
-			{
-				int team;
-				int whichflag;
-				team = whichflag = 0;
+static void ST_DrawTitleCard(int playernum) {
+	static patch_t*  lvlttl;
+	static patch_t*  ttlnum;
 
-				for(i=0; i<MAXPLAYERS; i++)
-				{
-					if(players[i].gotflag == 1)
-					{
-						team = players[i].ctfteam;
-						whichflag = players[i].gotflag;
-						break; // break, don't continue.
-					}
-				}
+	int lvlttlxpos;
+	int ttlnumxpos;
+	int zonexpos;
 
-				if(plyr->ctfteam != team && team > 0 && plyr->ctfteam == whichflag)
-					V_DrawStringWhite(128, 168, "OTHER TEAM HAS YOUR FLAG!");
-				else if (plyr->ctfteam == team && team > 0)
-				{
-					if(plyr->ctfteam == whichflag)
-						V_DrawString(128, 168, "YOUR TEAM HAS YOUR FLAG!");
-					else
-						V_DrawString(128, 176, "YOUR TEAM HAS ENEMY FLAG!");
-				}
+	int start_ttl_posy = 0;
+	int end_ttl_posy = 80;
+	int end_ttl_posy2 = 200;
 
-				team = whichflag = 0;
+	int start_zone_posy = 200;
+	int end_zone_posy = 104;
+	int end_zone_posy2 = 0;
 
-				for(i=0; i<MAXPLAYERS; i++)
-				{
-					if(players[i].gotflag == 2)
-					{
-						team = players[i].ctfteam;
-						whichflag = players[i].gotflag;
-						break; // break, don't continue.
-					}
-				}
-				if(plyr->ctfteam != team && team > 0 && plyr->ctfteam == whichflag)
-					V_DrawStringWhite(128, 168, "OTHER TEAM HAS YOUR FLAG!");
-				else if (plyr->ctfteam == team && team > 0)
-				{
-					if(plyr->ctfteam == whichflag)
-						V_DrawString(128, 168, "YOUR TEAM HAS YOUR FLAG!");
-					else
-						V_DrawString(128, 176, "YOUR TEAM HAS ENEMY FLAG!");
-				}
+	if (strlen(mapheaders[gamemap].ttlcardlump) > 0)
+		lvlttl = W_CachePatchName (mapheaders[gamemap].ttlcardlump, PU_STATIC);
+	else if (mapheaders[gamemap].special)
+		lvlttl = W_CachePatchName ("LVLTTLS", PU_STATIC);
+	else
+		lvlttl = W_CachePatchName ("LVLTTLM", PU_STATIC);
 
-				if(plyr->ctfteam == 1)
-					V_DrawString(128, 192, "YOU'RE ON THE RED TEAM");
-				else if(plyr->ctfteam == 2)
-					V_DrawString(128, 192, "YOU'RE ON THE BLUE TEAM");
+	if (mapheaders[gamemap].act > 0)
+		switch (mapheaders[gamemap].act) {
+			case 1:
+			default:
+				ttlnum = ttlone;
+				break;
+			case 2:
+				ttlnum = ttltwo;
+				break;
+			case 3:
+				ttlnum = ttlthree;
+				break;
+			case 4:
+				ttlnum = ttlfour;
+				break;
+			case 5:
+				ttlnum = ttlfive;
+				break;
+			case 6:
+				ttlnum = ttlsix;
+				break;
+			case 7:
+				ttlnum = ttlseven;
+				break;
+			case 8:
+				ttlnum = ttleight;
+				break;
+		}
 
-				if(plyr->gotflag == 1)
-					V_DrawString(128, 184, "YOU HAVE THE RED FLAG");
-				else if (plyr->gotflag == 2)
-					V_DrawString(128, 184, "YOU HAVE THE BLUE FLAG");
-			}
+	lvlttlxpos = 160 - (lvlttl->width/2);
+	ttlnumxpos = 160 + (ttlzone->width/3*2);
+	zonexpos = 160 - (ttlzone->width/2);
 
-			// Special Stage HUD Tails 08-11-2001
-			if(mapheaders[gamemap].special)
-			{
-				int pos_x = 112;
-				int pos_y = 56;
-
-				if (mapheaders[gamemap].special == 2) {
-					pos_x += 16;
-					pos_y += 16;
-					V_DrawStringWhite(16, 44, "Req. Score:");
-				}
-
-				ST_drawOverlayNum(SCX(pos_x),SCY(pos_y)-(16*vid.dupy), totalrings, tallnum, NULL);
-				
-				// leaving this here for reference Nozomi 03-03-2026
-				/*if(leveltime < 5*TICRATE)
-				{
-					V_DrawScaledPatch (SCX(100),SCY(90), FG | V_NOSCALESTART,getall); // Tails 08-11-2001
-					ST_drawOverlayNum(SCX(160), SCY(93), totalrings, tallnum, NULL);
-				}*/
-
-				// mine, disappears when the titlecard does Nozomi 03-03-2026
-				if (leveltime < 110) {
-					if (mapheaders[gamemap].special == 2)
-						V_DrawString(160 - (strlen("score attack!")-1)*4, 140, "score attack!");
-					else
-						V_DrawString(160 - (strlen(va("get %d rings!", totalrings))-1)*4, 140, va("get %d rings!", totalrings));
-				}
-
-				if(plyr->sstimer)
-				{
-					V_DrawString(124,160,"TIME LEFT");
-					   ST_drawOverlayNum(SCX(168), // Tails 02-29-2000
-										 SCY(192)-(16*vid.dupy), // Draw the current single seconds time Tails 02-29-2000
-										 plyr->sstimer/TICRATE,
-										 tallnum,NULL);
-				}
-				else
-					V_DrawScaledPatch (SCX(125),SCY(90), FG | V_NOSCALESTART,timeup); // Tails 08-11-2001
-
-			}
-
-			// Emerald Hunt Indicators Tails 12-20-2001
-			if(plyr->hunt1 && plyr->hunt1->health)
-			{
-				fixed_t dist;
-				dist = P_AproxDistance(P_AproxDistance(plyr->mo->x - plyr->hunt1->x, plyr->mo->y - plyr->hunt1->y), plyr->mo->z - plyr->hunt1->z);
-
-				if(dist < 128*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(132), SCY(176), FG | V_NOSCALESTART, homing6);
-					if(leveltime % 5 == 1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else if(dist < 512*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(132), SCY(176), FG | V_NOSCALESTART, homing5);
-					if(leveltime % 10 == 1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else if(dist < 1024*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(132), SCY(176), FG | V_NOSCALESTART, homing4);
-					if(leveltime % 20 == 1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else if(dist < 2048*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(132), SCY(176), FG | V_NOSCALESTART, homing3);
-					if(leveltime % 30 == 1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else if(dist < 3072*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(132), SCY(176), FG | V_NOSCALESTART, homing2);
-					if(leveltime % 35 ==1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else
-				{
-					V_DrawScaledPatch(SCX(132), SCY(176), FG | V_NOSCALESTART, homing1);
-				}
-			}
-			if(plyr->hunt2 && plyr->hunt2->health)
-			{
-				fixed_t dist;
-				dist = P_AproxDistance(P_AproxDistance(plyr->mo->x - plyr->hunt2->x, plyr->mo->y - plyr->hunt2->y), plyr->mo->z - plyr->hunt2->z);
-				if(dist < 128*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(152), SCY(176), FG | V_NOSCALESTART, homing6);
-					if(leveltime % 5 == 1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else if(dist < 512*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(152), SCY(176), FG | V_NOSCALESTART, homing5);
-					if(leveltime % 10 == 1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else if(dist < 1024*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(152), SCY(176), FG | V_NOSCALESTART, homing4);
-					if(leveltime % 20 == 1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else if(dist < 2048*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(152), SCY(176), FG | V_NOSCALESTART, homing3);
-					if(leveltime % 30 == 1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else if(dist < 3072*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(152), SCY(176), FG | V_NOSCALESTART, homing2);
-					if(leveltime % 35 == 1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else
-				{
-					V_DrawScaledPatch(SCX(152), SCY(176), FG | V_NOSCALESTART, homing1);
-				}
-			}
-			if(plyr->hunt3 && plyr->hunt3->health)
-			{
-				fixed_t dist;
-				dist = P_AproxDistance(P_AproxDistance(plyr->mo->x - plyr->hunt3->x, plyr->mo->y - plyr->hunt3->y), plyr->mo->z - plyr->hunt3->z);
-				if(dist < 128*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(172), SCY(176), FG | V_NOSCALESTART, homing6);
-					if(leveltime % 5 == 1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else if(dist < 512*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(172), SCY(176), FG | V_NOSCALESTART, homing5);
-					if(leveltime % 10 == 1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else if(dist < 1024*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(172), SCY(176), FG | V_NOSCALESTART, homing4);
-					if(leveltime % 20 == 1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else if(dist < 2048*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(172), SCY(176), FG | V_NOSCALESTART, homing3);
-					if(leveltime % 30 == 1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else if(dist < 3072*FRACUNIT)
-				{
-					V_DrawScaledPatch(SCX(172), SCY(176), FG | V_NOSCALESTART, homing2);
-					if(leveltime % 35 == 1)
-						S_StartSound(0, sfx_shotgn);
-				}
-				else
-				{
-					V_DrawScaledPatch(SCX(172), SCY(176), FG | V_NOSCALESTART, homing1);
-				}
-			}
-
-#define titledrawtime 146
-			// draw level title Tails
-			if(leveltime < titledrawtime)
-			{
-				static patch_t*  lvlttl;
-				static patch_t*  ttlnum;
-
-				int lvlttlxpos;
-				int ttlnumxpos;
-				int zonexpos;
-
-				int start_ttl_posy = 0;
-				int end_ttl_posy = 80;
-				int end_ttl_posy2 = 200;
-
-				int start_zone_posy = 200;
-				int end_zone_posy = 104;
-				int end_zone_posy2 = 0;
-
-				if (strlen(mapheaders[gamemap].ttlcardlump) > 0)
-					lvlttl = W_CachePatchName (mapheaders[gamemap].ttlcardlump, PU_STATIC);
-				else if (mapheaders[gamemap].special)
-					lvlttl = W_CachePatchName ("LVLTTLS", PU_STATIC);
-				else
-					lvlttl = W_CachePatchName ("LVLTTLM", PU_STATIC);
-
-				if (mapheaders[gamemap].act > 0)
-					switch (mapheaders[gamemap].act) {
-						case 1:
-						default:
-							ttlnum = ttlone;
-							break;
-						case 2:
-							ttlnum = ttltwo;
-							break;
-						case 3:
-							ttlnum = ttlthree;
-							break;
-						case 4:
-							ttlnum = ttlfour;
-							break;
-						case 5:
-							ttlnum = ttlfive;
-							break;
-						case 6:
-							ttlnum = ttlsix;
-							break;
-						case 7:
-							ttlnum = ttlseven;
-							break;
-						case 8:
-							ttlnum = ttleight;
-							break;
-					}
-
-				lvlttlxpos = 160 - (lvlttl->width/2);
-				ttlnumxpos = 160 + (ttlzone->width/3*2);
-				zonexpos = 160 - (ttlzone->width/2);
-
-				// Smooth Animation - Jisk 03-19-26
+	// Smooth Animation - Jisk 03-19-26
 #define anim1end 40 // OLD: 7
-#define anim2start 120 //OLD: 104
-#define anim2end 145 //OLD: 109
+#define anim2start 80 //OLD: 104
+#define anim2end 105 //OLD: 109
 
-				if (leveltime < anim1end)
-				{
-					int div = FixedDiv(leveltime*FRACUNIT, (anim1end+1)*FRACUNIT);
-					int lvlttlypos = Easing_OutQuint(div, 0, 80);
-					int ztypos = Easing_OutQuint(div, 200, 104);
+	if (leveltime >= anim1end && leveltime < anim1end+18)
+		V_DrawFadeScreen((leveltime-anim1end) / 3);
+	else if (leveltime < anim1end)
+		V_DrawFadeScreen(0);
 
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(lvlttlypos), FG | V_NOSCALESTART,lvlttl);
-					V_DrawScaledPatch (SCX(zonexpos),SCY(ztypos), FG | V_NOSCALESTART,ttlzone);
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(ztypos), FG | V_NOSCALESTART,ttlnum); 
-				}
-				else if ((leveltime >= anim1end) && (leveltime < anim2start))
-				{
-					int lvlttlypos = 80;
-					int ztypos = 104;
+	if (leveltime < anim1end)
+	{
+		int div = FixedDiv(leveltime*FRACUNIT, (anim1end+1)*FRACUNIT);
+		int lvlttlypos = Easing_OutQuint(div, 0, 80);
+		int ztypos = Easing_OutQuint(div, 200, 104);
 
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(lvlttlypos), FG | V_NOSCALESTART,lvlttl);
-					V_DrawScaledPatch (SCX(zonexpos),SCY(ztypos), FG | V_NOSCALESTART,ttlzone);
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(ztypos), FG | V_NOSCALESTART,ttlnum);
-				}
-				else if (leveltime >= anim2start)
-				{
-					int div = FixedDiv((leveltime-anim2start)*FRACUNIT, (anim2end-anim2start)*FRACUNIT);
-					int lvlttlypos = Easing_InQuint(div, 80, 200);
-					int ztypos = Easing_InQuint(div, 104, 0);
+		V_DrawScaledPatch (SCX(lvlttlxpos),SCY(lvlttlypos), FG | V_NOSCALESTART,lvlttl);
+		V_DrawScaledPatch (SCX(zonexpos),SCY(ztypos), FG | V_NOSCALESTART,ttlzone);
+		if (mapheaders[gamemap].act > 0)
+			V_DrawScaledPatch (SCX(ttlnumxpos),SCY(ztypos), FG | V_NOSCALESTART,ttlnum); 
+	}
+	else if ((leveltime >= anim1end) && (leveltime < anim2start))
+	{
+		int lvlttlypos = 80;
+		int ztypos = 104;
 
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(lvlttlypos), FG | V_NOSCALESTART,lvlttl);
-					V_DrawScaledPatch (SCX(zonexpos),SCY(ztypos), FG | V_NOSCALESTART,ttlzone);
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(ztypos), FG | V_NOSCALESTART,ttlnum); 
-				}
+		V_DrawScaledPatch (SCX(lvlttlxpos),SCY(lvlttlypos), FG | V_NOSCALESTART,lvlttl);
+		V_DrawScaledPatch (SCX(zonexpos),SCY(ztypos), FG | V_NOSCALESTART,ttlzone);
+		if (mapheaders[gamemap].act > 0)
+			V_DrawScaledPatch (SCX(ttlnumxpos),SCY(ztypos), FG | V_NOSCALESTART,ttlnum);
+	}
+	else if (leveltime >= anim2start)
+	{
+		int div = FixedDiv((leveltime-anim2start)*FRACUNIT, (anim2end-anim2start)*FRACUNIT);
+		int lvlttlypos = Easing_InQuint(div, 80, 200);
+		int ztypos = Easing_InQuint(div, 104, 0);
+
+		V_DrawScaledPatch (SCX(lvlttlxpos),SCY(lvlttlypos), FG | V_NOSCALESTART,lvlttl);
+		V_DrawScaledPatch (SCX(zonexpos),SCY(ztypos), FG | V_NOSCALESTART,ttlzone);
+		if (mapheaders[gamemap].act > 0)
+			V_DrawScaledPatch (SCX(ttlnumxpos),SCY(ztypos), FG | V_NOSCALESTART,ttlnum); 
+	}
+
 #undef anim1end
 #undef anim2start
 #undef anim2end
+#undef titledrawtime
+}
 
-				/* OLD LEVEL TITLE CODE
-				if(leveltime == 1)
-				{
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(0), FG | V_NOSCALESTART,lvlttl); // Tails 11-01-2000
-					V_DrawScaledPatch (SCX(zonexpos),SCY(200), FG | V_NOSCALESTART,ttlzone); // Tails 11-01-2000
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(200), FG | V_NOSCALESTART,ttlnum); // Tails 11-01-2000
-				}
-				else if (leveltime == 2)
-				{
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(12), FG | V_NOSCALESTART,lvlttl); // Tails 11-01-2000
-					V_DrawScaledPatch (SCX(zonexpos),SCY(188), FG | V_NOSCALESTART,ttlzone); // Tails 11-01-2000
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(188), FG | V_NOSCALESTART,ttlnum); // Tails 11-01-2000
-				}
-				else if (leveltime == 3)
-				{
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(24), FG | V_NOSCALESTART,lvlttl); // Tails 11-01-2000
-					V_DrawScaledPatch (SCX(zonexpos),SCY(176), FG | V_NOSCALESTART,ttlzone); // Tails 11-01-2000
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(0),SCY(176), FG | V_NOSCALESTART,ttlnum); // Tails 11-01-2000
-				}
-				else if (leveltime == 4)
-				{
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(36), FG | V_NOSCALESTART,lvlttl); // Tails 11-01-2000
-					V_DrawScaledPatch (SCX(zonexpos),SCY(164), FG | V_NOSCALESTART,ttlzone); // Tails 11-01-2000
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(164), FG | V_NOSCALESTART,ttlnum); // Tails 11-01-2000
-				}
-				else if (leveltime == 5)
-				{
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(48), FG | V_NOSCALESTART,lvlttl); // Tails 11-01-2000
-					V_DrawScaledPatch (SCX(zonexpos),SCY(152), FG | V_NOSCALESTART,ttlzone); // Tails 11-01-2000
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(152), FG | V_NOSCALESTART,ttlnum); // Tails 11-01-2000
-				}
-				else if (leveltime == 6)
-				{
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(60), FG | V_NOSCALESTART,lvlttl); // Tails 11-01-2000
-					V_DrawScaledPatch (SCX(zonexpos),SCY(140), FG | V_NOSCALESTART,ttlzone); // Tails 11-01-2000
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(140), FG | V_NOSCALESTART,ttlnum); // Tails 11-01-2000
-				}
-				else if (leveltime == 7)
-				{
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(72), FG | V_NOSCALESTART,lvlttl); // Tails 11-01-2000
-					V_DrawScaledPatch (SCX(zonexpos),SCY(128), FG | V_NOSCALESTART,ttlzone); // Tails 11-01-2000
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(128), FG | V_NOSCALESTART,ttlnum); // Tails 11-01-2000
-				}
-				else if (leveltime > 7 && leveltime < 105)
-				{
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(80), FG | V_NOSCALESTART,lvlttl); // Tails 11-01-2000
-					V_DrawScaledPatch (SCX(zonexpos),SCY(104), FG | V_NOSCALESTART,ttlzone); // Tails 11-01-2000
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(104), FG | V_NOSCALESTART,ttlnum); // Tails 11-01-2000
-				}
-				else if (leveltime == 105)
-				{
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(104), FG | V_NOSCALESTART,lvlttl); // Tails 11-01-2000
-					V_DrawScaledPatch (SCX(zonexpos),SCY(80), FG | V_NOSCALESTART,ttlzone); // Tails 11-01-2000
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(80), FG | V_NOSCALESTART,ttlnum); // Tails 11-01-2000
-				}
-				else if (leveltime == 106)
-				{
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(128), FG | V_NOSCALESTART,lvlttl); // Tails 11-01-2000
-					V_DrawScaledPatch (SCX(zonexpos),SCY(56), FG | V_NOSCALESTART,ttlzone); // Tails 11-01-2000
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(56), FG | V_NOSCALESTART,ttlnum); // Tails 11-01-2000
-				}
-				else if (leveltime == 107)
-				{
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(152), FG | V_NOSCALESTART,lvlttl); // Tails 11-01-2000
-					V_DrawScaledPatch (SCX(zonexpos),SCY(32), FG | V_NOSCALESTART,ttlzone); // Tails 11-01-2000
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(32), FG | V_NOSCALESTART,ttlnum); // Tails 11-01-2000
-				}
-				else if (leveltime == 108)
-				{
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(176), FG | V_NOSCALESTART,lvlttl); // Tails 11-01-2000
-					V_DrawScaledPatch (SCX(zonexpos),SCY(8), FG | V_NOSCALESTART,ttlzone); // Tails 11-01-2000
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(8), FG | V_NOSCALESTART,ttlnum); // Tails 11-01-2000
-				}
-				else if (leveltime == 109)
-				{
-					V_DrawScaledPatch (SCX(lvlttlxpos),SCY(200), FG | V_NOSCALESTART,lvlttl); // Tails 11-01-2000
-					V_DrawScaledPatch (SCX(zonexpos),SCY(0), FG | V_NOSCALESTART,ttlzone); // Tails 11-01-2000
-					if (mapheaders[gamemap].act > 0)
-						V_DrawScaledPatch (SCX(ttlnumxpos),SCY(0), FG | V_NOSCALESTART,ttlnum); // Tails 11-01-2000
-				}
-				*/
-			}
-			break;
+static void ST_EmeraldHuntDrawer(int playernum) {
+	// Emerald Hunt Indicators Tails 12-20-2001
+	if(plyr->hunt1 && plyr->hunt1->health)
+	{
+		fixed_t dist;
+		dist = P_AproxDistance(P_AproxDistance(plyr->mo->x - plyr->hunt1->x, plyr->mo->y - plyr->hunt1->y), plyr->mo->z - plyr->hunt1->z);
+
+		if(dist < 128*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(132), SCY(176), FG | V_NOSCALESTART, homing6);
+			if(leveltime % 5 == 1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else if(dist < 512*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(132), SCY(176), FG | V_NOSCALESTART, homing5);
+			if(leveltime % 10 == 1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else if(dist < 1024*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(132), SCY(176), FG | V_NOSCALESTART, homing4);
+			if(leveltime % 20 == 1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else if(dist < 2048*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(132), SCY(176), FG | V_NOSCALESTART, homing3);
+			if(leveltime % 30 == 1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else if(dist < 3072*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(132), SCY(176), FG | V_NOSCALESTART, homing2);
+			if(leveltime % 35 ==1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else
+		{
+			V_DrawScaledPatch(SCX(132), SCY(176), FG | V_NOSCALESTART, homing1);
+		}
+	}
+	if(plyr->hunt2 && plyr->hunt2->health)
+	{
+		fixed_t dist;
+		dist = P_AproxDistance(P_AproxDistance(plyr->mo->x - plyr->hunt2->x, plyr->mo->y - plyr->hunt2->y), plyr->mo->z - plyr->hunt2->z);
+		if(dist < 128*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(152), SCY(176), FG | V_NOSCALESTART, homing6);
+			if(leveltime % 5 == 1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else if(dist < 512*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(152), SCY(176), FG | V_NOSCALESTART, homing5);
+			if(leveltime % 10 == 1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else if(dist < 1024*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(152), SCY(176), FG | V_NOSCALESTART, homing4);
+			if(leveltime % 20 == 1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else if(dist < 2048*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(152), SCY(176), FG | V_NOSCALESTART, homing3);
+			if(leveltime % 30 == 1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else if(dist < 3072*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(152), SCY(176), FG | V_NOSCALESTART, homing2);
+			if(leveltime % 35 == 1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else
+		{
+			V_DrawScaledPatch(SCX(152), SCY(176), FG | V_NOSCALESTART, homing1);
+		}
+	}
+	if(plyr->hunt3 && plyr->hunt3->health)
+	{
+		fixed_t dist;
+		dist = P_AproxDistance(P_AproxDistance(plyr->mo->x - plyr->hunt3->x, plyr->mo->y - plyr->hunt3->y), plyr->mo->z - plyr->hunt3->z);
+		if(dist < 128*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(172), SCY(176), FG | V_NOSCALESTART, homing6);
+			if(leveltime % 5 == 1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else if(dist < 512*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(172), SCY(176), FG | V_NOSCALESTART, homing5);
+			if(leveltime % 10 == 1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else if(dist < 1024*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(172), SCY(176), FG | V_NOSCALESTART, homing4);
+			if(leveltime % 20 == 1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else if(dist < 2048*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(172), SCY(176), FG | V_NOSCALESTART, homing3);
+			if(leveltime % 30 == 1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else if(dist < 3072*FRACUNIT)
+		{
+			V_DrawScaledPatch(SCX(172), SCY(176), FG | V_NOSCALESTART, homing2);
+			if(leveltime % 35 == 1)
+				S_StartSound(0, sfx_shotgn);
+		}
+		else
+		{
+			V_DrawScaledPatch(SCX(172), SCY(176), FG | V_NOSCALESTART, homing1);
 		}
 	}
 }
-
-#undef titledrawtime

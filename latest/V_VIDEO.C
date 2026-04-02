@@ -1335,21 +1335,16 @@ void V_DrawFlatFill (int x, int y, int w, int h, int flatnum)
 //  Fade all the screen buffer, so that the menu is more readable,
 //  especially now that we use the small hufont in the menus...
 //
-void V_DrawFadeScreen (void)
+void V_DrawFadeScreen (int fadenum)
 {
     int         x,y,w;
     int         *buf;
     unsigned    quad;
     byte        p1, p2, p3, p4;
     byte*       fadetable = (byte *) colormaps + 16*256;
-    //short*    wput;
 
-#ifdef HWRENDER // not win32 only 19990829 by Kin
-    if (rendermode!=render_soft) {
-        HWR_FadeScreenMenuBack (0x01010160, 0);  //faB: hack, 0 means full height :o
-        return;
-    }
-#endif
+	if (fadenum != -1)
+		fadetable = (byte *) fadetables + fadenum*256;
 
     w = vid.width>>2;
     for (y=0 ; y<vid.height ; y++)
@@ -1365,21 +1360,6 @@ void V_DrawFadeScreen (void)
             buf[x] = (p4<<24) | (p3<<16) | (p2<<8) | p1;
         }
     }
-
-#ifdef _16bitcrapneverfinished
- else
- {
-    w = vid.width;
-    for (y=0 ; y<vid.height ; y++)
-    {
-        wput = (short*) (vid.buffer + vid.width*y);
-        for (x=0 ; x<w ; x++)
-        {
-            *wput++ = (*wput>>1) & 0x3def;
-        }
-    }
- }
-#endif
 }
 
 

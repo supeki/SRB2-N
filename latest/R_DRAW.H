@@ -80,6 +80,9 @@ extern byte*            dc_transmap;
 extern byte*            translationtables;
 extern byte*            dc_translation;
 
+// For fading the screen for title cards. Nozomi
+extern byte*			fadetables;
+
 extern struct r_lightlist_s*      dc_lightlist;
 extern int                        dc_numlights;
 extern int                        dc_maxlights;

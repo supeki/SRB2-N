@@ -243,7 +243,6 @@ void P_MovePlayer (player_t* player)
 	int waterspeed;
 	int flyspeed;
 	int topspeed;
-	int runspeed;
 	msecnode_t *node;
 	sector_t *sec;
     fixed_t   movepushforward=0,movepushside=0;
@@ -331,10 +330,10 @@ void P_MovePlayer (player_t* player)
 	snormalspeed = 5 * normalspeed / 3;
 	swaterspeed = 5 * waterspeed / 3;
 	sflyspeed = 5 * flyspeed / 3;
-	runspeed = skins[player->skin].runspeed;
+	player->runspeed = skins[player->skin].runspeed;
 
-	if (!runspeed)
-		runspeed = normalspeed/3*2;
+	if (!player->runspeed)
+		player->runspeed = normalspeed/3*2;
 
 	// So... why wasn't SSNTails handling it this way before...?
 	// That... I do not know. Nozomi 03-18-2026
@@ -535,7 +534,7 @@ void P_MovePlayer (player_t* player)
 		{
 	// If the player is moving fast enough,
 	// break into a run!
-			if((player->speed > runspeed) && player->walking && (onground))
+			if((player->speed > player->runspeed) && player->walking && (onground))
 				P_SetMobjState (player->mo, S_PLAY_SPD1);
 
 	// Otherwise, just walk.
@@ -594,16 +593,9 @@ void P_MovePlayer (player_t* player)
 		else
 			player->mo->flags &= ~MF_SHADOW;
 
-		// "If the player is Super Sonic and is pressing the
-		// forward/back or left/right keys and running, play
-		// Super Sonic's running animation."
-/*		if  (player->powers[pw_super] && (cmd->forwardmove || cmd->sidemove)
-			&& player->running)
-		        P_SetMobjState (player->mo, S_PLAY_ABL1);*/
-
 		// If your running animation is playing, and you're
 		// going too slow, switch back to the walking frames.
-		if (player->running && !(player->speed >= runspeed))
+		if (player->running && !(player->speed >= player->runspeed))
 			P_SetMobjState (player->mo, S_PLAY_RUN1);
 
 		// If Springing, but travelling DOWNWARD, change back!
@@ -996,14 +988,6 @@ void P_MovePlayer (player_t* player)
 				else if(player->powers[pw_blackshield])
 					P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z, MT_BLACKORB)->target = player->mo;
 			}
-
-			// If Super Sonic is moving fast enough, run across the water!
-	/*		if((player->powers[pw_super]) && (player->mo->z < player->mo->waterz+10*FRACUNIT) && (player->mo->z > player->mo->waterz-10*FRACUNIT) && (cmd->forwardmove) && (player->rmomx) && (player->rmomy) && (player->mo->momz < 0) && (player->speed > 10))
-			{
-				 player->mo->z = player->mo->waterz;
-				 player->mo->momz = 0;
-	//			 P_SpawnSplash (player->mo, (player->mo->z));
-			}*/
 		}
 
 ///////////////////////////
@@ -2742,35 +2726,12 @@ void P_PlayerThink (player_t* player)
     if (player->bonuscount)
         player->bonuscount--;
 
+	// Nozomi Ring Timer for Ring Pitch
 	if (player->ringtimer && !(leveltime % 8))
 		player->ringtimer--;
 
 	if (player->ringtimer > 10)
 		player->ringtimer = 10;
 
-    // Handling colormaps.
-	// DIEE!!!! Tails 01-06-2001
-/*
-    if (player->powers[pw_invulnerability])
-    {
-        if (player->powers[pw_invulnerability] > 4*TICRATE
-            || (player->powers[pw_invulnerability]&8) )
-            player->fixedcolormap = INVERSECOLORMAP;
-        else
-            player->fixedcolormap = 0;
-    }
-    else if (player->powers[pw_infrared])
-    {
-        if (player->powers[pw_infrared] > 4*TICRATE
-            || (player->powers[pw_infrared]&8) )
-        {
-            // almost full bright
-            player->fixedcolormap = 1;
-        }
-        else
-            player->fixedcolormap = 0;
-    }
-    else*/
-        player->fixedcolormap = 0;
-
+    player->fixedcolormap = 0;
 }

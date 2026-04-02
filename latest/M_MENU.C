@@ -3280,7 +3280,7 @@ void M_Drawer (void)
     scaledofs = vid.centerofs;
 
     // now that's more readable with a faded background (yeah like Quake...)
-    V_DrawFadeScreen (); // Tails 11-30-2000
+    V_DrawFadeScreen (-1); // Tails 11-30-2000
 	// So like, why was the above commented out? Nozomi 03-10-2026
 
     if (currentMenu->drawroutine)

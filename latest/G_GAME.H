@@ -65,7 +65,7 @@ extern boolean nozo_antibee;
 
 extern  char      gamemapname[128];
 
-extern  player_t        players[MAXPLAYERS];
+extern  player_t  players[MAXPLAYERS];
 extern  boolean   playeringame[MAXPLAYERS];
 
 // ======================================

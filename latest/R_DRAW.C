@@ -134,6 +134,8 @@ byte*                   dc_transmap;    // one of the translucency tables
 
 byte*                   translationtables;
 
+byte*					fadetables;
+
 // R_DrawTranslatedColumn uses this
 byte*                   dc_translation;
 
@@ -262,6 +264,7 @@ void R_InitTranslationTables (void)
     W_ReadLump( W_GetNumForName("TRANSFX1"), transtables+0x40000 );
 
     translationtables = Z_MallocAlign (256*(MAXSKINCOLORS+MAXSUPERCOLORS), PU_STATIC, 0, 8);
+	fadetables = Z_MallocAlign(256*10, PU_STATIC, 0, 8);
 
     // translate just the 16 green colors
     for (i=0 ; i<256 ; i++)
@@ -478,6 +481,107 @@ void R_InitTranslationTables (void)
 	translationtables [0x7f + SKINCOLOR_SUPER5*256] = 0xa7;
 
 	// End Super Skincolors! Nozomi
+
+	// Start Fade Tables! Nozomi
+
+	// Initializing them because lazy nya~ Nozomi
+	// Valid fadenums are 0-9...
+	// 0 is pitch black
+	// 9 is almost normal
+	// Nozomi 04-02-2026
+	for (i=0; i<256; i++)
+		for (j=0; j<256*9; j+=256)
+			fadetables[i+j] = i;
+
+	// Fade Table 0: Pitch Black
+	for (i=0; i<256; i++)
+		fadetables[i] = 0;
+
+	// Greyscale
+	for (i=80; i<112; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 112.0f) ) )/((float)(j)));
+
+	// Red
+	for (i=168; i<192; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 192.0f) ) )/((float)(j)));
+
+	// Orange
+	for (i=208; i<224; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 224.0f) ) )/((float)(j)));
+
+	for (i=232; i<236; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 236.0f) ) )/((float)(j)));
+
+	for (j=1; j<9; j++)
+			fadetables[248+j*256] = floor((float)214 + ((float)214 - ((float)214 * ((float)214 / 224.0f) ) )/((float)(j)));
+
+	// Yellow
+	for (i=224; i<232; i++) // This one is ugly... Nozomi
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 232.0f) ) )/((float)(j)));
+
+	for (i=160; i<168; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 168.0f) ) )/((float)(j)));
+
+	for (j=1; j<9; j++) // I'm cheating for this one.
+			fadetables[249+j*256] = floor((float)160 + ((float)160 - ((float)160 * ((float)160 / 168.0f) ) )/((float)(j)));
+
+	// Green
+	for (i=112; i<128; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 128.0f) ) )/((float)(j)));
+
+	// Blue
+	for (i=192; i<208; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 208.0f) ) )/((float)(j)));
+
+	// Violet
+	for (i=250; i<255; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 255.0f) ) )/((float)(j)));
+
+	// Armor
+	for (i=152; i<160; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 160.0f) ) )/((float)(j)));
+	
+	for (i=9; i<13; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 13.0f) ) )/((float)(j)));
+
+	// Leather
+	for (i=128; i<152; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 152.0f) ) )/((float)(j)));
+
+	for (i=236; i<240; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 240.0f) ) )/((float)(j)));
+
+	for (i=13; i<16; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 16.0f) ) )/((float)(j)));
+
+	// Skin
+	for (i=48; i<80; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 80.0f) ) )/((float)(j)));
+
+	// Flesh
+	for (i=16; i<48; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 48.0f) ) )/((float)(j)));
+
+	// Deep Water
+	for (i=240; i<248; i++)
+		for (j=1; j<9; j++)
+			fadetables[i+j*256] = floor((float)i + ((float)i - ((float)i * ((float)i / 248.0f) ) )/((float)(j)));
 }
 
 
