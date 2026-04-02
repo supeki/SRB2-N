@@ -535,8 +535,8 @@ void R_InitTranslationTables (void)
 	translationtables [0x7b + SKINCOLOR_HYPER3*256] = translationtables [0x74 + SKINCOLOR_CHERRYBLOSSOM*256];
 	translationtables [0x7c + SKINCOLOR_HYPER3*256] = translationtables [0x74 + SKINCOLOR_CHERRYBLOSSOM*256];
 	translationtables [0x7d + SKINCOLOR_HYPER3*256] = translationtables [0x74 + SKINCOLOR_CHERRYBLOSSOM*256];
-	translationtables [0x7e + SKINCOLOR_HYPER3*256] = translationtables [0x74 + SKINCOLOR_CHERRYBLOSSOM*256];
-	translationtables [0x7f + SKINCOLOR_HYPER3*256] = translationtables [0x74 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x7e + SKINCOLOR_HYPER3*256] = translationtables [0x75 + SKINCOLOR_CHERRYBLOSSOM*256];
+	translationtables [0x7f + SKINCOLOR_HYPER3*256] = translationtables [0x76 + SKINCOLOR_CHERRYBLOSSOM*256];
 
 	// Pastel...? I can't really make this color with what I have... We're using purple.
 
@@ -554,8 +554,8 @@ void R_InitTranslationTables (void)
 	translationtables [0x7b + SKINCOLOR_HYPER4*256] = 251;
 	translationtables [0x7c + SKINCOLOR_HYPER4*256] = 251;
 	translationtables [0x7d + SKINCOLOR_HYPER4*256] = 251;
-	translationtables [0x7e + SKINCOLOR_HYPER4*256] = 251;
-	translationtables [0x7f + SKINCOLOR_HYPER4*256] = 251;
+	translationtables [0x7e + SKINCOLOR_HYPER4*256] = 252;
+	translationtables [0x7f + SKINCOLOR_HYPER4*256] = 253;
 
 	// Blue
 
@@ -573,8 +573,8 @@ void R_InitTranslationTables (void)
 	translationtables [0x7b + SKINCOLOR_HYPER5*256] = 195;
 	translationtables [0x7c + SKINCOLOR_HYPER5*256] = 195;
 	translationtables [0x7d + SKINCOLOR_HYPER5*256] = 195;
-	translationtables [0x7e + SKINCOLOR_HYPER5*256] = 195;
-	translationtables [0x7f + SKINCOLOR_HYPER5*256] = 195;
+	translationtables [0x7e + SKINCOLOR_HYPER5*256] = 196;
+	translationtables [0x7f + SKINCOLOR_HYPER5*256] = 197;
 
 	// Green
 
@@ -592,8 +592,8 @@ void R_InitTranslationTables (void)
 	translationtables [0x7b + SKINCOLOR_HYPER6*256] = 114;
 	translationtables [0x7c + SKINCOLOR_HYPER6*256] = 114;
 	translationtables [0x7d + SKINCOLOR_HYPER6*256] = 114;
-	translationtables [0x7e + SKINCOLOR_HYPER6*256] = 114;
-	translationtables [0x7f + SKINCOLOR_HYPER6*256] = 114;
+	translationtables [0x7e + SKINCOLOR_HYPER6*256] = 115;
+	translationtables [0x7f + SKINCOLOR_HYPER6*256] = 116;
 
 	// Merky Yellow
 
@@ -611,8 +611,8 @@ void R_InitTranslationTables (void)
 	translationtables [0x7b + SKINCOLOR_HYPER7*256] = 162;
 	translationtables [0x7c + SKINCOLOR_HYPER7*256] = 162;
 	translationtables [0x7d + SKINCOLOR_HYPER7*256] = 162;
-	translationtables [0x7e + SKINCOLOR_HYPER7*256] = 162;
-	translationtables [0x7f + SKINCOLOR_HYPER7*256] = 162;
+	translationtables [0x7e + SKINCOLOR_HYPER7*256] = 163;
+	translationtables [0x7f + SKINCOLOR_HYPER7*256] = 164;
 
 
 	// End Hyper Skincolors! Nozomi

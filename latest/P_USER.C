@@ -948,14 +948,16 @@ void P_MovePlayer (player_t* player)
 				player->powers[pw_super] = 0;*/
 
 			// Change your color to flash!
-			if (!cv_superman.value)
+			if (!cv_superman.value) {
 				player->mo->color = SKINCOLOR_SUPER + abs((((signed)leveltime >> 1) % 9) - 4) + 1;
 				
 				// UNCOMMENT THIS WHEN HYPER IS IMPLEMENTED!!! Nozomi
-				/*if (leveltime % 6 < 3)
-					player->mo->color = SKINCOLOR_HYPER+1;
-				else
-					player->mo->color = SKINCOLOR_HYPER2 + floor(leveltime/6 % 6) + 1;*/
+				if (player->emerald8)
+					if (leveltime % 6 < 3)
+						player->mo->color = SKINCOLOR_HYPER+1;
+					else
+						player->mo->color = SKINCOLOR_HYPER2 + floor(leveltime/6 % 6) + 1;
+			}
 			else if (player->mo->color > MAXSKINCOLORS)
 				player->mo->color = player->skincolor;
 

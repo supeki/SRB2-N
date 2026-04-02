@@ -225,6 +225,7 @@ typedef struct player_s
     int emerald5;
     int emerald6;
     int emerald7;
+	int emerald8;
 	int token; // Number of tokens collected in a level Tails 08-11-2001
 	int lastmap; // Last level you were at Tails 08-11-2001
 	int	sstimer; // Time allotted in the special stage Tails 08-11-2001
