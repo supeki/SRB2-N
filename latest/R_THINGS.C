@@ -621,17 +621,22 @@ void R_DrawMaskedColumn (column_t* column)
         if (dc_yl <= mceilingclip[dc_x])
             dc_yl = mceilingclip[dc_x]+1;
 
+		if (dc_yl < 0)
+			dc_yl = 0;
+		if (dc_yh >= vid.height) // dc_yl must be < vid.height, so reduces number of checks in tight loop
+			dc_yh = vid.height - 1;
+
         if(colfunc == R_DrawFogColumn_8)
         {
           dc_yh = mfloorclip[dc_x] - 1;
           dc_yl = mceilingclip[dc_x] + 1;
         }
 
-        if (dc_yl <= dc_yh && dc_yl < vid.height && dc_yh > 0)
+        if (dc_yl <= dc_yh && dc_yh > 0)
         {
             dc_source = (byte *)column + 3;
             dc_texturemid = basetexturemid - (column->topdelta<<FRACBITS);
-            // dc_source = (byte *)column + 3 - column->topdelta;
+            //dc_source = (byte *)column + 3 - column->topdelta;
 
             // Drawn by either R_DrawColumn
             //  or (SHADOW) R_DrawFuzzColumn.

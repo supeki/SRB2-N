@@ -620,7 +620,7 @@ void R_DrawTranslatedColumn_8 (void)
     register fixed_t frac;
     register fixed_t fracstep;
 
-    count = dc_yh - dc_yl;
+    count = dc_yh - dc_yl + 1;
     if (count < 0)
         return;
 
@@ -689,7 +689,7 @@ void R_DrawTranslatedTranslucentColumn_8(void)
     register fixed_t frac;
     register fixed_t fracstep;
 
-	count = dc_yh - dc_yl;
+	count = dc_yh - dc_yl + 1;
 
 	if (count <= 0) // Zero length, column does not exceed a pixel.
 		return;
@@ -738,18 +738,15 @@ void R_DrawTranslatedTranslucentColumn_8(void)
 		{
 			while ((count -= 2) >= 0) // texture height is a power of 2
 			{
-				*dest = dc_colormap[*(dc_transmap
-					+ (dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]]<<8) + (*dest))];
+				*dest = *(dc_transmap + (dc_colormap[dc_translation[dc_source[(frac>>FRACBITS)&heightmask]]]<<8) + (*dest));
 				dest += vid.width;
 				frac += fracstep;
-				*dest = dc_colormap[*(dc_transmap
-					+ (dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]]<<8) + (*dest))];
+				*dest = *(dc_transmap + (dc_colormap[dc_translation[dc_source[(frac>>FRACBITS)&heightmask]]]<<8) + (*dest));
 				dest += vid.width;
 				frac += fracstep;
 			}
-			if (count & 1 && count >= 0)
-				*dest = dc_colormap[*(dc_transmap
-					+ (dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]]<<8) + (*dest))];
+			if (count & 1)
+				*dest = *(dc_transmap + (dc_colormap[dc_translation[dc_source[(frac>>FRACBITS)&heightmask]]]<<8) + (*dest));
 		}
 	}
 }

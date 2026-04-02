@@ -273,10 +273,6 @@ SOURCE=..\D_event.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\D_french.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\D_items.c
 # End Source File
 # Begin Source File
