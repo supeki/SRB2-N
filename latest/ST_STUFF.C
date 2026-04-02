@@ -405,6 +405,7 @@ static   patch_t*   sboover; // Tails 03-11-2000
 static   patch_t*   sboslife; // Tails 03-12-2000
 static   patch_t*   sbotlife; // Tails 03-12-2000
 static   patch_t*   sboklife; // Nozomi 02-23-2026
+static   patch_t*   suprlife; // Nozomi 04-01-2026
 static   patch_t*   stsonic; // Tails 03-12-2000
 static   patch_t*   sttails; // Tails 03-12-2000
 static   patch_t*   stknux; // Tails 03-12-2000
@@ -1517,6 +1518,7 @@ void ST_Init (void)
     sboslife  = W_CachePatchName ("SBOSLIFE", PU_STATIC); // Tails 03-12-2000
     sbotlife  = W_CachePatchName ("SBOTLIFE", PU_STATIC); // Tails 03-12-2000
 	sboklife  = W_CachePatchName ("SBOKLIFE", PU_STATIC);
+	suprlife  = W_CachePatchName ("SUPRLIFE", PU_STATIC);
     stsonic   = W_CachePatchName ("STSONIC", PU_STATIC); // Tails 03-12-2000
     sttails   = W_CachePatchName ("STTAILS", PU_STATIC); // Tails 03-12-2000
     stknux    = W_CachePatchName ("STKNUX", PU_STATIC); // Tails 03-12-2000
@@ -1713,6 +1715,8 @@ void ST_overlayDrawer (int playernum)
 
 				if (plyr->skincolor==0)
 					colormap = colormaps;
+				else if (plyr->mo)
+					colormap = translationtables - 256 + (plyr->mo->color<<8);
 				else
 					colormap = translationtables - 256 + (plyr->skincolor<<8);
 
@@ -1720,6 +1724,9 @@ void ST_overlayDrawer (int playernum)
 				{
 				   name_patch = stsonic;
 				   face_patch = sboslife;
+
+				   if (plyr->powers[pw_super])
+					   face_patch = suprlife;
 				}
 				else if (plyr->skin == 1)
 				{
@@ -1737,6 +1744,9 @@ void ST_overlayDrawer (int playernum)
 						face_patch = W_CachePatchName(skins[plyr->skin].face, PU_STATIC);
 					else
 						face_patch = sboulife;
+
+					if (plyr->powers[pw_super] && strlen(skins[plyr->skin].superface) > 0)
+					   face_patch = W_CachePatchName(skins[plyr->skin].superface, PU_STATIC);
 
 					if (strlen(skins[plyr->skin].hudname) > 0)
 						name_patch = W_CachePatchName(skins[plyr->skin].hudname, PU_STATIC);

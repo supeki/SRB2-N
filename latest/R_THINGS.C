@@ -2125,6 +2125,12 @@ void R_AddSkins (int wadnum)
                 strupr (skins[numskins].face);
             }
 			else
+            if (!stricmp(token,"superface"))
+            {
+                strncpy (skins[numskins].superface, value, 9);
+                strupr (skins[numskins].superface);
+            }
+			else
 			if (!stricmp(token,"hudname"))
             {
                 strncpy (skins[numskins].hudname, value, 9);

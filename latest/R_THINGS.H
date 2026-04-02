@@ -112,6 +112,7 @@ typedef struct
 	char		speed[9]; // speed definition Tails 11-15-2000
 	int 		runspeed; // runspeed Nozomi
 	char		face[9];
+	char		superface[9];
 	char		hudname[9];
 	fixed_t		spritescale; // spritescale Nozomi
 	fixed_t		facescale; // facescale Nozomi
