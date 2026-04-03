@@ -1801,7 +1801,7 @@ void P_MovePlayer (player_t* player)
 	}
 
 	// Display a ghost if you have Speed Sneakers (or are Super!) and are going fast enough! Nozomi Date Unknown
-	if (((player->speed + abs(player->mo->momz/FRACUNIT)) > normalspeed/3*2 && (player->powers[pw_strength] || player->powers[pw_super])) || player->homing || (player->mo->color > SKINCOLOR_HYPER && (player->speed > 2 + abs(player->mo->momz/FRACUNIT)))) {
+	if (((player->speed + abs(player->mo->momz/FRACUNIT)) > normalspeed/3*2 && (player->powers[pw_strength] || player->powers[pw_super])) || player->homing || (player->mo->color > SKINCOLOR_HYPER && (player->speed + abs(player->mo->momz/FRACUNIT) > 2))) {
 		mobj_t* ghost;
 		ghost = P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z, MT_THOK);
 		ghost->skin = player->mo->skin;
