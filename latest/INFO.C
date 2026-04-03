@@ -520,8 +520,8 @@ state_t states[NUMSTATES] = {
     {SPR_EGGM,6,2,{NULL},S_EGGMOBILE_PAIN11},  // S_EGGMOBILE_PAIN10 // Boss 1 Tails 11-29-99
     {SPR_EGGM,5,2,{NULL},S_EGGMOBILE_PAIN12},  // S_EGGMOBILE_PAIN11 // Boss 1 Tails 11-29-99
     {SPR_EGGM,6,2,{NULL},S_EGGMOBILE_RUN1},  // S_EGGMOBILE_PAIN12 // Boss 1 Tails 11-29-99
-    {SPR_EGGM,7,8,{A_Fall},S_EGGMOBILE_DIE2},    // S_EGGMOBILE_DIE1 // Boss 1 Tails 11-29-99
-    {SPR_EGGM,8,8,{A_Scream},S_EGGMOBILE_DIE3},        // S_EGGMOBILE_DIE2 // Boss 1 Tails 11-29-99
+    {SPR_EGGM,7,8,{A_BossDeath},S_EGGMOBILE_DIE2},    // S_EGGMOBILE_DIE1 // Boss 1 Tails 11-29-99
+    {SPR_EGGM,8,8,{A_ScoreRise},S_EGGMOBILE_DIE3},        // S_EGGMOBILE_DIE2 // Boss 1 Tails 11-29-99
     {SPR_EGGM,9,8,{A_Scream},S_EGGMOBILE_DIE4},    // S_EGGMOBILE_DIE3 // Boss 1 Tails 11-29-99
     {SPR_EGGM,10,8,{A_Scream},S_EGGMOBILE_DIE5},   // S_EGGMOBILE_DIE4 // Boss 1 Tails 11-29-99
     {SPR_EGGM,11,8,{A_Scream},S_EGGMOBILE_DIE6},   // S_EGGMOBILE_DIE5 // Boss 1 Tails 11-29-99
@@ -533,7 +533,7 @@ state_t states[NUMSTATES] = {
     {SPR_EGGM,17,8,{A_Scream},S_EGGMOBILE_DIE12},   // S_EGGMOBILE_DIE11 // Boss 1 Tails 11-29-99
     {SPR_EGGM,18,8,{A_Scream},S_EGGMOBILE_DIE13},   // S_EGGMOBILE_DIE12 // Boss 1 Tails 11-29-99
     {SPR_EGGM,19,8,{A_Scream},S_EGGMOBILE_DIE14},   // S_EGGMOBILE_DIE13 // Boss 1 Tails 11-29-99
-    {SPR_EGGM,20,-1,{A_BossDeath},S_NULL},  // S_EGGMOBILE_DIE14 // Boss 1 Tails 11-29-99
+    {SPR_EGGM,20,8,{A_Scream},S_EGGMOBILE_DIE2},  // S_EGGMOBILE_DIE14 // Boss 1 Tails 11-29-99
     {SPR_BOSF,32768,3,{A_SpawnSound},S_SPAWN2},     // S_SPAWN1
     {SPR_BOSF,32769,3,{A_SpawnFly},S_SPAWN3},       // S_SPAWN2
     {SPR_BOSF,32770,3,{A_SpawnFly},S_SPAWN4},       // S_SPAWN3
@@ -1295,9 +1295,9 @@ state_t states[NUMSTATES] = {
     {SPR_NSPR, 15,  1, {NULL},   S_SPRING_HORIZ4}, // S_SPRING_HORIZ3
     {SPR_NSPR, 16,  1, {NULL},   S_SPRING_HORIZ5}, // S_SPRING_HORIZ4
     {SPR_NSPR, 17,  1, {NULL},   S_SPRING_HORIZ6}, // S_SPRING_HORIZ5
-    {SPR_NSPR, 18,  1, {NULL},   S_SPRING_HORIZ7}, // S_SPRING_HORIZ6
-    {SPR_NSPR, 19,  1, {NULL},   S_SPRING_HORIZ8}, // S_SPRING_HORIZ7
-    {SPR_NSPR, 20,  1, {NULL},   S_SPRING_HORIZ},  // S_SPRING_HORIZ8
+    {SPR_NSPR, 16,  1, {NULL},   S_SPRING_HORIZ7}, // S_SPRING_HORIZ6
+    {SPR_NSPR, 15,  1, {NULL},   S_SPRING_HORIZ8}, // S_SPRING_HORIZ7
+    {SPR_NSPR, 14,  1, {NULL},   S_SPRING_HORIZ},  // S_SPRING_HORIZ8
 	{SPR_CRUK,  0, -1, {NULL},   S_CRUCKS}, // S_CRUCKS
 };
 
@@ -3915,7 +3915,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
     },
 
 	    {           // MT_FLINGRING
-        -1,           // doomednum
+        69,           // doomednum // nice :) Nozomi
         S_BON1,         // spawnstate
         1000,           // spawnhealth
         S_NULL,         // seestate

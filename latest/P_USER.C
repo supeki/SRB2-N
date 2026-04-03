@@ -369,8 +369,6 @@ void P_MovePlayer (player_t* player)
 	if (player->powers[pw_strength] || player->powers[pw_super])
 		player->acceleration *= 2;
 
-	player->mo->eflags &= ~MF_SPRUNG;
-
 	// Autobrake by Jisk, turned into a player option by Nozomi 03-19-2026
 	if (!onground && !(cmd->forwardmove || cmd->sidemove) && player->autobrake && player->mfjumped && !(player->mfspinning || player->gliding || player->climbing || (player->mo->state == &states[S_PLAY_PAIN] && player->powers[pw_invisibility]))) {
         int momentum = P_AproxDistance(player->mo->momx,player->mo->momy);

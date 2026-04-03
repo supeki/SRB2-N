@@ -507,7 +507,7 @@ void P_ZMovement (mobj_t* mo)
 
 	// IDK what the above does but it scares me. Nozomi
 
-	// OMG YOU DID IT TAILS YOU MADE SOMETHING SIMPLE THAT JUST WORKS!! Nozomiaril
+	// OMG YOU DID IT TAILS YOU MADE SOMETHING SIMPLE THAT JUST WORKS!! Nozomi
 	// Snowflake Tails 12-02-2001
 	if (mo->type == MT_SNOWFLAKE)
 	{
@@ -558,33 +558,19 @@ void P_ZMovement (mobj_t* mo)
         //  somebody left this after the setting momz to 0,
         //  kinda useless there.
         if (mo->flags2 & MF2_SKULLFLY)
-        {
-            // the skull slammed into something
-            mo->momz = -mo->momz;
-        }
+			mo->momz = -mo->momz;
 
-// Mine explodes upon ground contact Tails 06-13-2000
-if((mo->type==MT_MINE) && (mo->z <= mo->floorz) && !(mo->state == &states[S_MINE_BOOM1]
-   || mo->state == &states[S_MINE_BOOM2] || mo->state == &states[S_MINE_BOOM3]
-   || mo->state == &states[S_MINE_BOOM4] || mo->state == &states[S_DISS]))
-{
-  P_ExplodeMissile(mo);
-}
+		// Mine explodes upon ground contact Tails 06-13-2000
+		if((mo->type==MT_MINE) && (mo->z <= mo->floorz) && !(mo->state == &states[S_MINE_BOOM1]
+		   || mo->state == &states[S_MINE_BOOM2] || mo->state == &states[S_MINE_BOOM3]
+		   || mo->state == &states[S_MINE_BOOM4] || mo->state == &states[S_DISS]))
+			P_ExplodeMissile(mo);
 
         if (mo->momz < 0) // falling
         {
             if (mo->player && (mo->momz < -8*FRACUNIT))
-            {
-                // Squat down.
-                // Decrease viewheight for a moment
-                // after hitting the ground (hard),
-                // and utter appropriate sound.
                 mo->player->deltaviewheight = mo->momz>>3;
- //               S_StartSound (mo, sfx_spring); Don't say OOF!! Tails 11-05-99
-            }
 
-            // set it once and not continuously
-// Tails
 			if(tmfloorthing)
 			{
 				// Bouncing boxes Tails 09-28-2001
@@ -608,66 +594,54 @@ if((mo->type==MT_MINE) && (mo->z <= mo->floorz) && !(mo->state == &states[S_MINE
 							break;
 					}
 				}
-			switch(tmfloorthing->type)
-			{
-				case MT_GARGOYLE: // Deep Sea Gargoyle
-				case MT_MISC50: // Blue shield box
-				case MT_MISC48: // Yellow shield box
-				case MT_MISC31: // Green shield box
-				case MT_BKTV: // Black shield box
-				case MT_MISC74: // Super Sneaker box
-				case MT_PRUP: // 1-Up box
-				case MT_MISC10: // 10-Ring box
-				case MT_MISC11: // 25-Ring box
-				case MT_INV: // Invincibility box
+
+				switch(tmfloorthing->type)
+				{
+					case MT_GARGOYLE: // Deep Sea Gargoyle
+					case MT_MISC50: // Blue shield box
+					case MT_MISC48: // Yellow shield box
+					case MT_MISC31: // Green shield box
+					case MT_BKTV: // Black shield box
+					case MT_MISC74: // Super Sneaker box
+					case MT_PRUP: // 1-Up box
+					case MT_MISC10: // 10-Ring box
+					case MT_MISC11: // 25-Ring box
+					case MT_INV: // Invincibility box
+						if(mo->player)
+							if(!(mo->player->mfjumped))
+								tmfloorthing = 0;
+						break;
+					default:
+						break;
+				}
+			}
+
+            if ((mo->z <= mo->floorz) && !(tmfloorthing))
+            {
+				mo->eflags |= MF_JUSTHITFLOOR;
+
 				if(mo->player)
 				{
-					if(!(mo->player->mfjumped))
-					tmfloorthing = 0;
+					mo->player->scoreadd = 0;
+					mo->player->mfjumped = 0;
+					mo->player->gliding = 0;
+					mo->player->glidetime = 0;
+					mo->player->climbing = 0;
 				}
-					break;
-				default:
-					break;
-			}
-			}
-            if ((mo->z <= mo->floorz) && !(tmfloorthing)) // Tails 9-15-99 Spin Attack
-              {
-              mo->eflags |= MF_JUSTHITFLOOR; // Tails 9-15-99 Spin Attack
-			if(mo->player)
-			{
-			mo->player->scoreadd = 0; // Tails 11-03-2000
-              if(mo->player->mfjumped == 1) // Tails 9-15-99 Spin Attack
-			  {
-              mo->player->mfjumped = 0; // Tails 9-15-99 Spin Attack
-			  }
-			  mo->player->gliding = 0;
-			  mo->player->glidetime = 0;
-			  mo->player->climbing = 0;
-			}
-			}
-// end Tails
-
-			if(mo->player)
-			{
-             if(mo->player->mfspinning == 0)
-                {
-                 mo->player->mfstartdash = 0; // dashing stuff Tails 02-27-2000
-                 }
 			}
 
-            //SOM: Flingrings bounce
-            if(mo->type == MT_FLINGRING)
-			{
-              mo->momz = -mo->momz * 0.85;
-			}
-            else if (!(tmfloorthing) || (tmfloorthing->type == MT_GARGOYLE || tmfloorthing->type == MT_PLAYER))
-              mo->momz = 0;
-//		if(!(tmfloorthing))
-//            mo->momz = 0;
+			if(mo->player && mo->player->mfspinning == 0)
+				mo->player->mfstartdash = 0;
+
+				//SOM: Flingrings bounce
+				if(mo->type == MT_FLINGRING)
+					mo->momz = -mo->momz * 0.85;
+				else if (!(tmfloorthing) || (tmfloorthing->type == MT_GARGOYLE || tmfloorthing->type == MT_PLAYER))
+					mo->momz = 0;
         }
 
-	if(mo->type == MT_STEAM) // Tails 05-29-2001
-		return; // Tails 05-29-2001
+		if(mo->type == MT_STEAM)
+			return;
 
         mo->z = mo->floorz;
 
@@ -687,25 +661,13 @@ if((mo->type==MT_MINE) && (mo->z <= mo->floorz) && !(mo->state == &states[S_MINE
         //     TO BE SURE there is no problem for the release..
         //     (this is done in P_Mobjthinker below normally)
         mo->eflags &= ~MF_JUSTHITFLOOR;
-/*
-        if (mo->momz == 0)
-            mo->momz = -cv_gravity.value*2;      // push down
-        else
-            mo->momz -= cv_gravity.value;        // accelerate fall
-*/
+
         gravityadd = -cv_gravity.value;
 
 		if(mo->eflags & MF_UNDERWATER) // Tails
 			gravityadd = -cv_gravity.value/3; // Tails
 
-        // if waist under water, slow down the fall
-/*        if ( mo->eflags & MF_UNDERWATER) {
-            if ( mo->eflags & MF_SWIMMING )
-                gravityadd = 0;     // gameplay: no gravity while swimming
-            else
-                gravityadd >>= 1; // proper gravity in water Tails 04-04-2000
-        }
-        else*/ if (mo->momz==0)
+		if (mo->momz==0)
             // mobj at stop, no floor, so feel the push of gravity!
             gravityadd <<= 1;
 
@@ -718,6 +680,7 @@ playergravity:
 				gravityadd = -cv_gravity.value/3; // less gravity while gliding
 			if(mo->player->climbing)
 				gravityadd = 0;
+
 			if(mo->player->playerstate == PST_DEAD) // Added crash check Tails 11-16-2001)
 			{
 				gravityadd = -cv_gravity.value;
@@ -726,7 +689,7 @@ playergravity:
 			}
 		}
 
-			mo->momz += gravityadd;
+		mo->momz += gravityadd;
     }
 
     if (mo->z + mo->height > mo->ceilingz)
@@ -888,25 +851,11 @@ void P_MobjCheckWater (mobj_t* mobj)
 		} // Tails
         else
             mobj->eflags &= ~MF_UNDERWATER;
-/*
-        if(  !(oldeflags & (MF_TOUCHWATER|MF_UNDERWATER))
-           && ((mobj->eflags & MF_TOUCHWATER) ||
-               (mobj->eflags & MF_UNDERWATER)    )
-           && mobj->type != MT_BLOOD)
-            P_SpawnSplash (mobj, *rover->topheight); */ // Tails 12-05-2001
       }
       return;
     }
     else
         mobj->eflags &= ~(MF_UNDERWATER|MF_TOUCHWATER);
-/*
-    // blood doesnt make noise when it falls in water
-    if(  !(oldeflags & (MF_TOUCHWATER|MF_UNDERWATER)) 
-       && ((mobj->eflags & MF_TOUCHWATER) || 
-           (mobj->eflags & MF_UNDERWATER)    )         
-      && mobj->type == MT_PLAYER) // Tails 04-04-2000
-        P_SpawnSplash (mobj, z); //SoM: 3/17/2000
-*/
 // Return of WaterZ! Tails 10-31-2000
 if(mobj->subsector->sector->heightsec != -1 && mobj->subsector->sector->altheightsec == 1)
   mobj->waterz = sectors[mobj->subsector->sector->heightsec].floorheight;
@@ -921,6 +870,8 @@ mobj->waterz = mobj->floorz - 10000*FRACUNIT;
 void P_MobjThinker (mobj_t* mobj)
 {
     boolean   checkedpos = false;  //added:22-02-98:
+
+	mobj->eflags &= ~MF_SPRUNG;
 
     // check mobj against possible water content, before movement code
     P_MobjCheckWater (mobj);
@@ -1107,6 +1058,7 @@ if((mobj->type == MT_MISC34 || mobj->type == MT_REDFAN) && mobj->flags & MF_AMBU
 
             mobj->floorz = tmfloorz;
             mobj->ceilingz = tmceilingz;
+
             if (tmfloorthing)
                 mobj->eflags &= ~MF_ONGROUND;  //not on real floor
             else
@@ -1200,7 +1152,6 @@ if((mobj->type == MT_MISC34 || mobj->type == MT_REDFAN) && mobj->flags & MF_AMBU
 	// Keep Skim at water surface Tails 06-13-2000
 	if((mobj->type==MT_SKIM) && ((mobj->z > mobj->waterz) || (mobj->z < mobj->waterz)))
 		mobj->z = mobj->waterz;
-
 }
 
 static void CalculatePrecipFloor(precipmobj_t* mobj)
@@ -1363,32 +1314,6 @@ mobj_t* P_SpawnMobj ( fixed_t       x,
         //added:28-02-98: defaults onground
         mobj->eflags |= MF_ONGROUND;
 
-        //added:28-02-98: dirty hack : dont stack monsters coz it blocks
-        //                moving floors and anyway whats the use of it?
-
-		/*        if (mobj->flags & MF_NOBLOOD)
-        {
-            mobj->z = mobj->floorz;
-
-            // first check the tmfloorz
-            P_CheckPosition(mobj,x,y);
-            mobj->z = tmfloorz+FRACUNIT;
-
-            // second check at the good z pos
-            P_CheckPosition(mobj,x,y);
-
-            mobj->floorz = tmfloorz;
-            mobj->ceilingz = tmsectorceilingz;
-            mobj->z = tmfloorz;
-            // thing not on solid ground
-            if (tmfloorthing)
-                mobj->eflags &= ~MF_ONGROUND;
-
-            //if (mobj->type == MT_BARREL)
-            //   fprintf(stderr,"barrel at z %d floor %d ceiling %d\n",mobj->z,mobj->floorz,mobj->ceilingz);
-
-        }
-        else*/
 		if((mobj->type == MT_MISC2 && (mobj->flags & MF_AMBUSH)) || mobj->type == MT_DETON || mobj->type == MT_JETTBOMBER || mobj->type == MT_JETTGUNNER) // Special flag for rings Tails 06-03-2001
 			mobj->z = mobj->floorz + 32*FRACUNIT;
 		else
@@ -2184,7 +2109,7 @@ void P_SpawnMapThing (mapthing_t* mthing)
 
 		mobj->skin = &skins[skin];
 
-		mobj->color = (skin == 0) ? SKINCOLOR_LIGHTBLUE : (skin == 1) ? SKINCOLOR_APRICOT : SKINCOLOR_GREEN;
+		mobj->color = (skin == 0) ? SKINCOLOR_BLUE+1 : (skin == 1) ? SKINCOLOR_APRICOT+1 : SKINCOLOR_BRIGHTRED+1;
 		mobj->flags |= MF_TRANSLATION;
 		P_SetMobjState(mobj, (skin == 0) ? S_DUMMY_STND : (skin == 1) ? S_PLAY_TAP1 : S_DUMMY_STND);
 		mobj->angle = FixedAngle(mthing->angle*FRACUNIT);
@@ -2228,8 +2153,15 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	if (mobj->flags2 & MF2_PUSHABLE && mthing->options & MTF_AMBUSH)
 		mobj->flags2 &= ~MF2_PUSHABLE;
 
-	if (mobj->flags2 & MF2_SPRING && mobj->flags & MF_TRANSLATION)
-		mobj->color = mobjinfo[i].speed+1;
+
+	if (mobj->flags2 & MF2_SPRING) 
+	{
+		if (mobj->flags & MF_TRANSLATION)
+			mobj->color = mobjinfo[i].speed+1;
+	}
+		
+	if (mobj->type == MT_FLINGRING)
+		mobj->flags |= MF_AMBUSH;
 }
 
 
@@ -2237,56 +2169,6 @@ void P_SpawnMapThing (mapthing_t* mthing)
 //
 // GAME SPAWN FUNCTIONS
 //
-
-/* Crummy function Tails 12-05-2001
-//
-// P_SpawnSplash
-//
-// when player moves in water
-void P_SpawnSplash (mobj_t* mo, boolean flatwater)
-                                // flatwater : old water FWATER flat texture
-{
-    mobj_t*     th;
-    fixed_t     z;
-
-    if (demoversion<125)
-        return;
-
-    // we are supposed to be in water sector and my current
-    // hack uses negative tag as water height
-    if (flatwater)
-        z = mo->subsector->sector->floorheight + (FRACUNIT/4);
-    else
-        z = sectors[mo->subsector->sector->heightsec].floorheight; //SoM: 3/17/2000
-
-    // need to touch the surface because the splashes only appear at surface
-    if (mo->z > z || mo->z + mo->height < z)
-        return;
-
-    // note pos +1 +1 so it doesn't eat the sound of the player..
-    th = P_SpawnMobj (mo->x+1,mo->y+1,z, MT_SPLASH);
-    //if( z - mo->subsector->sector->floorheight > 4*FRACUNIT)
-        S_StartSound (th, sfx_gloop);
-    //else
-    //    S_StartSound (th,sfx_splash);
-    th->tics -= P_Random()&3;
-
-    if (th->tics < 1)
-        th->tics = 1;
-
-
-    // get rough idea of speed
-    
-    thrust = (mo->momx + mo->momy) >> FRACBITS+1;
-
-    if (thrust >= 2 && thrust<=3)
-        P_SetMobjState (th,S_SPLASH2);
-    else
-    if (thrust < 2)
-        P_SetMobjState (th,S_SPLASH3);
-    
-}
-*/
 
 // --------------------------------------------------------------------------
 // P_SpawnSmoke

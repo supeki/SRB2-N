@@ -387,9 +387,6 @@ static boolean P_Move (mobj_t* actor)
         actor->flags &= ~MF_INFLOAT;
     }
 
-
-    if (! (actor->flags & MF_FLOAT) )
-        actor->z = actor->floorz;
     return true;
 }
 
@@ -2484,7 +2481,7 @@ void A_ParticleRise2 (mobj_t*   actor)
 void A_RingChase (mobj_t*   actor)
 {
 	// spilled rings flicker before disappearing Tails 01-11-2001
-	if(leveltime & 1 && actor->type == MT_FLINGRING && actor->fuse < 70)
+	if(leveltime & 1 && actor->type == MT_FLINGRING && actor->fuse < 70 && !(actor->flags & MF_AMBUSH))
 		actor->flags |= MF_SHADOW;
 	else
 		actor->flags &= ~MF_SHADOW;
