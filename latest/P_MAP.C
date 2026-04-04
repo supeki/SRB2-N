@@ -536,9 +536,9 @@ boolean PIT_CheckThing (mobj_t* thing)
 			othermo = thing;
 
 		if (spring && othermo) {
-			if (othermo->eflags & MF_SPRUNG) {
-				return true;
-			}
+			//if (othermo->eflags & MF_SPRUNG) {
+			//	return true;
+			//}
 
 			if (spring->info->damage != 0 || (othermo->player && othermo->player->homing)) {
 				othermo->momx = othermo->momy = 0;
