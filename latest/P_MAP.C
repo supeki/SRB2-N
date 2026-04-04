@@ -1018,8 +1018,7 @@ boolean P_CheckPosition ( mobj_t*       thing,
 //
 boolean P_TryMove ( mobj_t*       thing,
                     fixed_t       x,
-                    fixed_t       y,
-                    boolean       allowdropoff)
+                    fixed_t       y )
 {
     fixed_t     oldx;
     fixed_t     oldy;
@@ -1028,14 +1027,10 @@ boolean P_TryMove ( mobj_t*       thing,
     line_t*     ld;
 
     floatok = false;
-
     if (!P_CheckPosition (thing, x, y))
         return false;           // solid wall or thing
-#ifdef CLIENTPREDICTION2
-    if ( !(thing->flags & MF_NOCLIP) && !(thing->eflags & MF_NOZCHECKING))
-#else
+
     if ( !(thing->flags & MF_NOCLIP) )
-#endif
     {
         fixed_t maxstep = MAXSTEPMOVE;
         if (tmceilingz - tmfloorz < thing->height)
@@ -1055,10 +1050,9 @@ boolean P_TryMove ( mobj_t*       thing,
              (tmfloorz - thing->z > maxstep ) )
             return false;       // too big a step up
 
-        if ( !boomsupport || !allowdropoff)
-          if ( !(thing->flags&(MF_DROPOFF|MF_FLOAT))
-               && tmfloorz - tmdropoffz > MAXSTEPMOVE )
-              return false;       // don't stand over a dropoff
+        if ( !(thing->flags&(MF_DROPOFF|MF_FLOAT))
+             && tmfloorz - tmdropoffz > MAXSTEPMOVE )
+            return false;       // don't stand over a dropoff
     }
 
     // the move is ok,
@@ -1067,8 +1061,8 @@ boolean P_TryMove ( mobj_t*       thing,
 
     //added:28-02-98: gameplay hack : walk over a small wall while jumping
     //                stop jumping it succeeded
-    // BP: removed in 1.28 because we can move in air now
-    if ( demoplayback>=112 && demoplayback<128 && thing->player &&
+    // BP: removed in 1.28 because we can mode in air now
+    if ( demoplayback<128 && thing->player &&
          (thing->player->cheats & CF_JUMPOVER) )
     {
         if (tmfloorz > thing->floorz + MAXSTEPMOVE)
@@ -1085,20 +1079,19 @@ boolean P_TryMove ( mobj_t*       thing,
     //added:28-02-98:
     if (tmfloorthing)
         thing->eflags &= ~MF_ONGROUND;  //not on real floor
-    else {
+    else
         thing->eflags |= MF_ONGROUND;
-	}
 
     P_SetThingPosition (thing);
 
     // if any special lines were hit, do the effect
     if ( !(thing->flags&(MF_TELEPORT|MF_NOCLIP)) &&
-         (thing->type != MT_CHASECAM) && (thing->type != MT_SPIRIT))
+         (thing->type != MT_CHASECAM) )
     {
         while (numspechit--)
         {
             // see if the line was crossed
-            ld = lines + spechit[numspechit];
+            ld = spechit[numspechit];
             side = P_PointOnLineSide (thing->x, thing->y, ld);
             oldside = P_PointOnLineSide (oldx, oldy, ld);
             if (side != oldside)
@@ -1108,6 +1101,7 @@ boolean P_TryMove ( mobj_t*       thing,
             }
         }
     }
+
     return true;
 }
 
@@ -1129,20 +1123,15 @@ boolean P_ThingHeightClip (mobj_t* thing)
     onfloor = (thing->z <= thing->floorz);
 
     P_CheckPosition (thing, thing->x, thing->y);
-
     // what about stranding a monster partially off an edge?
 
     thing->floorz = tmfloorz;
     thing->ceilingz = tmceilingz;
 
-    if(thing->type == MT_MISC2 || thing->type == MT_BLUEORB || thing->type == MT_GREENORB || thing->type == MT_BLACKORB || thing->type == MT_YELLOWORB || thing->type == MT_THOK) // Tails
-      return true; // Ignore these items Tails
+    if(thing->type == MT_MISC2)
+      return true;
 
-	// Have player fall through floor? 10-05-2001 Tails
-	if(thing->player && thing->player->playerstate == PST_DEAD)
-		return true;
-
-    if (!tmfloorthing && onfloor)
+    if (!tmfloorthing && onfloor && !(thing->flags & MF_NOGRAVITY))
     {
         // walking monsters rise and fall with the floor
         thing->z = thing->floorz;
@@ -1151,8 +1140,8 @@ boolean P_ThingHeightClip (mobj_t* thing)
     {
         // don't adjust a floating monster unless forced to
         //added:18-04-98:test onfloor
-        if (!onfloor)                    //was tmsectorceilingz
-            if (thing->z+thing->height > tmceilingz)
+        if (!onfloor)
+            if (thing->z+thing->height > tmsectorceilingz)
                 thing->z = thing->ceilingz - thing->height;
 
         thing->flags &= ~MF_ONGROUND;
@@ -1169,14 +1158,13 @@ boolean P_ThingHeightClip (mobj_t* thing)
 
     if (thing->ceilingz - thing->floorz < thing->height
         //imp dans imp map01
-        /*&& thing->z >= thing->floorz*/)
+        && thing->z >= thing->floorz)
     {
         return false;
     }
 
     return true;
 }
-
 
 
 //
@@ -1463,6 +1451,7 @@ void P_SlideMove (mobj_t* mo)
     if (++hitcount == 3)
         goto stairstep;         // don't loop forever
 
+
     // trace along the three leading corners
     if (mo->momx > 0)
     {
@@ -1494,16 +1483,15 @@ void P_SlideMove (mobj_t* mo)
                      PT_ADDLINES, PTR_SlideTraverse );
     P_PathTraverse ( leadx, traily, leadx+mo->momx, traily+mo->momy,
                      PT_ADDLINES, PTR_SlideTraverse );
-//if(mo->player && mo->player->climbing) // Tails 04-12-2001
-//return; // Tails 04-12-2001
+
     // move up to the wall
     if (bestslidefrac == FRACUNIT+1)
     {
         // the move most have hit the middle, so stairstep
       stairstep:
-        if (!P_TryMove (mo, mo->x, mo->y + mo->momy, true)) //SoM: 4/10/2000
-            P_TryMove (mo, mo->x + mo->momx, mo->y, true);  //Allow things to
-        return;                                             //drop off.
+        if (!P_TryMove (mo, mo->x, mo->y + mo->momy))
+            P_TryMove (mo, mo->x + mo->momx, mo->y);
+        return;
     }
 
     // fudge a bit to make sure it doesn't hit
@@ -1513,7 +1501,7 @@ void P_SlideMove (mobj_t* mo)
         newx = FixedMul (mo->momx, bestslidefrac);
         newy = FixedMul (mo->momy, bestslidefrac);
 
-        if (!P_TryMove (mo, mo->x+newx, mo->y+newy, true))
+        if (!P_TryMove (mo, mo->x+newx, mo->y+newy))
             goto stairstep;
     }
 
@@ -1535,7 +1523,7 @@ void P_SlideMove (mobj_t* mo)
     mo->momx = tmxmove;
     mo->momy = tmymove;
 
-    if (!P_TryMove (mo, mo->x+tmxmove, mo->y+tmymove, true))
+    if (!P_TryMove (mo, mo->x+tmxmove, mo->y+tmymove))
     {
         goto retry;
     }
@@ -2005,7 +1993,7 @@ fixed_t P_AimLineAttack ( mobj_t*       t1,
 //added:16-02-98: Fab comments...
 //                t1       est l'attaquant (player ou monstre)
 //                angle    est l'angle de tir sur le plan x,y (orientation)
-//                distance est la port‚e maximale de la balle
+//                distance est la portï¿½e maximale de la balle
 //                slope    est la pente vers la destination (up/down)
 //                damage   est les degats infliges par la balle
 void P_LineAttack ( mobj_t*       t1,

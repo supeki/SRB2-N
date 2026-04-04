@@ -254,7 +254,7 @@ extern  mprecipsecnode_t* precipsector_list;
 
 boolean P_CheckPosition (mobj_t *thing, fixed_t x, fixed_t y);
 //SoM: 4/10/2000
-boolean P_TryMove (mobj_t* thing, fixed_t x, fixed_t y, boolean allowdropoff);
+boolean P_TryMove (mobj_t* thing, fixed_t x, fixed_t y);
 boolean P_TeleportMove (mobj_t* thing, fixed_t x, fixed_t y);
 void    P_SlideMove (mobj_t* mo);
 boolean P_CheckSight (mobj_t* t1, mobj_t* t2);

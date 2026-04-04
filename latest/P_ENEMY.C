@@ -349,7 +349,7 @@ static boolean P_Move (mobj_t* actor)
     tryx = actor->x + actor->info->speed*xspeed[actor->movedir];
     tryy = actor->y + actor->info->speed*yspeed[actor->movedir];
 
-    try_ok = P_TryMove (actor, tryx, tryy, false);
+    try_ok = P_TryMove (actor, tryx, tryy);
 
     if (!try_ok)
     {
