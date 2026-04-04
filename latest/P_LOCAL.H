@@ -281,6 +281,13 @@ P_AimLineAttack
   angle_t       angle,
   fixed_t       distance );
 
+fixed_t
+P_HomingLineAttack
+( mobj_t*       t1,
+  angle_t       angle,
+  fixed_t       distance );
+
+
 void
 P_LineAttack
 ( mobj_t*       t1,

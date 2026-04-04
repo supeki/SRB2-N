@@ -58,7 +58,7 @@
 
 boolean  P_NukeEnemies (player_t* player);
 boolean  PIT_NukeEnemies (mobj_t* thing);
-boolean  P_LookForEnemies (player_t* player, boolean boss);
+boolean  P_LookForEnemies (player_t* player, boolean boss, boolean homing);
 boolean  P_HomingAttack (player_t* player, mobj_t* enemy);
 void D_StartTitle(); // Tails
 void P_FindEmerald();
@@ -266,7 +266,7 @@ void P_MovePlayer (player_t* player)
 	if (cv_bosslockon.value && level_has_bosses) // awesome global that's set to false at P_SetupLevel and set to true when any mobj spawns with MF2_BOSS :3 Nozomi 03-27-2026
 	{
 		if ((leveltime % 4 == 0) && !player->mo->tracer)
-			P_LookForEnemies(player, true);
+			P_LookForEnemies(player, true, false);
 	}
 
 	movepushsideangle = movepushangle-ANG90;
@@ -1315,7 +1315,7 @@ void P_MovePlayer (player_t* player)
 								// Must press jump while holding down spin to activate.
 								if(cv_homing.value && !player->homing && player->mfjumped)
 								{
-									if(P_LookForEnemies(player, false))
+									if(P_LookForEnemies(player, false, true))
 										if(player->mo->tracer)
 											player->homing = 1;
 								}
@@ -1920,12 +1920,11 @@ boolean PIT_NukeEnemies (mobj_t* thing)
     return true;
 }
 
-
 //
 // P_LookForEnemies
 // Looks for something you can hit - Used for homing attack Tails 06-20-2001
 //
-boolean P_LookForEnemies (player_t* player, boolean boss)
+boolean P_LookForEnemies (player_t* player, boolean boss, boolean homing)
 {
     int                 i;
     angle_t             an;
@@ -1935,7 +1934,10 @@ boolean P_LookForEnemies (player_t* player, boolean boss)
     {
         an = player->mo->angle - ANG90/2 + ANG90/40*i;
 
-        P_AimLineAttack (player->mo, an, 16*64*FRACUNIT);
+		if (homing)
+			P_HomingLineAttack (player->mo, an, 16*64*FRACUNIT);
+		else
+			P_AimLineAttack (player->mo, an, 16*64*FRACUNIT);
 
         if (!linetarget)
             continue;

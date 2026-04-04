@@ -1996,6 +1996,57 @@ fixed_t P_AimLineAttack ( mobj_t*       t1,
     return 0;
 }
 
+// nozomi ver for homing
+fixed_t P_HomingLineAttack ( mobj_t*       t1,
+                          angle_t       angle,
+                          fixed_t       distance )
+{
+    fixed_t     x2;
+    fixed_t     y2;
+
+#ifdef PARANOIA
+    if(!t1)
+       I_Error("P_aimlineattack: mobj == NULL !!!");
+#endif
+
+    angle >>= ANGLETOFINESHIFT;
+    shootthing = t1;
+
+    {
+        x2 = t1->x + (distance>>FRACBITS)*finecosine[angle];
+        y2 = t1->y + (distance>>FRACBITS)*finesine[angle];
+
+        //added:15-02-98: Fab comments...
+        // Doom's base engine says that at a distance of 160,
+        // the 2d graphics on the plane x,y correspond 1/1 with plane units
+        topslope = 100*FRACUNIT/160;
+        bottomslope = -100*FRACUNIT/160;
+    }
+    shootz = t1->z + (t1->height>>1) + 8*FRACUNIT;
+
+    // can't shoot outside view angles
+
+
+    attackrange = distance;
+    linetarget = NULL;
+
+    //added:15-02-98: comments
+    // traverse all linedefs and mobjs from the blockmap containing t1,
+    // to the blockmap containing the dest. point.
+    // Call the function for each mobj/line on the way,
+    // starting with the mobj/linedef at the shortest distance...
+    P_PathTraverse ( t1->x, t1->y,
+                     x2, y2,
+                     PT_ADDLINES|PT_ADDTHINGS,
+                     PTR_AimTraverse );
+
+    //added:15-02-98: linetarget is only for mobjs, not for linedefs
+    if (linetarget)
+        return aimslope;
+
+    return 0;
+}
+
 
 //
 // P_LineAttack
