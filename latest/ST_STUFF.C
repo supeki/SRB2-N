@@ -1783,7 +1783,7 @@ void ST_overlayDrawer (int playernum)
 		   name_patch = stsonic;
 		   face_patch = sboslife;
 
-		   if (plyr->powers[pw_super])
+		   if (plyr->powers[pw_super] && !cv_superman.value)
 			   face_patch = suprlife;
 		}
 		else if (plyr->skin == 1)

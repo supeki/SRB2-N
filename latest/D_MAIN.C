@@ -214,6 +214,7 @@ boolean			mariomode; // Mario Mode Tails 12-18-2001
 
 // nozomi stuff
 boolean window_title = true;
+boolean nozo_specialtitle = false;
 
 char*				parmskin; // Player skin defined from parms Tails 06-09-2001
 char*				ctfteam; // Player Preferred CTF Team defined from parms Tails 07-31-2001
@@ -892,6 +893,10 @@ void D_DoAdvanceDemo (void)
     advancedemo = false;
     usergame = false;               // no save / end game here
     gameaction = ga_nothing;
+	
+	if (nozo_specialtitle)
+		return; // Don't play demos in special titles! Nozomi
+
 // Done lots of stuff here Tails
         demosequence = (demosequence+1)%12;
 
@@ -952,9 +957,6 @@ void D_DoAdvanceDemo (void)
         pagename = "BLACK";
         break;
     }
-
-	if (gamestate == GS_NOZOMITITLE)
-		S_ChangeMusic(mus_dm2ttl, false);
 }
 
 // =========================================================================
@@ -972,9 +974,14 @@ void D_StartTitle (void)
 	nozo_timeattack = false;
     displayplayer = consoleplayer = statusbarplayer = 0;
     demosequence = -1;
-	D_UpdateWindowTitle();
-    D_AdvanceDemo ();
 	F_StartTitleScreen();
+	D_UpdateWindowTitle();
+
+	if (!nozo_specialtitle)
+		D_AdvanceDemo ();
+	else
+		advancedemo = false;
+
     CON_ToggleOff();
 }
 

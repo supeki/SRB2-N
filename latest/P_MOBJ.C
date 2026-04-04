@@ -633,11 +633,11 @@ void P_ZMovement (mobj_t* mo)
 			if(mo->player && mo->player->mfspinning == 0)
 				mo->player->mfstartdash = 0;
 
-				//SOM: Flingrings bounce
-				if(mo->type == MT_FLINGRING)
-					mo->momz = -mo->momz * 0.85;
-				else if (!(tmfloorthing) || (tmfloorthing->type == MT_GARGOYLE || tmfloorthing->type == MT_PLAYER))
-					mo->momz = 0;
+			//SOM: Flingrings bounce
+			if(mo->type == MT_FLINGRING)
+				mo->momz = -mo->momz * 0.85;
+			else if (!(tmfloorthing) || (tmfloorthing->type == MT_GARGOYLE || tmfloorthing->type == MT_PLAYER))
+				mo->momz = 0;
         }
 
 		if(mo->type == MT_STEAM)
@@ -802,14 +802,12 @@ void P_MobjCheckWater (mobj_t* mobj)
         if (z && mobj->z+(mobj->height>>1) <= z) // Added crash check Tails 11-16-2001
         { // Tails 03-06-2000
             mobj->eflags |= MF_UNDERWATER;
-			if(mobj->player)
-			{
-         if(!((mobj->player->powers[pw_super]) || (mobj->player->powers[pw_invulnerability])))
-            mobj->player->powers[pw_yellowshield] = false;
-        if (mobj->player->powers[pw_underwater] <= 0 && !(mobj->player->powers[pw_greenshield])) // Tails 03-06-2000
-            {// Tails 03-06-2000
-            mobj->player->powers[pw_underwater] = 30*TICRATE + 1; // Tails 03-06-2000
-            }// Tails 03-06-2000
+
+			if(mobj->player) {
+				if(!((mobj->player->powers[pw_super]) || (mobj->player->powers[pw_invulnerability])))
+					mobj->player->powers[pw_yellowshield] = false;
+				if (mobj->player->powers[pw_underwater] <= 0 && !(mobj->player->powers[pw_greenshield])) // Tails 03-06-2000
+					mobj->player->powers[pw_underwater] = 30*TICRATE + 1; // Tails 03-06-2000
 			}
 		}
         else
@@ -839,14 +837,12 @@ void P_MobjCheckWater (mobj_t* mobj)
         if(mobj->z + mobj->height < *rover->topheight)
 		{ // Tails
             mobj->eflags |= MF_UNDERWATER;
-			if(mobj->player)
-			{
-         if(!((mobj->player->powers[pw_super]) || (mobj->player->powers[pw_invulnerability])))
-            mobj->player->powers[pw_yellowshield] = false;
-        if (mobj->player->powers[pw_underwater] <= 0 && !(mobj->player->powers[pw_greenshield])) // Tails 03-06-2000
-            {// Tails 03-06-2000
-            mobj->player->powers[pw_underwater] = 30*TICRATE + 1; // Tails 03-06-2000
-            }// Tails 03-06-2000
+
+			if(mobj->player) {
+				if(!((mobj->player->powers[pw_super]) || (mobj->player->powers[pw_invulnerability])))
+					mobj->player->powers[pw_yellowshield] = false;
+				if (mobj->player->powers[pw_underwater] <= 0 && !(mobj->player->powers[pw_greenshield])) // Tails 03-06-2000
+					mobj->player->powers[pw_underwater] = 30*TICRATE + 1; // Tails 03-06-2000
 			}
 		} // Tails
         else
@@ -871,75 +867,64 @@ void P_MobjThinker (mobj_t* mobj)
 {
     boolean   checkedpos = false;  //added:22-02-98:
 
-	mobj->eflags &= ~MF_SPRUNG;
-
     // check mobj against possible water content, before movement code
     P_MobjCheckWater (mobj);
 
 // Start Level end sign stuff Tails 01-14-2001
 
-if(mobj->type == MT_SIGN)
-{
-//for (i=0 ; i< MAXPLAYERS ; i++)
-//{
-
-	if(plyr->exiting)
-	{
+	if (mobj->type == MT_SIGN && plyr->exiting)
 		if (mobj->state == &states[S_SIGN49])
 		{
 			P_SetMobjState (mobj, S_SIGN1);
 			S_StartSound(mobj, sfx_lvpass);
 		}
-	}
-//}
-}
 
 // End Level end sign stuff Tails 01-14-2001
 
 // Fans spawn bubbles underwater Tails 02-28-2001
 // ONLY with MF_AMBUSH! Nozomi 03-13-2026
-if((mobj->type == MT_MISC34 || mobj->type == MT_REDFAN) && mobj->flags & MF_AMBUSH)
-{
-	int dist = 0;
-
-	if (!P_LookForPlayers(mobj, true))
-		return;
-
-	dist = R_PointToDist2(mobj->x, mobj->y, mobj->target->x, mobj->target->y);
-
-	if (dist > 1024*FRACUNIT) {
-		mobj->target = NULL;
-		return;
-	}
-
-	if (mobj->z + mobj->height < mobj->waterz) {
-		if(!(P_Random() % 16))
-		{
-			P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_SMALLBUBBLE);
-		}
-		if(!(P_Random() % 96))
-		{
-			P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_MEDIUMBUBBLE);
-		}
-	}
-	else if (!(leveltime % (4 + (((byte)dist) % 7)))) // air particles!!! Nozomi 03-13-2026
+	if((mobj->type == MT_MISC34 || mobj->type == MT_REDFAN) && mobj->flags & MF_AMBUSH)
 	{
-		if(!(P_Random() % 16))
-		{
-			if (mobj->type == MT_REDFAN)
-				P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE3);
-			else
-				P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE);
+		int dist = 0;
+
+		if (!P_LookForPlayers(mobj, true))
+			return;
+
+		dist = R_PointToDist2(mobj->x, mobj->y, mobj->target->x, mobj->target->y);
+
+		if (dist > 1024*FRACUNIT) {
+			mobj->target = NULL;
+			return;
 		}
-		if(!(P_Random() % 32))
+
+		if (mobj->z + mobj->height < mobj->waterz) {
+			if(!(P_Random() % 16))
+			{
+				P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_SMALLBUBBLE);
+			}
+			if(!(P_Random() % 96))
+			{
+				P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_MEDIUMBUBBLE);
+			}
+		}
+		else if (!(leveltime % (4 + (((byte)dist) % 7)))) // air particles!!! Nozomi 03-13-2026
 		{
-			if (mobj->type == MT_REDFAN)
-				P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE4);
-			else
-				P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE2);
+			if(!(P_Random() % 16))
+			{
+				if (mobj->type == MT_REDFAN)
+					P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE3);
+				else
+					P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE);
+			}
+			if(!(P_Random() % 32))
+			{
+				if (mobj->type == MT_REDFAN)
+					P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE4);
+				else
+					P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE2);
+			}
 		}
 	}
-}
 
     if(mobj->player)
 	{
@@ -1073,6 +1058,8 @@ if((mobj->type == MT_MISC34 || mobj->type == MT_REDFAN) && mobj->flags & MF_AMBU
     }
     else
         mobj->eflags &= ~MF_JUSTHITFLOOR;
+
+	mobj->eflags &= ~MF_SPRUNG;
 
     // cycle through states,
     // calling action functions at transitions

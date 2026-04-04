@@ -540,29 +540,30 @@ boolean PIT_CheckThing (mobj_t* thing)
 				return true;
 			}
 
-			if (spring->info->damage || (othermo->player && othermo->player->homing)) {
+			if (spring->info->damage != 0 || (othermo->player && othermo->player->homing)) {
 				othermo->momx = othermo->momy = 0;
 
 				P_UnsetThingPosition (othermo);
 				tmthing->x = spring->x;
 				tmthing->y = spring->y;
-				
-				if (spring->info->mass > 0)
-					othermo->z = spring->z + spring->height + 1;
 				P_SetThingPosition (othermo);
 			}
 
-			spring->flags &= ~MF_SOLID;
+			if (spring->info->flags & MF_SOLID)
+				spring->flags &= ~MF_SOLID;
 
-			if (spring->info->mass > 0) {
+			if (spring->info->mass != 0) {
+				P_UnsetThingPosition (othermo);
 				othermo->z = spring->z + spring->height + 1;
+				P_SetThingPosition (othermo);
+
 				othermo->momz = spring->info->mass;
 				if (othermo->player)
 					P_SetMobjState (othermo, S_PLAY_PLG1);
 			}
 
-			if (spring->info->damage > 0) {
-				//if (spring->info->mass == 0)
+			if (spring->info->damage != 0) {
+				if (spring->info->mass == 0)
 				{ // Partially stole this from 2.2 Nozomi 03-28-2026
 					fixed_t offx, offy;
 
@@ -594,7 +595,7 @@ boolean PIT_CheckThing (mobj_t* thing)
 
 				P_InstaThrust(othermo, spring->angle, spring->info->damage);
 
-				if(othermo->player && !(othermo->player->cmd.forwardmove || othermo->player->cmd.sidemove))
+				if(!othermo->player || (othermo->player && !(othermo->player->cmd.forwardmove || othermo->player->cmd.sidemove)))
 				{
 					othermo->angle = spring->angle;
 					if (othermo->player==&players[consoleplayer])
@@ -617,10 +618,10 @@ boolean PIT_CheckThing (mobj_t* thing)
 				othermo->player->climbing = 0;
 			}
 
-			spring->flags |= MF_SOLID;
+			if (spring->info->flags & MF_SOLID)
+				spring->flags |= MF_SOLID;
 
 			othermo->eflags |= MF_SPRUNG;
-			return true;
 		}
 	}
 
@@ -1083,11 +1084,10 @@ boolean P_TryMove ( mobj_t*       thing,
     thing->y = y;
 
     //added:28-02-98:
-    if (tmfloorthing)
-        thing->eflags &= ~MF_ONGROUND;  //not on real floor
-    else {
+    //if (tmfloorthing)
+    //    thing->eflags &= ~MF_ONGROUND;  //not on real floor
+    //else {
         thing->eflags |= MF_ONGROUND;
-	}
 
     P_SetThingPosition (thing);
 
