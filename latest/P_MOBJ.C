@@ -1059,7 +1059,8 @@ void P_MobjThinker (mobj_t* mobj)
     else
         mobj->eflags &= ~MF_JUSTHITFLOOR;
 
-	mobj->eflags &= ~MF_SPRUNG;
+	if (!mobj->player)
+		mobj->eflags &= ~MF_SPRUNG;
 
     // cycle through states,
     // calling action functions at transitions
@@ -1094,6 +1095,8 @@ void P_MobjThinker (mobj_t* mobj)
 
         P_NightmareRespawn (mobj);
     }
+
+	mobj->eflags &= ~MF_SPRUNG;
 
 	if(mobj->type == MT_EGGMOBILE && mobj->health < 3 && leveltime & 1 && mobj->health > 0)
 		P_SpawnMobj(mobj->x, mobj->y, mobj->z, MT_SMOK);
