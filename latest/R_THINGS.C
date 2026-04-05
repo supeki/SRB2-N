@@ -780,6 +780,9 @@ static void R_ProjectSprite (mobj_t* thing)
     int                 light = 0;
 	fixed_t				skinscale = FRACUNIT;
 
+	if (!thing || thing->state == &states[S_DISS])
+		return;
+
     if(thing->subsector->sector->numlights)
     {
       int lightnum;

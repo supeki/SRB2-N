@@ -71,7 +71,7 @@ char *sprnames[NUMSPRITES+1] = {
 	"RRNG","TTAG","STEM","RFLG","BFLG","GFLG","TOKE","CEMG","CEMO","CEMP",
 	"CEMB","CEMR","CEML","CEMY","JETB","JETG","JBUL","MOUS","DETN","XPLD",
 	"REDX","CHAN","CAPE","SNO1","SANT","EMER","EMES","EMET","SBLL","SPIK",
-	"CCOM","MARL","RAIN","NSPR","SUPR","CRUK",
+	"CCOM","MARL","RAIN","NSPR","SUPR","CRUK","CORN",
     NULL
 };
 
@@ -162,6 +162,7 @@ void A_BunnyHop(); // have bunny hop tails
 void A_BubbleSpawn(); // Randomly spawn bubbles Tails 03-07-2000
 void A_BubbleRise(); // Bubbles float to surface Tails 03-07-2000
 void A_ParticleRise();
+void A_Corona();
 void A_ParticleRise2();
 void A_ExtraLife(); // Extra Life Tails 03-12-2000
 void A_BlackShield(); // Obtained Black Shield Tails 04-08-2000
@@ -1299,6 +1300,7 @@ state_t states[NUMSTATES] = {
     {SPR_NSPR, 15,  1, {NULL},   S_SPRING_HORIZ8}, // S_SPRING_HORIZ7
     {SPR_NSPR, 14,  1, {NULL},   S_SPRING_HORIZ},  // S_SPRING_HORIZ8
 	{SPR_CRUK,  0, -1, {NULL},   S_CRUCKS}, // S_CRUCKS
+	{SPR_CORN,  0, 1, {A_Corona},   S_CORONA}, // S_CORONA
 };
 
 mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
@@ -6458,6 +6460,31 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 		sfx_None,
 		MF_SOLID,
 		S_CRUCKS
+	},
+	{ // MT_CORONA
+		-1,
+		S_CORONA,
+		1000,
+		S_CORONA,
+		sfx_None,
+		0,
+		sfx_None,
+		S_CORONA,
+		0,
+		sfx_None,
+		S_CORONA,
+		S_CORONA,
+		S_CORONA,
+		S_CORONA,
+		sfx_None,
+		0,
+		16*FRACUNIT,
+		48*FRACUNIT,
+		1000,
+		0,
+		sfx_None,
+		MF_NOGRAVITY|MF_NOCLIP,
+		S_CORONA
 	}
 // end new springs Nozomi 03-28-2026
 };

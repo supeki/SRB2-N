@@ -672,8 +672,8 @@ void R_DrawTranslatedTranslucentColumn_8(void)
 
 	// Looks familiar.
 	fracstep = dc_iscale;
-	//frac = dc_texturemid + (dc_yl - centery)*fracstep;
-	frac = (dc_texturemid + FixedMul((dc_yl << FRACBITS) - centeryfrac, fracstep));
+	frac = dc_texturemid + (dc_yl - centery)*fracstep;
+	//frac = (dc_texturemid + FixedMul((dc_yl << FRACBITS) - centeryfrac, fracstep));
 
 	// Inner loop that does the actual texture mapping, e.g. a DDA-like scaling.
 	// This is as fast as it gets.

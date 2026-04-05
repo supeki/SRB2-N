@@ -157,6 +157,16 @@ static boolean P_SetPrecipMobjState(precipmobj_t* mobj, statenum_t state)
 	return true;
 }
 
+// IDK where to put this but... here... Nozomi
+
+mobj_t* P_SpawnCorona(mobj_t* mo)
+{
+	mobj_t* corona = P_SpawnMobj(mo->x, mo->y, mo->z+mo->height/2, MT_CORONA);
+	corona->color = mo->color;
+	corona->target = mo;
+	return corona;
+}
+
 //
 // P_ExplodeMissile
 //
@@ -799,25 +809,28 @@ void P_MobjCheckWater (mobj_t* mobj)
         else
             z = sector->floorheight + (FRACUNIT/4); // water texture
 
-        if (z && mobj->z+(mobj->height>>1) <= z) // Added crash check Tails 11-16-2001
+        if (mobj->z+(mobj->height>>1) <= z) // Added crash check Tails 11-16-2001
         { // Tails 03-06-2000
             mobj->eflags |= MF_UNDERWATER;
-			if(mobj->player)
-			{
-         if(!((mobj->player->powers[pw_super]) || (mobj->player->powers[pw_invulnerability])))
-            mobj->player->powers[pw_yellowshield] = false;
-        if (mobj->player->powers[pw_underwater] <= 0 && !(mobj->player->powers[pw_greenshield])) // Tails 03-06-2000
-            {// Tails 03-06-2000
-            mobj->player->powers[pw_underwater] = 30*TICRATE + 1; // Tails 03-06-2000
-            }// Tails 03-06-2000
+
+			if(mobj->player) {
+				if(!((mobj->player->powers[pw_super]) || (mobj->player->powers[pw_invulnerability])))
+					mobj->player->powers[pw_yellowshield] = false;
+				if (mobj->player->powers[pw_underwater] <= 0 && !(mobj->player->powers[pw_greenshield])) // Tails 03-06-2000
+					mobj->player->powers[pw_underwater] = 30*TICRATE + 1; // Tails 03-06-2000
 			}
 		}
-        else
-         {
+        else // Tails 03-06-2000 (I guess I'm just comment-happy today!)
             mobj->eflags &= ~MF_UNDERWATER;
-          } // Tails 03-06-2000 (I guess I'm just comment-happy today!)
 
-    } else if(sector->ffloors) {
+		if(mobj->z + mobj->height > z && mobj->z <= z)
+            mobj->eflags |= MF_TOUCHWATER;
+        else
+            mobj->eflags &= ~MF_TOUCHWATER;
+
+		mobj->waterz = z;
+		return;
+    } else if (sector->ffloors) {
       ffloor_t*  rover;
 
       mobj->eflags &= ~(MF_UNDERWATER|MF_TOUCHWATER);
@@ -858,9 +871,6 @@ void P_MobjCheckWater (mobj_t* mobj)
     }
     else
         mobj->eflags &= ~(MF_UNDERWATER|MF_TOUCHWATER);
-
-	if(mobj->subsector->sector->heightsec != -1 && mobj->subsector->sector->altheightsec == 1)
-		mobj->waterz = sectors[mobj->subsector->sector->heightsec].floorheight;
 }
 
 //
@@ -1108,7 +1118,7 @@ void P_MobjThinker (mobj_t* mobj)
 	{
 		mobj_t* thok;
 		thok = P_SpawnMobj(mobj->x, mobj->y, mobj->z, MT_THOK);
-		thok->color = SKINCOLOR_GREY;
+		thok->color = SKINCOLOR_YELLOW;
 	}
 
 	// Some black shield code Tails 04-08-2000

@@ -248,6 +248,7 @@ void P_SetTranslucencies (void)
 	R_SetTrans(S_RAIN1, 0, tr_transmed);
 
 	R_SetTrans(S_TOKEN, S_TOKEN2, tr_additive);
+	R_SetTrans(S_CORONA, 0, tr_additive);
 }
 
 void Translucency_OnChange(void)

@@ -2715,11 +2715,12 @@ void P_PlayerInSpecialSector (player_t* player)
 					player->mo->z++;
 					player->mo->momz = JUMPGRAVITY*5;
 					P_SetMobjState(player->mo, S_PLAY_FALL1);
-			} else
-					P_DamageMobj (player->mo, NULL, NULL, 10000);
+				} else
+						P_DamageMobj (player->mo, NULL, NULL, 10000);
 			break;
 
 			case 7: // Damage Sector Nozomi 03-17-2026
+			case 8: // Red Volcano Zone 1 uses this for the light, but it should also damage right...?? Nozomi
 				P_DamageMobj (player->mo, NULL, NULL, 1);
 			break;
 
@@ -2740,7 +2741,7 @@ void P_PlayerInSpecialSector (player_t* player)
 			default:
 			//SoM: 3/8/2000: Just ignore.
 			//CONS_Printf ("P_PlayerInSpecialSector: unknown special %i",
-			//             sector->special);
+			//				 sector->special);
 			break;
 		};//}
    }
@@ -3041,11 +3042,19 @@ void P_SpawnSpecials (void)
             P_SpawnStrobeFlash(sector,FASTDARK,0);
             sector->special |= 3<<DAMAGE_SHIFT; //SoM: 3/8/2000: put damage bits in
             break;
+			
+		  case 6:
+            // GLOWING LIGHT (Nozomi)
+            P_SpawnGlowingLight(sector);
+            break;
 
           case 8:
-            // GLOWING LIGHT
+            // GLOWING LIGHT + DAMAGE (Nozomi)
             P_SpawnGlowingLight(sector);
-            sector->special = 4; // Tails 9-15-99
+			// No Tails don't do that!
+            //sector->special = 4; // Tails 9-15-99
+			// Do this instead! Nozomi
+			sector->special |= 3<<DAMAGE_SHIFT;
             break;
 
           case 9:

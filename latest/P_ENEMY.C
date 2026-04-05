@@ -2478,6 +2478,38 @@ void A_ParticleRise2 (mobj_t*   actor)
 	actor->momz += JUMPGRAVITY*0.2; // make bubbles rise!
 }
 
+void A_Corona (mobj_t* actor)
+{
+	if (!actor->target) {
+		P_RemoveMobj(actor);
+		return;
+	} else {
+		P_UnsetThingPosition(actor);
+		actor->x = actor->target->x;
+		actor->y = actor->target->y;
+		actor->z = actor->target->z + (actor->target->height / 2);
+		P_SetThingPosition(actor);
+
+		// Use the movecount of the Corona to determine its behavior with its target.
+		switch (actor->movecount) {
+			case 1: // Super Sonic
+				if (!actor->target->player)
+					return;
+
+				if (!actor->target->player->powers[pw_super]) {
+					P_RemoveMobj(actor);
+					return;
+				}
+
+				actor->color = actor->target->color;
+				actor->flags |= MF_TRANSLATION;
+				break;
+			default:
+				break;
+		}
+	}	
+}
+
 void A_RingChase (mobj_t*   actor)
 {
 	// spilled rings flicker before disappearing Tails 01-11-2001

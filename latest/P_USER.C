@@ -1372,6 +1372,8 @@ void P_MovePlayer (player_t* player)
 
 				if(player->mfjumped && player->superready && !player->powers[pw_super]) // If you can turn into Super
 				{							// and aren't, do it!
+					mobj_t* corona;
+
 					// Insert flashy transformation animation here.
 					player->powers[pw_super] = true;
 
@@ -1379,7 +1381,13 @@ void P_MovePlayer (player_t* player)
 						P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z + player->mo->height, MT_CAPE)->target = player->mo; // A cape... "Super" Sonic, get it? Ha...ha...
 				
 					if (cv_supermusic.value)
-						S_ChangeMusic(mus_supers, true);
+						if (player->emerald8)
+							S_ChangeMusicName("NFFZ", true);
+						else
+							S_ChangeMusic(mus_supers, true);
+
+					corona = P_SpawnCorona(player->mo); // Fancy fake coronas :) Nozomi
+					corona->movecount = 1;
 				}
 			}
 		}
