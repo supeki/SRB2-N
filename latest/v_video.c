@@ -731,6 +731,73 @@ void V_DrawScaledTranslationPatch ( int           x,
     }
 }
 
+void V_DrawScaledTranslationPatchFlipped ( int           x,
+									int           y,
+									int           scrn,    // hacked flags in it...
+									patch_t*      patch,
+									byte*		  colormap )
+{
+    int         count;
+    int         col;
+    column_t*   column;
+    byte*       desttop;
+    byte*       dest;
+    byte*       source;
+    int         w;
+
+    int         dupx,dupy;
+    int         ofs;
+    int         colfrac,rowfrac;
+
+    // draw a 3Dfx converted patch
+    #ifdef HWRENDER
+    if ( rendermode != render_soft) {
+        HWR_DrawPatch ((GlidePatch_t*)patch, x, y);
+        return;
+    }
+    #endif
+
+    dupx = vid.dupx;
+    dupy = vid.dupy;
+
+    y -= SHORT(patch->topoffset);
+    x -= SHORT(patch->leftoffset);
+
+    col = 0;
+    colfrac  = FixedDiv (FRACUNIT, dupx<<FRACBITS);
+    rowfrac  = FixedDiv (FRACUNIT, dupy<<FRACBITS);
+
+    desttop = screens[scrn&0xFF];
+    if (scrn&V_NOSCALESTART)
+        desttop += (y*vid.width) + x;
+    else
+        desttop += (y*dupy*vid.width) + (x*dupx) + scaledofs;
+
+    w = SHORT(patch->width)<<FRACBITS;
+
+    for (col=w-colfrac; col>=0; col-=colfrac, desttop++)
+    {
+        column = (column_t *)((byte *)patch + LONG(patch->columnofs[col>>FRACBITS]));
+
+        while (column->topdelta != 0xff )
+        {
+            source = (byte *)column + 3;
+            dest   = desttop + column->topdelta*dupy*vid.width;
+            count  = column->length*dupy;
+
+            ofs = 0;
+            while (count--)
+            {
+                *dest = *(colormap + (source[ofs>>FRACBITS]));
+                dest += vid.width;
+                ofs += rowfrac;
+            }
+
+            column = (column_t *)( (byte *)column + column->length + 4 );
+        }
+    }
+}
+
 void V_DrawCustomScaledTranslationPatch ( int           x,
 										  int           y,
 										  fixed_t		scale,
@@ -1268,21 +1335,16 @@ void V_DrawFlatFill (int x, int y, int w, int h, int flatnum)
 //  Fade all the screen buffer, so that the menu is more readable,
 //  especially now that we use the small hufont in the menus...
 //
-void V_DrawFadeScreen (void)
+void V_DrawFadeScreen (int fadenum)
 {
     int         x,y,w;
     int         *buf;
     unsigned    quad;
     byte        p1, p2, p3, p4;
     byte*       fadetable = (byte *) colormaps + 16*256;
-    //short*    wput;
 
-#ifdef HWRENDER // not win32 only 19990829 by Kin
-    if (rendermode!=render_soft) {
-        HWR_FadeScreenMenuBack (0x01010160, 0);  //faB: hack, 0 means full height :o
-        return;
-    }
-#endif
+	if (fadenum != -1)
+		fadetable = (byte *) fadetables + fadenum*256;
 
     w = vid.width>>2;
     for (y=0 ; y<vid.height ; y++)
@@ -1298,21 +1360,6 @@ void V_DrawFadeScreen (void)
             buf[x] = (p4<<24) | (p3<<16) | (p2<<8) | p1;
         }
     }
-
-#ifdef _16bitcrapneverfinished
- else
- {
-    w = vid.width;
-    for (y=0 ; y<vid.height ; y++)
-    {
-        wput = (short*) (vid.buffer + vid.width*y);
-        for (x=0 ; x<w ; x++)
-        {
-            *wput++ = (*wput>>1) & 0x3def;
-        }
-    }
- }
-#endif
 }
 
 
@@ -1435,7 +1482,6 @@ void V_DrawString (int x, int y, char* string)
         cx+=w;
     }
 }
-
 
 //
 //added:03-02-98: V_DrawString, using a colormap to display the text in

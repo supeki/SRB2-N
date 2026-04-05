@@ -100,20 +100,24 @@ R_ClipVisSprite
 // -----------
 // SKINS STUFF
 // -----------
-#define SKINNAMESIZE 16
+#define SKINNAMESIZE 32
 #define DEFAULTSKIN  "sonic"   // Changed by Tails: 9-13-99
 
 typedef struct
 {
     char        name[SKINNAMESIZE+1];   // short descriptive name of the skin
     spritedef_t spritedef;
+	spritedef_t superspritedef; // super sprites!! Nozomi
     int         ability; // ability definition Tails 11-15-2000 changed to int by Nozomi
 	char		speed[9]; // speed definition Tails 11-15-2000
 	int 		runspeed; // runspeed Nozomi
 	char		face[9];
+	char		superface[9];
 	char		hudname[9];
 	fixed_t		spritescale; // spritescale Nozomi
 	fixed_t		facescale; // facescale Nozomi
+	byte		no_super; // we should only need a byte right Nozomi
+	byte		no_super_sprites;
 
     // specific sounds per skin
     short       soundsid[NUMSKINSOUNDS]; // sound # in S_sfx table
@@ -152,6 +156,7 @@ typedef struct
 	int ta_time;
 	char picname[9];
 	int weather;
+	boolean corona;
 } mapheader_t;
 
 extern mapheader_t mapheaders[NUMMAPHEADERS+1];

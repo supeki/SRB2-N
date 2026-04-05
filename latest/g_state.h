@@ -58,8 +58,11 @@ typedef enum
     GS_DEMOSCREEN,              // looking at a demo
     //legacy
     GS_DEDICATEDSERVER,         // added 27-4-98 : new state for dedicated server
-    GS_WAITINGPLAYERS,           // added 3-9-98 : waiting player in net game
-	GS_NOZOMITITLE
+    GS_WAITINGPLAYERS,          // added 3-9-98 : waiting player in net game
+	// nozomi
+	GS_NOZOMITITLE,
+	GS_SRBNOZOMI,
+	GS_NOZOMITETRIS				// don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask don't ask
 } gamestate_t;
 
 typedef enum

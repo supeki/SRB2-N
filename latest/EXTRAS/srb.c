@@ -1,7 +1,13 @@
 // Sonic Robo-Blast! Nozomi
 
+#include "../doomstat.h"
+#include "../console.h"
 #include "../doomdef.h"
+#include "../d_main.h"
+#include "../g_game.h"
 #include "../g_input.h"
+#include "../g_state.h"
+#include "../r_draw.h"
 #include "../r_main.h"
 #include "../s_sound.h"
 #include "../v_video.h"
@@ -57,6 +63,19 @@ static srbn_platform_t srbn_platforms[1024]; // We shouldn't really need this ma
 // Platform Patches
 static patch_t* srbn_platformpatches[1024]; // Same with the platform patches... blegh.
 
+// Command that starts SRB-Nozomi in its own gamestate! :p
+static void Command_StartSRBN_f(void)
+{
+	if (gamestate != GS_SRBNOZOMI && wipegamestate != GS_SRBNOZOMI) {
+		gamestate = GS_SRBNOZOMI;
+		wipegamestate = -1;
+	}
+
+	SRBN_Init();
+	menuactive = false;
+	CON_ToggleOff();
+}
+
 // Initialize a bunch of stuff yaya! Nozomi 03-10-2026
 void D_InitSRBNozomi(void) {
 	int i;
@@ -83,6 +102,8 @@ void D_InitSRBNozomi(void) {
 	// cache platform patches
 	for (i=0; i<8; i++)
 		srbn_platformpatches[i] = W_CachePatchName(va("SRBP%04d", i), PU_CACHE);
+
+	COM_AddCommand ("srbnozomi", Command_StartSRBN_f);
 }
 
 void SRBN_Init(void) {
@@ -148,7 +169,7 @@ void SRBN_Init(void) {
 	srbn_platforms[6].patch = 0; // see nozomi-gfx.wad for patch order
 	srbn_platforms[6].type = PLATFORM_PLATFORM; // platform, see above for details
 
-	S_ChangeMusicName("robotrop", 1);
+	S_ChangeMusicName("knothole", 1);
 
 	play_srb_nozomi = true;
 }
@@ -415,10 +436,14 @@ static void SRBN_DrawSonikku(void)
 	else if (srbn_sonic_idletimer > 6.65f)
 		earless_patch = (int)(srbn_sonic_idletimer / 6.65f) % 5 + 1;
 
-	if (srbn_sonic_dir > 0)
-		V_DrawScaledPatch(srbn_sonic_x, srbn_sonic_y - srbn_sonic_momy, 0, srbn_earless[earless_patch]);
-	else
-		V_DrawScaledPatchFlipped(srbn_sonic_x, srbn_sonic_y - srbn_sonic_momy, 0, srbn_earless[earless_patch]);
+	{
+		byte* sonikku_colormap = translationtables - 256 + (cv_playercolor.value<<8);
+
+		if (srbn_sonic_dir > 0)
+			V_DrawScaledTranslationPatch(srbn_sonic_x, srbn_sonic_y - srbn_sonic_momy, 0, srbn_earless[earless_patch], sonikku_colormap);
+		else
+			V_DrawScaledTranslationPatchFlipped(srbn_sonic_x, srbn_sonic_y - srbn_sonic_momy, 0, srbn_earless[earless_patch], sonikku_colormap);
+	}
 
 	V_DrawStringWhite(0, 0, va("%d,%d", srbn_sonic_x, srbn_sonic_y));
 }

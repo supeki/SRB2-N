@@ -383,9 +383,6 @@ static boolean P_Move (mobj_t* actor)
         actor->flags &= ~MF_INFLOAT;
     }
 
-
-    if (! (actor->flags & MF_FLOAT) )
-        actor->z = actor->floorz;
     return true;
 }
 
@@ -2477,10 +2474,50 @@ void A_ParticleRise2 (mobj_t*   actor)
 	actor->momz += JUMPGRAVITY*0.2; // make bubbles rise!
 }
 
+void A_Corona (mobj_t* actor)
+{
+	if (!actor->target) {
+		P_SetMobjState(actor, S_DISS);
+		return;
+	} else {
+		P_UnsetThingPosition(actor);
+		actor->x = actor->target->x;
+		actor->y = actor->target->y;
+		actor->z = actor->target->z + (actor->target->height / 2);
+		P_SetThingPosition(actor);
+
+		actor->color = actor->target->color;
+
+		// Use the type of the Corona's target to determine its behavior.
+		switch (actor->target->type) {
+			case MT_PLAYER: // Super Sonic
+				if (!actor->target->player)
+					return;
+
+				if (!actor->target->player->powers[pw_super]) {
+					P_RemoveMobj(actor);
+					return;
+				}
+				break;
+			case MT_MISC2:
+			case MT_FLINGRING:
+				actor->color = SKINCOLOR_SUPER5;
+				break;
+			case MT_TOKEN:
+			case MT_EMMY:
+				P_SetSuperColor(actor);
+				actor->frame |= FF_FULLBRIGHT;
+				break;
+			default:
+				break;
+		}
+	}	
+}
+
 void A_RingChase (mobj_t*   actor)
 {
 	// spilled rings flicker before disappearing Tails 01-11-2001
-	if(leveltime & 1 && actor->type == MT_FLINGRING && actor->fuse < 70)
+	if(leveltime & 1 && actor->type == MT_FLINGRING && actor->fuse < 70 && !(actor->flags & MF_AMBUSH))
 		actor->flags |= MF_SHADOW;
 	else
 		actor->flags &= ~MF_SHADOW;

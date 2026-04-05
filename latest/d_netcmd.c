@@ -411,6 +411,9 @@ void D_RegisterClientCommands (void)
     COM_AddCommand ("save",Command_Save_f);
     RegisterNetXCmd(XD_SAVEGAME,Got_SaveGamecmd);
 
+	CV_SetValue(&cv_playercolor, SKINCOLOR_BLUE+1);
+	CV_SetValue(&cv_playercolor2, SKINCOLOR_APRICOT+1);
+
 /* ideas of commands names from Quake
     "status"
     "notarget"
@@ -443,7 +446,7 @@ void D_RegisterClientCommands (void)
 //
 void SendNameAndColor(void)
 {
-    char     buf[MAXPLAYERNAME+1+SKINNAMESIZE+1+1],*p;
+    char     buf[MAXPLAYERNAME+1+SKINNAMESIZE+1+4],*p;
 	int team; // Tails 07-31-2001
 	int y; // Tails 07-31-2001
 	int z; // Tails 07-31-2001
@@ -451,8 +454,11 @@ void SendNameAndColor(void)
 
     p=buf;
 
+	if (cv_playercolor.value > MAXSKINCOLORS-1)
+		CV_SetValue(&cv_playercolor, 1);
+
 	if (!cv_playercolor.value) {
-		for (i=MAXSKINCOLORS;i>1;i--)
+		for (i=MAXSKINCOLORS-1;i>1;i--)
 			if (Color_Names[i] > 0)
 				break;
 
@@ -536,7 +542,7 @@ void SendNameAndColor(void)
 // splitscreen
 void SendNameAndColor2(void)
 {
-    char     buf[MAXPLAYERNAME+1+SKINNAMESIZE+1],*p;
+    char     buf[MAXPLAYERNAME+1+SKINNAMESIZE+1+4],*p;
 
     p=buf;
     WRITEBYTE(p,cv_playercolor2.value);

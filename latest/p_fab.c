@@ -183,7 +183,7 @@ void P_SetTranslucencies (void)
     R_SetTrans (S_SMOK1      , S_SMOK5     , tr_transmed);
     R_SetTrans (S_SPLASH1    , S_SPLASH3   , tr_transmor);
 
-	R_SetTrans (S_GTHOK1, 0, tr_transmed); // Thok! mobj Tails 12-05-99
+	R_SetTrans (S_GTHOK1, 0, tr_additive); // Thok! mobj Tails 12-05-99
 
 // if higher translucency needed, toy around with the other tr_trans variables
 
@@ -246,6 +246,7 @@ void P_SetTranslucencies (void)
 	R_SetTrans (S_AIRPARTICLE5, S_AIRPARTICLE6, tr_transmed);
 	R_SetTrans (S_AIRPARTICLE7, S_AIRPARTICLE8, tr_transmed);
 	R_SetTrans(S_RAIN1, 0, tr_transmed);
+	R_SetTrans(S_CORONA, 0, tr_additive);
 }
 
 void Translucency_OnChange(void)

@@ -42,9 +42,12 @@
 #include "f_finale.h"
 #include "g_game.h"
 #include "hu_stuff.h"
+#include "m_easing.h"
+#include "p_tick.h"
 #include "r_local.h"
 #include "s_sound.h"
 #include "i_video.h"
+#include "i_system.h"
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
@@ -55,16 +58,13 @@ int             finalestage;
 
 int             finalecount;
 
+static int animtimer; // Used for some animation timings
+
 #define TEXTSPEED       3
 #define TEXTWAIT        250
 
 char*   finaletext;
 char*   finaleflat;
-
-void    F_StartCast (void);
-void    F_CastTicker (void);
-boolean F_CastResponder (event_t *ev);
-void    F_CastDrawer (void);
 
 //
 // F_StartFinale
@@ -137,9 +137,6 @@ void F_StartFinale (void)
 
 boolean F_Responder (event_t *event)
 {
-    if (finalestage == 2)
-        return F_CastResponder (event);
-
     return false;
 }
 
@@ -169,12 +166,6 @@ void F_Ticker (void)
 
     // advance animation
     finalecount++;
-
-    if (finalestage == 2)
-    {
-        F_CastTicker ();
-        return;
-    }
 
     if ( gamemode == commercial)
         return;
@@ -256,363 +247,15 @@ void F_TextWrite (void)
 }
 
 //
-// Final DOOM 2 animation
-// Casting by id Software.
-//   in order of appearance
-//
-typedef struct
-{
-    char                *name;
-    mobjtype_t  type;
-} castinfo_t;
-
-castinfo_t      castorder[] = {
-    {NULL, MT_BLUECRAWLA},
-    {NULL, MT_REDCRAWLA},
-    {NULL, MT_BLUECRAWLA},
-    {NULL, MT_GARGOYLE},
-    {NULL, MT_SNOWFLAKE},
-    {NULL, MT_BLUECRAWLA},
-    {NULL, MT_JETTBOMBER}, // Tails 08-18-2001
-    {NULL, MT_REDCRAWLA},
-    {NULL, MT_REDCRAWLA},
-    {NULL, MT_REDCRAWLA},
-    {NULL, MT_DETON},
-    {NULL, MT_REDCRAWLA},
-    {NULL, MT_REDCRAWLA},
-    {NULL, MT_EGGMOBILE},
-    {NULL, MT_JETTGUNNER}, // Tails 09-03-2001
-    {NULL, MT_EGGMOBILE},
-    {NULL, MT_PLAYER},
-
-    {NULL,0}
-};
-
-int             castnum;
-int             casttics;
-state_t*        caststate;
-boolean         castdeath;
-int             castframes;
-int             castonmelee;
-boolean         castattacking;
-
-
-//
-// F_StartCast
-//
-
-
-void F_StartCast (void)
-{
-    int i;
-
-    for(i=0;i<17;i++)
-       castorder[i].name = text[CC_ZOMBIE_NUM+i];
-
-    wipegamestate = -1;         // force a screen wipe
-    castnum = 0;
-    caststate = &states[mobjinfo[castorder[castnum].type].seestate];
-    casttics = caststate->tics;
-    castdeath = false;
-    finalestage = 2;
-    castframes = 0;
-    castonmelee = 0;
-    castattacking = false;
-    S_ChangeMusic(mus_evil, true);
-}
-
-
-//
-// F_CastTicker
-//
-void F_CastTicker (void)
-{
-    int         st;
-    int         sfx;
-
-    if (--casttics > 0)
-        return;                 // not time to change state yet
-
-    if (caststate->tics == -1 || caststate->nextstate == S_NULL)
-    {
-        // switch from deathstate to next monster
-        castnum++;
-        castdeath = false;
-        if (castorder[castnum].name == NULL)
-            castnum = 0;
-        if (mobjinfo[castorder[castnum].type].seesound)
-            S_StartSound (NULL, mobjinfo[castorder[castnum].type].seesound);
-        caststate = &states[mobjinfo[castorder[castnum].type].seestate];
-        castframes = 0;
-    }
-    else
-    {
-        // just advance to next state in animation
-        if (caststate == &states[S_PLAY_ATK1])
-            goto stopattack;    // Oh, gross hack!
-        st = caststate->nextstate;
-        caststate = &states[st];
-        castframes++;
-
-        // sound hacks....
-        switch (st)
-        {
-          case S_PLAY_ATK1:     sfx = sfx_dshtgn; break;
-          case S_POSS_RUN1:     sfx = sfx_menu1; break; // Tails 06-13-2000
-          case S_SPOS_RUN1:     sfx = sfx_shotgn; break; // Tails 06-13-2000
-//          case S_VILE_ATK2:     sfx = sfx_vilatk; break;
-//          case S_SKEL_FIST2:    sfx = sfx_skeswg; break;
-//          case S_SKEL_FIST4:    sfx = sfx_skepch; break;
-//          case S_SKEL_MISS2:    sfx = sfx_bkpoof; break;
-//          case S_FATT_ATK8:
-//          case S_FATT_ATK5:
-//          case S_FATT_ATK2:     sfx = sfx_lvpass; break;
-//          case S_CPOS_ATK2:
-//          case S_CPOS_ATK3:
-//          case S_CPOS_ATK4:     sfx = sfx_shotgn; break;
-//          case S_TROO_ATK3:     sfx = sfx_claw; break;
-//          case S_SARG_ATK2:     sfx = sfx_sgtatk; break;
-//          case S_BOSS_ATK2:
-//          case S_BOS2_ATK2:
-//          case S_HEAD_ATK2:     sfx = sfx_lvpass; break; // Tails 08-18-2001
-//          case S_SKULL_ATK2:    sfx = sfx_sklatk; break;
-//          case S_SPID_ATK2:
-//          case S_SPID_ATK3:     sfx = sfx_shotgn; break;
-//          case S_BSPI_ATK2:     sfx = sfx_plasma; break;
-//          case S_EGGMOBILE_ATK2:
-//          case S_EGGMOBILE_ATK2:
-          case S_EGGMOBILE_ATK2:    sfx = sfx_rlaunc; break;
-          case S_DISS:     sfx = sfx_sklatk; break;
-          default: sfx = 0; break;
-        }
-
-        if (sfx)
-            S_StartSound (NULL, sfx);
-    }
-
-    if (castframes == 12)
-    {
-        // go into attack frame
-        castattacking = true;
-        if (castonmelee)
-            caststate=&states[mobjinfo[castorder[castnum].type].meleestate];
-        else
-            caststate=&states[mobjinfo[castorder[castnum].type].missilestate];
-        castonmelee ^= 1;
-        if (caststate == &states[S_NULL])
-        {
-            if (castonmelee)
-                caststate=
-                    &states[mobjinfo[castorder[castnum].type].meleestate];
-            else
-                caststate=
-                    &states[mobjinfo[castorder[castnum].type].missilestate];
-        }
-    }
-
-    if (castattacking)
-    {
-        if (castframes == 24
-            ||  caststate == &states[mobjinfo[castorder[castnum].type].seestate] )
-        {
-          stopattack:
-            castattacking = false;
-            castframes = 0;
-            caststate = &states[mobjinfo[castorder[castnum].type].seestate];
-        }
-    }
-
-    casttics = caststate->tics;
-    if (casttics == -1)
-        casttics = 15;
-}
-
-
-//
-// F_CastResponder
-//
-
-boolean F_CastResponder (event_t* ev)
-{
-    if (ev->type != ev_keydown)
-        return false;
-
-    if (castdeath)
-        return true;                    // already in dying frames
-
-    // go into death frame
-    castdeath = true;
-    caststate = &states[mobjinfo[castorder[castnum].type].deathstate];
-    casttics = caststate->tics;
-    castframes = 0;
-    castattacking = false;
-    if (mobjinfo[castorder[castnum].type].deathsound)
-        S_StartSound (NULL, mobjinfo[castorder[castnum].type].deathsound);
-
-    return true;
-}
-
-
-#define CASTNAME_Y   180                // where the name of actor is drawn
-void F_CastPrint (char* text)
-{
-    V_DrawString ((BASEVIDWIDTH-V_StringWidth (text))/2, CASTNAME_Y, text);
-}
-
-
-//
 // F_CastDrawer
 //
 void V_DrawPatchFlipped (int x, int y, int scrn, patch_t *patch);
-
-void F_CastDrawer (void)
-{
-    spritedef_t*        sprdef;
-    spriteframe_t*      sprframe;
-    int                 lump;
-    boolean             flip;
-    patch_t*            patch;
-
-    // erase the entire screen to a background
-    //V_DrawPatch (0,0,0, W_CachePatchName ("BOSSBACK", PU_CACHE));
-    D_PageDrawer ("BOSSBACK");
-
-    F_CastPrint (castorder[castnum].name);
-
-    // draw the current frame in the middle of the screen
-    sprdef = &sprites[caststate->sprite];
-    sprframe = &sprdef->spriteframes[ caststate->frame & FF_FRAMEMASK];
-    lump = sprframe->lumppat[0];      //Fab: see R_InitSprites for more
-    flip = (boolean)sprframe->flip[0];
-
-    patch = W_CachePatchNum (lump, PU_CACHE);
-
-    if (flip)
-        V_DrawScaledPatchFlipped (BASEVIDWIDTH>>1,170,0,patch);
-    else
-        V_DrawScaledPatch (BASEVIDWIDTH>>1,170,0,patch);
-}
-
-
-//
-// F_DrawPatchCol
-//
-static void F_DrawPatchCol (int           x,
-  patch_t*      patch,
-  int           col )
-{
-    column_t*   column;
-    byte*       source;
-    byte*       dest;
-    byte*       desttop;
-    int         count;
-
-    column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
-    desttop = screens[0]+x*vid.dupx;
-
-    // step through the posts in a column
-    while (column->topdelta != 0xff )
-    {
-        source = (byte *)column + 3;
-        dest = desttop + column->topdelta*vid.width;
-        count = column->length;
-
-        while (count--)
-        {
-            int dupycount=vid.dupy;
-
-            while(dupycount--)
-            {
-                int dupxcount=vid.dupx;
-                while(dupxcount--)
-                     *dest++ = *source;
-
-                dest += (vid.width-vid.dupx);
-            }
-            source++;
-        }
-        column = (column_t *)(  (byte *)column + column->length + 4 );
-    }
-}
-
-
-//
-// F_BunnyScroll
-//
-void F_BunnyScroll (void)
-{
-    int         scrolled;
-    int         x;
-    patch_t*    p1;
-    patch_t*    p2;
-    char        name[10];
-    int         stage;
-    static int  laststage;
-
-    p1 = W_CachePatchName ("PFUB2", PU_LEVEL);
-    p2 = W_CachePatchName ("PFUB1", PU_LEVEL);
-
-    V_MarkRect (0, 0, vid.width, vid.height);
-
-    scrolled = 320 - (finalecount-230)/2;
-    if (scrolled > 320)
-        scrolled = 320;
-    if (scrolled < 0)
-        scrolled = 0;
-    //faB:do equivalent for hw mode ?
-    if (rendermode==render_soft)
-    {
-        for ( x=0 ; x<320 ; x++)
-        {
-            if (x+scrolled < 320)
-                F_DrawPatchCol (x, p1, x+scrolled);
-            else
-                F_DrawPatchCol (x, p2, x+scrolled - 320);
-        }
-    }
-    else
-    {
-        if( scrolled>0 )
-            V_DrawScaledPatch(320-scrolled,0, 0, p2 );
-        if( scrolled<320 )
-            V_DrawScaledPatch(-scrolled,0, 0, p1 );
-    }
-
-    if (finalecount < 1130)
-        return;
-    if (finalecount < 1180)
-    {
-        V_DrawScaledPatch ((320-13*8)/2,
-                           (200-8*8)/2,0, W_CachePatchName ("END0",PU_CACHE));
-        laststage = 0;
-        return;
-    }
-
-    stage = (finalecount-1180) / 5;
-    if (stage > 6)
-        stage = 6;
-    if (stage > laststage)
-    {
-        S_StartSound (NULL, sfx_menu1);
-        laststage = stage;
-    }
-
-    sprintf (name,"END%i",stage);
-    V_DrawScaledPatch ((320-13*8)/2, (200-8*8)/2,0, W_CachePatchName (name,PU_CACHE));
-}
-
 
 //
 // F_Drawer
 //
 void F_Drawer (void)
 {
-    if (finalestage == 2)
-    {
-        F_CastDrawer ();
-        return;
-    }
-
     if (!finalestage)
         F_TextWrite ();
     else
@@ -631,9 +274,6 @@ void F_Drawer (void)
             V_DrawScaledPatch(0,0,0,
                         W_CachePatchName(text[VICTORY2_NUM],PU_CACHE));
             break;
-          case 3:
-            F_BunnyScroll ();
-            break;
           case 4:
             V_DrawScaledPatch (0,0,0,
                          W_CachePatchName(text[ENDPIC_NUM],PU_CACHE));
@@ -641,4 +281,237 @@ void F_Drawer (void)
         }
     }
 
+}
+
+static void F_DrawPatchCol(int x, patch_t *patch, int col)
+{
+	const column_t *column;
+	const byte *source;
+	byte *desttop, *dest = NULL;
+	const byte *deststop, *destbottom;
+	size_t count;
+
+	desttop = screens[0] + x*vid.dupx;
+	deststop = screens[0] + vid.rowbytes * vid.height;
+	destbottom = desttop + vid.height*vid.width;
+
+	do {
+		int topdelta, prevdelta = -1;
+		column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
+
+		// step through the posts in a column
+		while (column->topdelta != 0xff)
+		{
+			topdelta = column->topdelta;
+			if (topdelta <= prevdelta)
+				topdelta += prevdelta;
+			prevdelta = topdelta;
+			source = (const byte *)column + 3;
+			dest = desttop + topdelta*(vid.height/BASEVIDHEIGHT)*vid.width;
+			count = column->length;
+
+			while (count--)
+			{
+				int dupycount = vid.dupy;
+
+				while (dupycount-- && dest < destbottom)
+				{
+					int dupxcount = vid.dupx;
+					while (dupxcount-- && dest <= deststop)
+						*dest++ = *source;
+
+					dest += (vid.width - vid.dupx);
+				}
+				source++;
+			}
+			column = (const column_t *)((const byte *)column + column->length + 4);
+		}
+
+		desttop += patch->height*vid.dupy*vid.width;
+	} while(dest < destbottom);
+}
+
+//
+// F_SkyScroll
+//
+static void F_SkyScroll(void)
+{
+	int scrolled, x, mx, fakedwidth;
+	patch_t *pat;
+
+	pat = W_CachePatchName("TITLESKY", PU_CACHE);
+
+	animtimer = ((finalecount*80)/16) % SHORT(pat->width);
+
+	fakedwidth = vid.width / vid.dupx;
+
+	if (rendermode == render_soft)
+	{ // if only hardware rendering could be this elegant and complete
+		scrolled = (SHORT(pat->width) - animtimer) - 1;
+		for (x = 0, mx = scrolled; x < fakedwidth; x++, mx = (mx+1)%SHORT(pat->width))
+			F_DrawPatchCol(x, pat, mx);
+	}
+}
+
+static patch_t* ttbanner; // white banner with "robo blast" and "2"
+static patch_t* ttwing; // wing background
+static patch_t* ttsonic; // "SONIC"
+static patch_t* ttswave1; // Title Sonics
+static patch_t* ttswave2;
+static patch_t* ttswip1;
+static patch_t* ttsprep1;
+static patch_t* ttsprep2;
+static patch_t* ttspop1;
+static patch_t* ttspop2;
+static patch_t* ttspop3;
+static patch_t* ttspop4;
+static patch_t* ttspop5;
+static patch_t* ttspop6;
+static patch_t* ttspop7;
+
+static void F_StartMADventure(void);
+
+void F_StartTitleScreen(void)
+{
+	gamestate = GS_NOZOMITITLE;
+	nozo_specialtitle = false;
+
+	finalecount = 0;
+	finalestage = 0;
+	animtimer = 0;
+
+	ttbanner = W_CachePatchName("TTBANNER", PU_LEVEL);
+	ttwing = W_CachePatchName("TTWING", PU_LEVEL);
+	ttsonic = W_CachePatchName("TTSONIC", PU_LEVEL);
+	ttswave1 = W_CachePatchName("TTSWAVE1", PU_LEVEL);
+	ttswave2 = W_CachePatchName("TTSWAVE2", PU_LEVEL);
+	ttswip1 = W_CachePatchName("TTSWIP1", PU_LEVEL);
+	ttsprep1 = W_CachePatchName("TTSPREP1", PU_LEVEL);
+	ttsprep2 = W_CachePatchName("TTSPREP2", PU_LEVEL);
+	ttspop1 = W_CachePatchName("TTSPOP1", PU_LEVEL);
+	ttspop2 = W_CachePatchName("TTSPOP2", PU_LEVEL);
+	ttspop3 = W_CachePatchName("TTSPOP3", PU_LEVEL);
+	ttspop4 = W_CachePatchName("TTSPOP4", PU_LEVEL);
+	ttspop5 = W_CachePatchName("TTSPOP5", PU_LEVEL);
+	ttspop6 = W_CachePatchName("TTSPOP6", PU_LEVEL);
+	ttspop7 = W_CachePatchName("TTSPOP7", PU_LEVEL);
+
+	{
+		localtime_t nozotime = I_GetLocalTime();
+
+		if (nozotime.month == 11 && nozotime.day == 3)
+		{
+			F_StartMADventure();
+			return;
+		}
+	
+	}
+
+	S_ChangeMusic(mus_dm2ttl, false);
+}
+
+void F_TitleScreenTicker(void)
+{
+	finalecount++;
+	finalestage += 8;
+}
+
+static fixed_t ttlscale = FRACUNIT;
+static int titletimer;
+
+static void MADventure_Drawer(void);
+
+void Title_Drawer(void) 
+{
+	localtime_t nozotime = I_GetLocalTime();
+
+	if (gamestate != GS_NOZOMITITLE)
+		return;
+
+	if (nozotime.month == 11 && nozotime.day == 3) // Sonic MADventure
+	{
+		titletimer = finalecount;
+		// Commented out until I can make it. Nozomi
+		MADventure_Drawer();
+		return;
+	}
+
+	if (!demoplayback) {
+		F_SkyScroll();
+		titletimer = finalecount;
+	} else
+		titletimer = leveltime + 57;
+	
+
+	V_DrawCustomScaledTranslationPatch(30, 14, ttlscale, 0, ttwing, colormaps);
+
+	if(titletimer < 57)
+	{
+		if(titletimer == 35)
+			V_DrawCustomScaledTranslationPatch(115, 15, ttlscale, 0, ttspop1, colormaps);
+		else if(titletimer == 36)
+			V_DrawCustomScaledTranslationPatch(114, 15, ttlscale, 0,ttspop2, colormaps);
+		else if(titletimer == 37)
+			V_DrawCustomScaledTranslationPatch(113, 15, ttlscale, 0,ttspop3, colormaps);
+		else if(titletimer == 38)
+			V_DrawCustomScaledTranslationPatch(112, 15, ttlscale, 0,ttspop4, colormaps);
+		else if(titletimer == 39)
+			V_DrawCustomScaledTranslationPatch(111, 15, ttlscale, 0,ttspop5, colormaps);
+		else if(titletimer == 40)
+			V_DrawCustomScaledTranslationPatch(110, 15, ttlscale, 0, ttspop6, colormaps);
+		else if(titletimer >= 41 && titletimer <= 44)
+			V_DrawCustomScaledTranslationPatch(109, 15, ttlscale, 0, ttspop7, colormaps);
+		else if(titletimer >= 45 && titletimer <= 48)
+			V_DrawCustomScaledTranslationPatch(108, 12, ttlscale, 0, ttsprep1, colormaps);
+		else if(titletimer >= 49 && titletimer <= 52)
+			V_DrawCustomScaledTranslationPatch(107, 9, ttlscale, 0, ttsprep2, colormaps);
+		else if(titletimer >= 53 && titletimer <= 56)
+			V_DrawCustomScaledTranslationPatch(106, 6, ttlscale, 0, ttswip1, colormaps);
+		V_DrawCustomScaledTranslationPatch(93, 106, ttlscale, 0, ttsonic, colormaps);
+	}
+	else
+	{
+		V_DrawCustomScaledTranslationPatch(93, 106, ttlscale, 0,ttsonic, colormaps);
+		if(titletimer/5 & 1)
+			V_DrawCustomScaledTranslationPatch(100, 3, ttlscale, 0,ttswave1, colormaps);
+		else
+			V_DrawCustomScaledTranslationPatch(100, 3, ttlscale, 0,ttswave2, colormaps);
+	}
+
+	V_DrawCustomScaledTranslationPatch(48, 142, ttlscale, 0,ttbanner, colormaps);
+}
+
+static patch_t* madtitle;
+static patch_t* madsonic;
+static patch_t* madtails;
+static patch_t* madknux;
+static patch_t* madamy;
+static patch_t* madredxvi;
+static patch_t* madcredits;
+
+static void F_StartMADventure(void)
+{
+	nozo_specialtitle = true;
+	S_ChangeMusicName("redxvi", true);
+
+	madtitle = W_CachePatchName("MADTITLE", PU_LEVEL);
+	madsonic = W_CachePatchName("MADCHAR3", PU_LEVEL);
+	madtails = W_CachePatchName("MADCHAR4", PU_LEVEL);
+	madknux = W_CachePatchName("MADCHAR1", PU_LEVEL);
+	madamy = W_CachePatchName("MADCHAR5", PU_LEVEL);
+	madredxvi = W_CachePatchName("MADCHAR2", PU_LEVEL);
+	madcredits = W_CachePatchName("MADCREDI", PU_LEVEL);
+}
+
+static void MADventure_Drawer(void)
+{
+	V_DrawScaledPatch(0, 0, 0, madtitle);
+
+	V_DrawScaledPatch(6, 200 - (26+madknux->height), 0, madknux);
+	V_DrawScaledPatch(320 - (6+madamy->width), 200 - (26+madamy->height), 0, madamy);
+	V_DrawScaledPatch(70, 200 - (17+madredxvi->height), 0, madredxvi);
+	V_DrawScaledPatch(320 - (70+madtails->width), 200 - (17+madtails->height), 0, madtails);
+	V_DrawScaledPatch(160 - (madsonic->width/2), 200 - (9+madsonic->height), 0, madsonic);
+
+	V_DrawScaledPatch(160 - (madcredits->width/2), 200 - (madcredits->height) - 1, 0, madcredits);
 }

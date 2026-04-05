@@ -73,9 +73,11 @@ extern int msg_id;
 
 #include "doomdef.h"
 #include "doomstat.h"
+#include "d_main.h"
 #include "command.h"
 #include "g_game.h"
 #include "m_argv.h"
+#include "p_local.h"
 #include "r_main.h"     //R_PointToAngle2() used to calc stereo sep.
 #include "r_things.h"     // for skins
 
@@ -83,7 +85,7 @@ extern int msg_id;
 #include "s_sound.h"
 #include "w_wad.h"
 #include "z_zone.h"
-#include "srb-nozomi/srb.h"
+#include "EXTRAS/srb.h"
 
 // commands for music and sound servers
 #ifdef MUSSERV
@@ -378,7 +380,7 @@ void S_StartSoundAtVolumeAndPitch( void*         origin_p,
 	if (
 		((players[displayplayer].mo && players[displayplayer].mo->eflags & MF_UNDERWATER)
 		||(players[secondarydisplayplayer].mo && players[secondarydisplayplayer].mo->eflags & MF_UNDERWATER))
-		&& cv_underwaterpitch.value) {
+		&& cv_underwaterpitch.value && gamestate == GS_LEVEL) { // how the fuck is it doing this in the title screen after dsz1 time attack, go my GS
 		pitch = pitch / 4 * 3;
 		volume = volume / 4 * 3;
 	}
@@ -735,6 +737,9 @@ void S_ChangeMusic( int                   musicnum,
 
 	if (musicnum == mus_supers && strlen(custom_supermusic) > 0)
 		strncpy(music_name, custom_supermusic, 8);
+
+	if (musicnum == mus_supers && cv_superman.value)
+		strncpy(music_name, "SUPERMAN", 8);
 
 	if (mus_playing && !stricmp(mus_playing->name, music_name))
 		return;

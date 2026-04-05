@@ -56,6 +56,7 @@ extern  boolean xmasmode; // Xmas mode Tails 12-02-2001
 extern  boolean mariomode; // Mario mode Tails 12-18-2001
 
 // srb2-nozomi stuff
+extern boolean nozo_specialtitle;
 
 // time attack
 extern boolean nozo_timeattack;
@@ -66,7 +67,7 @@ extern boolean nozo_antibee;
 
 extern  char      gamemapname[128];
 
-extern  player_t        players[MAXPLAYERS];
+extern  player_t  players[MAXPLAYERS];
 extern  boolean   playeringame[MAXPLAYERS];
 
 // ======================================

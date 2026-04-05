@@ -285,9 +285,10 @@ void P_FindAnimatedFlat (int animnum)
     endflatnum = W_CheckNumForName (animdefs[animnum].endname);
 
     // note: high word of lumpnum is the wad number
-    if ( (startflatnum>>16) != (endflatnum>>16) )
+    /*if ( (startflatnum>>16) != (endflatnum>>16) )
        I_Error ("AnimatedFlat start %s not in same wad as end %s\n",
                 animdefs[animnum].startname, animdefs[animnum].endname);
+	*/
 
     //
     // now search through the levelflats if this anim flat sequence is used
@@ -2714,11 +2715,12 @@ void P_PlayerInSpecialSector (player_t* player)
 					player->mo->z++;
 					player->mo->momz = JUMPGRAVITY*5;
 					P_SetMobjState(player->mo, S_PLAY_FALL1);
-			} else
-					P_DamageMobj (player->mo, NULL, NULL, 10000);
+				} else
+						P_DamageMobj (player->mo, NULL, NULL, 10000);
 			break;
 
 			case 7: // Damage Sector Nozomi 03-17-2026
+			case 8: // Red Volcano Zone 1 uses this for the light, but it should also damage right...?? Nozomi
 				P_DamageMobj (player->mo, NULL, NULL, 1);
 			break;
 
@@ -2739,7 +2741,7 @@ void P_PlayerInSpecialSector (player_t* player)
 			default:
 			//SoM: 3/8/2000: Just ignore.
 			//CONS_Printf ("P_PlayerInSpecialSector: unknown special %i",
-			//             sector->special);
+			//				 sector->special);
 			break;
 		};//}
    }
@@ -3040,11 +3042,19 @@ void P_SpawnSpecials (void)
             P_SpawnStrobeFlash(sector,FASTDARK,0);
             sector->special |= 3<<DAMAGE_SHIFT; //SoM: 3/8/2000: put damage bits in
             break;
+			
+		  case 6:
+            // GLOWING LIGHT (Nozomi)
+            P_SpawnGlowingLight(sector);
+            break;
 
           case 8:
-            // GLOWING LIGHT
+            // GLOWING LIGHT + DAMAGE (Nozomi)
             P_SpawnGlowingLight(sector);
-            sector->special = 4; // Tails 9-15-99
+			// No Tails don't do that!
+            //sector->special = 4; // Tails 9-15-99
+			// Do this instead! Nozomi
+			sector->special |= 3<<DAMAGE_SHIFT;
             break;
 
           case 9:
@@ -3145,7 +3155,7 @@ void P_SpawnSpecials (void)
               sectors[s].heightsec = sec;
             break;
 
-          //SoM: 3/20/2000: support for drawn heights coming from different sector
+		  //SoM: 3/20/2000: support for drawn heights coming from different sector
           case 270:
             sec = sides[*lines[i].sidenum].sector-sectors;
             for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
@@ -3180,17 +3190,27 @@ void P_SpawnSpecials (void)
           case 300:
             sec = sides[*lines[i].sidenum].sector-sectors;
             for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
-              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_SOLID|FF_RENDERALL|FF_NOSHADE|FF_TRANSLUCENT);
+              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_SOLID|FF_RENDERALL|FF_TRANSLUCENT);
             break;
           case 301: // walk through trans Tails
             sec = sides[*lines[i].sidenum].sector-sectors;
             for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
-              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_RENDERALL|FF_NOSHADE|FF_TRANSLUCENT);
+              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_RENDERALL|FF_TRANSLUCENT);
             break;
           case 302: // walk through solid Tails 04-15-2001
             sec = sides[*lines[i].sidenum].sector-sectors;
             for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
-              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_RENDERALL|FF_NOSHADE|FF_CUTLEVEL);
+              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_RENDERALL|FF_CUTLEVEL);
+            break;
+		  case 303: // nozomi water!!
+            sec = sides[*lines[i].sidenum].sector-sectors;
+            for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
+              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_SWIMMABLE|FF_TRANSLUCENT|FF_RENDERPLANES);
+            break;
+		  case 304: // nozomi water w/ sides!!
+            sec = sides[*lines[i].sidenum].sector-sectors;
+            for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
+              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_SWIMMABLE|FF_TRANSLUCENT|FF_RENDERALL);
             break;
 #endif
 

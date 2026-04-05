@@ -278,6 +278,9 @@ void Command_CheatGimme_f (void)
         if (!strncmp(s,"milk",4))
         {
             CONS_Printf("got milk?\n");
+
+			if (!plyr->emerald8)
+				plyr->emerald8 = true;
         }
         else
         if (!strncmp(s,"shoes",5))

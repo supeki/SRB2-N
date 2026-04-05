@@ -185,7 +185,8 @@
 #include "win32/win_main.h"
 #endif
 
-#include "srb-nozomi/srb.h"
+#include "EXTRAS/srb.h"
+#include "EXTRAS/tetris.h"
 
 //
 //  DEMO LOOP
@@ -209,6 +210,7 @@ boolean			mariomode; // Mario Mode Tails 12-18-2001
 
 // nozomi stuff
 boolean window_title = true;
+boolean nozo_specialtitle = false;
 
 char*				parmskin; // Player skin defined from parms Tails 06-09-2001
 char*				ctfteam; // Player Preferred CTF Team defined from parms Tails 07-31-2001
@@ -393,6 +395,12 @@ void D_Display (void)
 	  case GS_NOZOMITITLE:
 		D_PageDrawer (pagename);
 		break;
+	  case GS_NOZOMITETRIS:
+		T_TetrisDrawer();
+		break;
+	  case GS_SRBNOZOMI:
+		SRBN_Draw();
+		break;
 	  case GS_NULL:
         break;
 
@@ -515,12 +523,15 @@ void D_Display (void)
         ST_Drawer (viewheight==vid.height, 1);
 #endif
 
+	// draw our title right before menus and the console :3
+	Title_Drawer();
+
     //FIXME: draw either console or menu, not the two
     CON_Drawer ();
 
     // menus go directly to the screen
     M_Drawer ();          // menu is drawn even on top of everything
-    NetUpdate ();         // send out any new accumulation
+	NetUpdate ();         // send out any new accumulation
 
 //
 // normal update
@@ -764,7 +775,6 @@ void D_PageTicker (void)
 	if (gamestate == GS_WAITINGPLAYERS) {
 		if (netgame && (!server)) {
 			// Sonic Robo-Blast! Nozomi
-
 			if (play_srb_nozomi)
 				SRBN_GameplayLoop();
 			else if (gamekeydown[gamecontrol[gc_jump][0]] || gamekeydown[gamecontrol[gc_jump][1]])
@@ -773,6 +783,9 @@ void D_PageTicker (void)
 					
 		return;
 	}
+
+	if (gamestate == GS_NOZOMITITLE)
+		F_TitleScreenTicker ();
 
     if (--pagetic < 0)
         D_AdvanceDemo ();
@@ -811,11 +824,10 @@ void D_PageDrawer (char* lumpname)
 					// show our server joining status! Nozomi 03-10-2026
 
 					// Sonic Robo-Blast! Nozomi
-					if (play_srb_nozomi) {
+					if (play_srb_nozomi)
 						SRBN_Draw();
-					} else {
+					else
 						V_DrawString(160-strlen("Press JUMP to play a game!")*4, 100-4, "Press JUMP to play a game!");
-					}
 
 					if (cl_mode == cl_connected)
 						V_DrawString(160-strlen("connected! waiting on map change!")*4 + 8, 200-12, "connected! waiting on map change!");
@@ -881,6 +893,10 @@ void D_DoAdvanceDemo (void)
     advancedemo = false;
     usergame = false;               // no save / end game here
     gameaction = ga_nothing;
+	
+	if (nozo_specialtitle)
+		return; // Don't play demos in special titles! Nozomi
+
 // Done lots of stuff here Tails
         demosequence = (demosequence+1)%12;
 
@@ -941,9 +957,6 @@ void D_DoAdvanceDemo (void)
         pagename = "BLACK";
         break;
     }
-
-	if (gamestate == GS_NOZOMITITLE)
-		S_ChangeMusic(mus_dm2ttl, false);
 }
 
 // =========================================================================
@@ -961,8 +974,14 @@ void D_StartTitle (void)
 	nozo_timeattack = false;
     displayplayer = consoleplayer = statusbarplayer = 0;
     demosequence = -1;
+	F_StartTitleScreen();
 	D_UpdateWindowTitle();
-    D_AdvanceDemo ();
+
+	if (!nozo_specialtitle)
+		D_AdvanceDemo ();
+	else
+		advancedemo = false;
+
     CON_ToggleOff();
 }
 
@@ -1115,6 +1134,8 @@ void IdentifyVersion (void)
 
 	// Add the maps Nozomi 02-22-2026
 	D_AddFile("maps.wad");
+
+	D_AddFile("extdata.dat");
 }
 
 
@@ -1439,6 +1460,10 @@ void D_DoomMain (void)
     S_RegisterSoundStuff ();
     CV_RegisterVar (&cv_screenslink);
 
+	// Nozomi's Extra games :)
+	D_InitSRBNozomi(); // Sonic Robo-Blast! Nozomi
+	D_InitNozomiTetris(); // Nozomi Tetris
+
     //Fab:29-04-98: do some dirty chatmacros strings initialisation
     HU_HackChatmacros ();
   //--------------------------------------------------------- CONFIG.CFG
@@ -1551,9 +1576,6 @@ p = M_CheckParm ("-ctfteam"); // Tails 08-04-2001
 
     CONS_Printf (text[ST_INIT_NUM]);
     ST_Init ();
-
-	// Sonic Robo-Blast! Nozomi
-	D_InitSRBNozomi();
 
     // init all NETWORK
     CONS_Printf (text[D_CHECKNET_NUM]);

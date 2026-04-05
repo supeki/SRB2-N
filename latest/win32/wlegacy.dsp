@@ -273,10 +273,6 @@ SOURCE=..\D_event.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\D_french.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\D_items.c
 # End Source File
 # Begin Source File
@@ -835,14 +831,6 @@ SOURCE=..\Sounds.h
 # End Source File
 # Begin Source File
 
-SOURCE="..\srb-nozomi\srb.c"
-# End Source File
-# Begin Source File
-
-SOURCE="..\srb-nozomi\srb.h"
-# End Source File
-# Begin Source File
-
 SOURCE=..\St_lib.c
 # End Source File
 # Begin Source File
@@ -1019,6 +1007,26 @@ SOURCE=..\_logs\todolauncher.txt
 # Begin Source File
 
 SOURCE=..\_logs\Todola~1.txt
+# End Source File
+# End Group
+# Begin Group "EXTRA"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\EXTRAS\srb.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\EXTRAS\srb.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\EXTRAS\tetris.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\EXTRAS\tetris.h
 # End Source File
 # End Group
 # Begin Source File

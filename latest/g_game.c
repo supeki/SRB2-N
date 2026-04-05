@@ -124,7 +124,8 @@
 #include "i_joy.h"
 #include "info.h"
 
-#include "srb-nozomi/srb.h"
+#include "EXTRAS/srb.h"
+#include "EXTRAS/tetris.h"
 
 // added 8-3-98 increse savegame size from 0x2c000 (180kb) to 512*1024
 #define SAVEGAMESIZE    (512*1024)
@@ -1234,6 +1235,14 @@ void G_Ticker (void)
 	  case GS_NOZOMITITLE:
 		  D_PageTicker ();
 		  break;
+
+	  case GS_NOZOMITETRIS:
+		  T_TetrisTicker();
+		  break;
+
+	  case GS_SRBNOZOMI:
+		  SRBN_GameplayLoop();
+		  break;
     }
 }
 
@@ -1320,6 +1329,7 @@ void G_PlayerReborn (int player)
     int         emerald5;
     int         emerald6;
     int         emerald7;
+	int         emerald8;
 	int			xtralife;
 	int			xtralife2;
 	int			charability; // Tails
@@ -1359,6 +1369,7 @@ void G_PlayerReborn (int player)
     emerald5 = players[player].emerald5; // Tails 04-11-2000
     emerald6 = players[player].emerald6; // Tails 04-11-2000
     emerald7 = players[player].emerald7; // Tails 04-11-2000
+	emerald8 = players[player].emerald8;
 	xtralife = players[player].xtralife;
 	xtralife2 = players[player].xtralife2;
 	tagit = players[player].tagit; // Tails 05-08-2001
@@ -1399,6 +1410,7 @@ void G_PlayerReborn (int player)
     players[player].emerald5 = emerald5; // Tails 04-11-2000
     players[player].emerald6 = emerald6; // Tails 04-11-2000
     players[player].emerald7 = emerald7; // Tails 04-11-2000
+	players[player].emerald8 = emerald8;
 	players[player].xtralife = xtralife;
 	players[player].xtralife2 = xtralife2;
 	players[player].tagit = tagit; // Tails 05-08-2001
@@ -2095,13 +2107,14 @@ void G_InitNew (skill_t skill, char* mapname, boolean resetplayer)
 {
             players[i].playerstate = PST_REBORN;
 
-    players[i].emerald1 = 0;
-    players[i].emerald2 = 0;
-    players[i].emerald3 = 0;
-    players[i].emerald4 = 0;
-    players[i].emerald5 = 0;
-    players[i].emerald6 = 0;
-    players[i].emerald7 = 0;
+players[i].emerald1 = 0;
+players[i].emerald2 = 0;
+players[i].emerald3 = 0;
+players[i].emerald4 = 0;
+players[i].emerald5 = 0;
+players[i].emerald6 = 0;
+players[i].emerald7 = 0;
+players[i].emerald8 = 0;
 
     // start set lives/continues via game skill Tails 03-11-2000
 

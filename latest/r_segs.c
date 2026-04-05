@@ -1974,10 +1974,6 @@ void R_StoreWallRange( int   start, int   stop )
             I_Error("pas de waterplane avec markwater!?");
         waterplane = R_CheckPlane (waterplane, rw_x, rw_stopx-1);
     }
-    // render it
-    //added:24-02-98:WATER! unused now, trying something neater
-    if (markwater)
-        colfunc = R_DrawWaterColumn;
 #endif
 
 #ifdef R_FAKEFLOORS

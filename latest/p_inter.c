@@ -679,7 +679,7 @@ void P_TouchSpecialThing ( mobj_t*       special,
 				return; // Only go in the mouth
 			else
 			{
-		  if(player->powers[pw_underwater] <= 12*TICRATE + 1)
+		  if(player->powers[pw_underwater] <= 12*TICRATE + 1 && cv_drownmusic.value)
 			{
 			S_ChangeMusic(mus_runnin + gamemap - 1, 1);
 			I_PlayCD(gamemap + 1, true);
@@ -694,40 +694,6 @@ void P_TouchSpecialThing ( mobj_t*       special,
 			}
 			  break;
 	// end bubble grab Tails 03-07-2000
-
-	/*
-		  case MT_EMMY:
-		if(!(player->emerald1)){
-			player->emerald1 = true;
-			sound = sfx_getpow;
-			break;}
-	  else if((player->emerald1) && !(player->emerald2)){
-			player->emerald2 = true;
-			sound = sfx_getpow;
-			break;}
-	  else if((player->emerald2) && !(player->emerald3)){
-			player->emerald3 = true;
-			sound = sfx_getpow;
-			break;}
-	   else if((player->emerald3) && !(player->emerald4)){
-			player->emerald4 = true;
-			sound = sfx_getpow;
-			break;}
-	   else if((player->emerald4) && !(player->emerald5)){
-			player->emerald5 = true;
-			sound = sfx_getpow;
-			break;}
-	   else if((player->emerald5) && !(player->emerald6)){
-			player->emerald6 = true;
-			sound = sfx_getpow;
-			break;}
-	   else if((player->emerald6) && !(player->emerald7)){
-			player->emerald7 = true;
-			sound = sfx_getpow;
-			break;}
-	   else
-		 break;
-	*/
 
 		  case MT_REDFLAG:
 			  if(player->ctfteam == 1 && player->specialsector != 988 && !player->gotflag) // Player is on the Red Team

@@ -359,6 +359,8 @@ typedef struct mobj_s
     //SOM: Added fuse
     int                 fuse;
     int			waterz; // Water height Tails
+
+	struct mobj_s*	corona; // corona! Nozomi
 } mobj_t;
 
 typedef struct precipmobj_s
@@ -381,6 +383,7 @@ typedef struct precipmobj_s
 
 	// The closest interval over all contacted sectors (or things).
 	fixed_t floorz;
+	fixed_t waterz;
 
 	// Precipitation has a fixed radius of 2*FRACUNIT
 	// and a fixed height of 4*FRACUNIT

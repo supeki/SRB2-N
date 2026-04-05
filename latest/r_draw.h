@@ -80,6 +80,9 @@ extern byte*            dc_transmap;
 extern byte*            translationtables;
 extern byte*            dc_translation;
 
+// For fading the screen for title cards. Nozomi
+extern byte*			fadetables;
+
 extern struct r_lightlist_s*      dc_lightlist;
 extern int                        dc_numlights;
 extern int                        dc_maxlights;
@@ -104,7 +107,13 @@ extern fixed_t          ds_xstep;
 extern fixed_t          ds_ystep;
 
 extern byte*            ds_source;      // start of a 64*64 tile image
+extern byte *ds_transmap;
 
+// Variable flat sizes
+extern UINT32 nflatxshift;
+extern UINT32 nflatyshift;
+extern UINT32 nflatshiftup;
+extern UINT32 nflatmask;
 
 // viewborder patches lump numbers
 #define BRDR_T      0
@@ -155,20 +164,16 @@ void    R_DrawViewBorder (void);
 // 8bpp DRAWING CODE
 // -----------------
 
-#ifdef HORIZONTALDRAW
-//Fab 17-06-98
-void    R_DrawHColumn_8 (void);
-#endif
-
 void    ASMCALL R_DrawColumn_8 (void);
+void    ASMCALL R_DrawWallColumn_8 (void);
 void    ASMCALL R_DrawSkyColumn_8 (void);
 void    ASMCALL R_DrawShadeColumn_8 (void);             //smokie test..
 void    ASMCALL R_DrawFuzzColumn_8 (void);
 void    ASMCALL R_DrawTranslucentColumn_8 (void);
 void    ASMCALL R_DrawTranslatedColumn_8 (void);
 void    ASMCALL R_DrawTranslatedTranslucentColumn_8(void);
-void	ASMCALL R_DrawWallColumn_8(void);
-void    ASMCALL R_DrawSpan_8 (void);
+void    R_DrawSpan_8 (void);
+void    R_DrawTranslucentSpan_8 (void);
 
 void    R_DrawFogColumn_8 (void); //SoM: Test
 void    R_DrawColumnShadowed_8 (void);
