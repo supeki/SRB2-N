@@ -38,6 +38,7 @@
 
 #include "doomdef.h"
 #include "i_system.h"   //I_Tactile currently has no effect
+#include "i_sound.h"
 #include "am_map.h"
 #include "dstrings.h"
 #include "g_game.h"
@@ -57,11 +58,6 @@
 void P_PlayerRingBurst(player_t* player);
 //END HACK
 
-//Prototype Tails
-void P_Thrust ( mobj_t*       mo,
-                angle_t       angle,
-                fixed_t       move );
-void I_PlayCD ();
 void P_PlayerFlagBurst(player_t* player);
 // end protos Tails
 

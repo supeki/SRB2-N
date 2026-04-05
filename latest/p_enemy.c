@@ -48,19 +48,15 @@
 #include "r_state.h"
 #include "s_sound.h"
 #include "m_random.h"
+#include "i_sound.h"
 
 void FastMonster_OnChange(void);
-void P_Thrust(); // Tails
-void P_InstaThrust(); // Tails 08-26-2001
-void P_ExplodeMissile(); // Tails 08-26-2001
 
 // enable the solid corpses option : still not finished
 consvar_t cv_solidcorpse = {"solidcorpse","0",CV_NETVAR,CV_OnOff};
 consvar_t cv_fastmonsters = {"fastmonsters","0",CV_NETVAR | CV_CALL,CV_OnOff,FastMonster_OnChange};
 
 extern player_t *plyr; // Tails
-
-void I_PlayCD(); // proto! Tails
 
 typedef enum
 {

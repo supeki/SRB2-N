@@ -75,9 +75,6 @@ static fixed_t preciptmy;
 static fixed_t preciptmbbox[4];
 static int preciptmflags;
 
-void P_InstaThrust (); // Proto! Tails 11-01-2000
-void P_Thrust (); // Proto! Tails 11-01-2000
-
 // If "floatok" true, move would be ok
 // if within "tmfloorz - tmceilingz".
 boolean         floatok;

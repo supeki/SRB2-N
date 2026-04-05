@@ -73,6 +73,7 @@
 #include "g_input.h"
 #include "m_menu.h"
 #include "r_local.h"
+#include "p_local.h"
 #include "r_things.h"
 #include "p_inter.h"
 #include "p_setup.h"
@@ -129,8 +130,6 @@ void Command_Water_f (void);
 void Command_ExitLevel_f(void);
 void Command_Load_f(void);
 void Command_Save_f(void);
-
-boolean P_TeleportMove(); // Tails 10-02-2001
 
 // =========================================================================
 //                           CLIENT VARIABLES

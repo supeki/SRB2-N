@@ -45,6 +45,10 @@ void VerifFavoritWeapon (player_t *player);
 boolean P_GivePower(player_t*, int);
 void P_CheckFragLimit(player_t *p);
 
+void P_FindEmerald (player_t* player);
+
+void D_StartTitle(void);
+
 //added:28-02-98: boooring handling of thing(s) on top of thing(s)
 /* BUGGY CODE
 void P_CheckSupportThings (mobj_t* mobj);

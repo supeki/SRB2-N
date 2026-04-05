@@ -41,6 +41,7 @@
 #include "m_random.h"
 #include "r_local.h"
 #include "s_sound.h"
+#include "i_sound.h"
 #include "st_stuff.h"
 #include "i_video.h"
 #include "v_video.h"
@@ -106,8 +107,6 @@
 #define DM_VICTIMSY             50
 // in sec
 #define DM_WAIT                 20
-
-void I_PlayCD(); // proto Tails
 
 typedef enum
 {

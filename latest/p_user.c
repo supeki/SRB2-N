@@ -50,6 +50,7 @@
 #include "p_local.h"
 #include "r_main.h"
 #include "s_sound.h"
+#include "p_inter.h"
 #include "r_things.h" // Tails 03-01-2000
 #include "m_random.h" // Protoyping to remove warnings Tails
 #include "i_sound.h" // Prototyping to remove warnings Tails
@@ -60,9 +61,6 @@ boolean  P_NukeEnemies (player_t* player);
 boolean  PIT_NukeEnemies (mobj_t* thing);
 boolean  P_LookForEnemies (player_t* player, boolean boss);
 boolean  P_HomingAttack (player_t* player, mobj_t* enemy);
-void D_StartTitle(); // Tails
-void P_FindEmerald();
-
 
 // Index of the special effects (INVUL inverse) map.
 #define INVERSECOLORMAP         32

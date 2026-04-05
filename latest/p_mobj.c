@@ -1508,10 +1508,6 @@ mobj_t* P_SpawnMobj ( fixed_t       x,
         mobj->z = z;
     }
 
-    // added 16-6-98: special hack for spirit
-    if(mobj->type == MT_SPIRIT)
-        mobj->thinker.function.acv = (actionf_p1)P_MobjNullThinker;
-    else
     {
         mobj->thinker.function.acp1 = (actionf_p1)P_MobjThinker;
         P_AddThinker (&mobj->thinker);

@@ -2207,7 +2207,7 @@ boolean G_Downgrade(int version)
     else
     {
         //activate rocket trails by default
-        states[S_ROCKET].action.acv     = A_SmokeTrailer;
+        //states[S_ROCKET].action.acv     = A_SmokeTrailer;
 /*
         // smoke trails behind the skull heads
         states[S_SKULL_ATK3].action.acv = A_SmokeTrailer;

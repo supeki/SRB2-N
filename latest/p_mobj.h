@@ -403,4 +403,12 @@ void P_SnowThinker(precipmobj_t* mobj);
 void P_RainThinker(precipmobj_t* mobj);
 void P_RemovePrecipMobj(precipmobj_t* mobj);
 
+void P_Thrust ( mobj_t*       mo,
+                angle_t       angle,
+                fixed_t       move );
+
+void P_InstaThrust ( mobj_t*       mo,
+                     angle_t       angle,
+                     fixed_t       move );
+
 #endif

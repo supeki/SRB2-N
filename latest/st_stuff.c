@@ -45,6 +45,7 @@
 #include "p_inter.h"
 #include "m_random.h"
 
+#include "s_sound.h"
 #include "st_stuff.h"
 #include "st_lib.h"
 #include "i_video.h"
@@ -455,8 +456,6 @@ static   patch_t*   homing3; // Emerald hunt indicators Tails 12-20-2001
 static   patch_t*   homing4; // Emerald hunt indicators Tails 12-20-2001
 static   patch_t*   homing5; // Emerald hunt indicators Tails 12-20-2001
 static   patch_t*   homing6; // Emerald hunt indicators Tails 12-20-2001
-
-void S_StartSound(); // Tails 12-21-2001
 
 //
 // STATUS BAR CODE
