@@ -2481,7 +2481,7 @@ void A_ParticleRise2 (mobj_t*   actor)
 void A_Corona (mobj_t* actor)
 {
 	if (!actor->target) {
-		P_RemoveMobj(actor);
+		P_SetMobjState(actor, S_DISS);
 		return;
 	} else {
 		P_UnsetThingPosition(actor);
@@ -2490,9 +2490,11 @@ void A_Corona (mobj_t* actor)
 		actor->z = actor->target->z + (actor->target->height / 2);
 		P_SetThingPosition(actor);
 
-		// Use the movecount of the Corona to determine its behavior with its target.
-		switch (actor->movecount) {
-			case 1: // Super Sonic
+		actor->color = actor->target->color;
+
+		// Use the type of the Corona's target to determine its behavior.
+		switch (actor->target->type) {
+			case MT_PLAYER: // Super Sonic
 				if (!actor->target->player)
 					return;
 
@@ -2500,9 +2502,15 @@ void A_Corona (mobj_t* actor)
 					P_RemoveMobj(actor);
 					return;
 				}
-
-				actor->color = actor->target->color;
-				actor->flags |= MF_TRANSLATION;
+				break;
+			case MT_MISC2:
+			case MT_FLINGRING:
+				actor->color = SKINCOLOR_SUPER5;
+				break;
+			case MT_TOKEN:
+			case MT_EMMY:
+				P_SetSuperColor(actor);
+				actor->frame |= FF_FULLBRIGHT;
 				break;
 			default:
 				break;

@@ -222,6 +222,19 @@ extern int ticruned,ticmiss;
 extern consvar_t cv_homing; // Tails 07-02-2001
 extern consvar_t cv_numsnow; // Tails 12-25-200
 
+void P_SetSuperColor(mobj_t* mo)
+{
+	mo->color = SKINCOLOR_SUPER + abs((((signed)leveltime >> 1) % 9) - 4) + 1;
+}
+
+void P_SetHyperColor(mobj_t* mo)
+{
+	if (leveltime % 6 < 3)
+		mo->color = SKINCOLOR_HYPER+1;
+	else
+		mo->color = SKINCOLOR_HYPER2 + floor(leveltime/6 % 6) + 1;
+}
+
 //
 // P_MovePlayer
 //
@@ -950,14 +963,10 @@ void P_MovePlayer (player_t* player)
 
 			// Change your color to flash!
 			if (!cv_superman.value) {
-				player->mo->color = SKINCOLOR_SUPER + abs((((signed)leveltime >> 1) % 9) - 4) + 1;
-				
-				// UNCOMMENT THIS WHEN HYPER IS IMPLEMENTED!!! Nozomi
 				if (player->emerald8)
-					if (leveltime % 6 < 3)
-						player->mo->color = SKINCOLOR_HYPER+1;
-					else
-						player->mo->color = SKINCOLOR_HYPER2 + floor(leveltime/6 % 6) + 1;
+					P_SetHyperColor(player->mo);
+				else
+					P_SetSuperColor(player->mo);
 			}
 			else if (player->mo->color > MAXSKINCOLORS)
 				player->mo->color = player->skincolor;
@@ -1372,8 +1381,6 @@ void P_MovePlayer (player_t* player)
 
 				if(player->mfjumped && player->superready && !player->powers[pw_super]) // If you can turn into Super
 				{							// and aren't, do it!
-					mobj_t* corona;
-
 					// Insert flashy transformation animation here.
 					player->powers[pw_super] = true;
 
@@ -1386,8 +1393,7 @@ void P_MovePlayer (player_t* player)
 						else
 							S_ChangeMusic(mus_supers, true);
 
-					corona = P_SpawnCorona(player->mo); // Fancy fake coronas :) Nozomi
-					corona->movecount = 1;
+					P_SpawnCorona(player->mo);
 				}
 			}
 		}

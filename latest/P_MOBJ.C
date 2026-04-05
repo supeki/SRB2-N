@@ -164,6 +164,7 @@ mobj_t* P_SpawnCorona(mobj_t* mo)
 	mobj_t* corona = P_SpawnMobj(mo->x, mo->y, mo->z+mo->height/2, MT_CORONA);
 	corona->color = mo->color;
 	corona->target = mo;
+	mo->corona = corona;
 	return corona;
 }
 
@@ -1189,12 +1190,55 @@ void P_RecalcPrecipInSector(sector_t* sector)
 	sector = NULL; // warning C4100: 'sector' : unreferenced formal parameter
 }
 
+static void P_PrecipMobjCheckWater (precipmobj_t* mobj)
+{
+    sector_t* sector;
+	int z;
+
+    //
+    // see if we are in water, and set some flags for later
+    //
+    sector = mobj->subsector->sector;
+	mobj->waterz = mobj->floorz - 10000*FRACUNIT;
+
+	if ((sector->heightsec > -1 && sector->altheightsec == 1) ||
+        (levelflats[sector->floorpic].iswater && sector->heightsec == -1))
+    {
+        if (sector->heightsec > -1)  //water hack
+            z = (sectors[sector->heightsec].floorheight);
+        else
+            z = sector->floorheight + (FRACUNIT/4); // water texture
+
+		mobj->waterz = z;
+		return;
+    } else if (sector->ffloors) {
+      ffloor_t*  rover;
+
+      for(rover = sector->ffloors; rover; rover = rover->next)
+      {
+        if(!(rover->flags & FF_SWIMMABLE) || rover->flags & FF_SOLID)
+          continue;
+
+		if (*rover->topheight <= mobj->z)
+			mobj->waterz = *rover->topheight;
+
+        if(*rover->topheight < mobj->z || *rover->bottomheight > mobj->z)
+          continue;
+
+		mobj->waterz = *rover->topheight;
+      }
+      return;
+    }
+}
+
 void P_SnowThinker(precipmobj_t* mobj)
 {
 	// adjust height
 	mobj->z += mobj->momz;
 
-	if(mobj->z <= mobj->floorz)
+	P_PrecipMobjCheckWater(mobj);
+
+	if(mobj->z <= mobj->floorz || mobj->z <= mobj->waterz)
 		mobj->z = mobj->subsector->sector->ceilingheight;
 
 	return;
@@ -1204,6 +1248,8 @@ void P_RainThinker(precipmobj_t* mobj)
 {
 	// adjust height
 	mobj->z += mobj->momz;
+
+	P_PrecipMobjCheckWater(mobj);
 
 	if(mobj->state != &states[S_RAIN1])
 	{
@@ -1226,7 +1272,7 @@ void P_RainThinker(precipmobj_t* mobj)
 			P_SetPrecipMobjState(mobj, S_RAIN1);
 		}
 	}
-	else if(mobj->z <= mobj->floorz && mobj->momz)
+	else if((mobj->z <= mobj->floorz || mobj->z <= mobj->waterz) && mobj->momz)
 	{
 		// no splashes on sky or bottomless pits
 		if(mobj->z <= mobj->subsector->sector->floorheight
@@ -1236,7 +1282,10 @@ void P_RainThinker(precipmobj_t* mobj)
 		else
 		{
 			mobj->momz = 0;
-			mobj->z = mobj->floorz;
+			if (mobj->waterz > mobj->floorz)
+				mobj->z = mobj->waterz;
+			else
+				mobj->z = mobj->floorz;
 			P_SetPrecipMobjState(mobj, S_SPLASH1);
 		}
 	}
@@ -1343,6 +1392,17 @@ mobj_t* P_SpawnMobj ( fixed_t       x,
     //SOM: Fuse for bunnies, squirls, and flingrings
       if(mobj->type == MT_BIRD || mobj->type == MT_SQRL || mobj->type == MT_MOUSE)
         mobj->fuse = 300 + (P_Random() % 50);
+
+	if (mapheaders[gamemap].corona)
+	  switch (mobj->type) {
+		case MT_MISC2:
+		case MT_FLINGRING:
+		case MT_TOKEN:
+		case MT_EMMY:
+			P_SpawnCorona(mobj);
+		default:
+			break;
+	  }
 
     return mobj;
 }
@@ -1488,6 +1548,9 @@ void P_RemoveMobj (mobj_t* mobj)
 
     // stop any playing sound
     S_StopSound (mobj);
+
+	if (mobj->corona)
+		P_RemoveMobj(mobj->corona);
 
     // free block
     P_RemoveThinker ((thinker_t*)mobj);

@@ -80,6 +80,7 @@
 // faB: new 'alpha' shade effect, for smoke..
 
 #define FF_SMOKESHADE  0x80000  // sprite is an alpha channel
+#define FF_HALFBRIGHT  0x100000
 
 
 

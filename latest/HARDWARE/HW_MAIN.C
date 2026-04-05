@@ -2555,10 +2555,15 @@ static void HWR_ProjectSprite (mobj_t* thing)
     if( thing->state->frame & FF_FULLBRIGHT || fixedcolormap )
         // TODO: disable also the fog
         vis->sectorlight = 0xff;
+	else if (thing->state->frame & FF_HALFBRIGHT)
+		if( sectorlight*2 + BRIGHTEN_THE_DAMN_LIGHTLEVELS*2 < 0xff )
+			vis->sectorlight = sectorlight*2 + BRIGHTEN_THE_DAMN_LIGHTLEVELS*2;
+		else
+			vis->sectorlight = 0xff;
     else if( sectorlight + BRIGHTEN_THE_DAMN_LIGHTLEVELS < 256 )
         vis->sectorlight = sectorlight + BRIGHTEN_THE_DAMN_LIGHTLEVELS;
     else
-        vis->sectorlight = 255;
+        vis->sectorlight = 0xff;
 }
 
 
@@ -2692,8 +2697,11 @@ void HWR_DrawPSprite( pspdef_t* psp, int lightlevel)
         // TODO: remove fog for this sprite !
         Surf.FlatColor.s.red = Surf.FlatColor.s.green = Surf.FlatColor.s.blue = 0xff;
     }
-    else
+    else if( psp->state->frame & FF_HALFBRIGHT )
     {
+		Surf.FlatColor.s.red = Surf.FlatColor.s.green = Surf.FlatColor.s.blue = lightlevel*2;
+	}
+	else {
         // default opaque mode using alpha 0 for holes
         Surf.FlatColor.s.red = Surf.FlatColor.s.green = Surf.FlatColor.s.blue = lightlevel;
         

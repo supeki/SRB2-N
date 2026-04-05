@@ -46,6 +46,7 @@
 #include "sounds.h"
 #include "m_fixed.h"
 #include "p_mobj.h"
+#include "p_pspr.h"
 
 char *sprnames[NUMSPRITES+1] = {
     "SHTG","PUNG","PISG","PISF","SHTF","SHT2","CHGG","CHGF","MISG",
@@ -1300,7 +1301,7 @@ state_t states[NUMSTATES] = {
     {SPR_NSPR, 15,  1, {NULL},   S_SPRING_HORIZ8}, // S_SPRING_HORIZ7
     {SPR_NSPR, 14,  1, {NULL},   S_SPRING_HORIZ},  // S_SPRING_HORIZ8
 	{SPR_CRUK,  0, -1, {NULL},   S_CRUCKS}, // S_CRUCKS
-	{SPR_CORN,  0, 1, {A_Corona},   S_CORONA}, // S_CORONA
+	{SPR_CORN,  FF_HALFBRIGHT, 1, {A_Corona},   S_CORONA}, // S_CORONA
 };
 
 mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
@@ -6483,7 +6484,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 		1000,
 		0,
 		sfx_None,
-		MF_NOGRAVITY|MF_NOCLIP,
+		MF_NOGRAVITY|MF_NOCLIP|MF_TRANSLATION,
 		S_CORONA
 	}
 // end new springs Nozomi 03-28-2026

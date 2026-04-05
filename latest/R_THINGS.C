@@ -839,9 +839,10 @@ static void R_ProjectSprite (mobj_t* thing)
 
     //Fab:02-08-98: 'skin' override spritedef currently used for skin
     if (thing->skin)
-		if (!cv_superman.value && thing->player && thing->player->powers[pw_super] && skins[thing->player->skin].no_super_sprites == 0)
+		if (!cv_superman.value && thing->player && thing->player->powers[pw_super] && skins[thing->player->skin].no_super_sprites == 0) {
 			sprdef = &((skin_t *)thing->skin)->superspritedef;
-		else if (
+			thing->frame |= FF_FULLBRIGHT; // Full bright super! Nozomi
+		} else if (
 			!cv_superman.value
 			&& thing->type == MT_THOK 
 			&& thing->sprite == SPR_PLAY
@@ -849,9 +850,10 @@ static void R_ProjectSprite (mobj_t* thing)
 			&& thing->target->player 
 			&& thing->target->player->powers[pw_super]
 			&& skins[thing->target->player->skin].no_super_sprites == 0
-		) // large ass hack for the ghosts :3 Nozomi
+		) { // large ass hack for the ghosts :3 Nozomi
 			sprdef = &((skin_t *)thing->target->skin)->superspritedef;
-		else
+			thing->frame |= FF_FULLBRIGHT; // Full bright super! Nozomi
+		} else
 			sprdef = &((skin_t *)thing->skin)->spritedef;
     else
         sprdef = &sprites[thing->sprite];
@@ -1024,6 +1026,9 @@ static void R_ProjectSprite (mobj_t* thing)
 
             // diminished light
             index = xscale>>(LIGHTSCALESHIFT-detailshift);
+
+			if (thing->frame & FF_HALFBRIGHT)
+				index = (xscale*4)>>(LIGHTSCALESHIFT-detailshift);
 
             if (index >= MAXLIGHTSCALE)
                 index = MAXLIGHTSCALE-1;
@@ -2435,6 +2440,12 @@ void R_AddMapHeader (int wadnum)
 			{
 				// Weather! Nozomi 03-05-2026
 				mapheaders[levelnum].weather = atoi(value);
+			}
+
+			if (!stricmp(token,"corona"))
+			{
+				// Coronas! Nozomi 04-05-2026
+				mapheaders[levelnum].corona = atoi(value) > 0 ? true : false;
 			}
 
 			if (!stricmp(token,"next"))
