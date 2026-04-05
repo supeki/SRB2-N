@@ -116,11 +116,16 @@ fixed_t                 dc_texturemid;
 
 byte*                   dc_source;
 
+/**	\brief Variable flat sizes
+*/
+
+UINT32 nflatxshift, nflatyshift, nflatshiftup, nflatmask;
+
 
 // -----------------------
 // translucency stuff here
 // -----------------------
-#define NUMTRANSTABLES  5     // how many translucency tables are used
+#define NUMTRANSTABLES  7     // how many translucency tables are used
 
 byte*                   transtables;    // translucency tables
 
@@ -161,6 +166,7 @@ fixed_t                 ds_xstep;
 fixed_t                 ds_ystep;
 
 byte*                   ds_source;      // start of a 64*64 tile image
+byte *ds_transmap;
 
 
 // ==========================================================================
@@ -262,6 +268,8 @@ void R_InitTranslationTables (void)
     W_ReadLump( W_GetNumForName("TRANSHI"),  transtables+0x20000 );
     W_ReadLump( W_GetNumForName("TRANSFIR"), transtables+0x30000 );
     W_ReadLump( W_GetNumForName("TRANSFX1"), transtables+0x40000 );
+	W_ReadLump( W_GetNumForName("TRANSLOW"), transtables+0x50000 );
+	W_ReadLump( W_GetNumForName("ADDITIVE"), transtables+0x60000 );
 
     translationtables = Z_MallocAlign (256*(MAXSKINCOLORS+MAXSUPERCOLORS), PU_STATIC, 0, 8);
 	fadetables = Z_MallocAlign(256*10, PU_STATIC, 0, 8);

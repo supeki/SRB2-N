@@ -789,34 +789,9 @@ void P_MobjCheckWater (mobj_t* mobj)
     //
     sector = mobj->subsector->sector;
     oldeflags = mobj->eflags;
+	mobj->waterz = mobj->floorz - 10000*FRACUNIT;
 
-    //SoM: 3/28/2000: Only use 270 water type of water. Some boom levels get messed up.
-    if ((sector->heightsec > -1 && sector->altheightsec == 1) ||
-        (levelflats[sector->floorpic].iswater && sector->heightsec == -1))
-    {
-        if (sector->heightsec > -1)  //water hack
-            z = (sectors[sector->heightsec].floorheight);
-        else
-            z = sector->floorheight + (FRACUNIT/4); // water texture
-
-        if (z && mobj->z+(mobj->height>>1) <= z) // Added crash check Tails 11-16-2001
-        { // Tails 03-06-2000
-            mobj->eflags |= MF_UNDERWATER;
-
-			if(mobj->player) {
-				if(!((mobj->player->powers[pw_super]) || (mobj->player->powers[pw_invulnerability])))
-					mobj->player->powers[pw_yellowshield] = false;
-				if (mobj->player->powers[pw_underwater] <= 0 && !(mobj->player->powers[pw_greenshield])) // Tails 03-06-2000
-					mobj->player->powers[pw_underwater] = 30*TICRATE + 1; // Tails 03-06-2000
-			}
-		}
-        else
-         {
-            mobj->eflags &= ~MF_UNDERWATER;
-          } // Tails 03-06-2000 (I guess I'm just comment-happy today!)
-
-    }
-    else if(sector->ffloors)
+    if(sector->ffloors)
     {
       ffloor_t*  rover;
 
@@ -826,8 +801,14 @@ void P_MobjCheckWater (mobj_t* mobj)
       {
         if(!(rover->flags & FF_SWIMMABLE) || rover->flags & FF_SOLID)
           continue;
+
+		if (*rover->topheight <= mobj->z)
+			mobj->waterz = *rover->topheight;
+
         if(*rover->topheight < mobj->z || *rover->bottomheight > (mobj->z + (mobj->height / 2)))
           continue;
+
+		mobj->waterz = *rover->topheight;
 
         if(mobj->z + mobj->height > *rover->topheight)
             mobj->eflags |= MF_TOUCHWATER;
@@ -852,12 +833,6 @@ void P_MobjCheckWater (mobj_t* mobj)
     }
     else
         mobj->eflags &= ~(MF_UNDERWATER|MF_TOUCHWATER);
-// Return of WaterZ! Tails 10-31-2000
-if(mobj->subsector->sector->heightsec != -1 && mobj->subsector->sector->altheightsec == 1)
-  mobj->waterz = sectors[mobj->subsector->sector->heightsec].floorheight;
-else
-mobj->waterz = mobj->floorz - 10000*FRACUNIT;
-
 }
 
 //

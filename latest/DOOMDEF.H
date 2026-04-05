@@ -120,7 +120,7 @@
 #define FAKEFLOORS              // SoM: Setup and clip fake floors.
 #define R_FAKEFLOORS            // SoM: Render fake floors.
 #define GLOBALCOLORMAPS         // SoM: Use global colormap code.
-//#define OLDWATER                // SoM: Allow old legacy water.
+#define OLDWATER                // SoM: Allow old legacy water.
 //#define TANDL                   //Hurdler: Use T&L in hardware mode  
 
 // =========================================================================

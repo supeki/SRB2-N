@@ -95,7 +95,9 @@ typedef enum
     tr_transmor=2,   //       20       80  puffs
     tr_transhi =3,   //       10       90  blur effect
     tr_transfir=4,   // 50 50 but brighter for fireballs, shots..
-    tr_transfx1=5    // 50 50 brighter some colors, else opaque for torches
+    tr_transfx1=5,    // 50 50 brighter some colors, else opaque for torches
+	tr_translo=6,
+	tr_additive=7
 } transnum_t;
 
 

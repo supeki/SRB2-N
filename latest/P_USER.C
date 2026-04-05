@@ -851,15 +851,18 @@ void P_MovePlayer (player_t* player)
 		}
 
 // Jump out of water stuff Tails 12-06-2000
-		if((player->mo->eflags & ~MF_UNDERWATER
+		if(
+			(player->mo->eflags & ~MF_UNDERWATER
 			&& player->mo->momz > 0
 			&& player->mo->z+(player->mo->height>>1) > player->mo->waterz
-			&& player->mo->z+(player->mo->height>>1) - player->mo->momz < player->mo->waterz)
-			|| (player->mo->eflags & MF_UNDERWATER
+			&& player->mo->z+(player->mo->height>>1) - player->mo->momz < player->mo->waterz
+			)
+			|| (player->mo->eflags & MF_TOUCHWATER
 			&& player->mo->momz < 0
-			&& player->mo->z+(player->mo->height>>1) < player->mo->waterz
-			&& player->mo->z+(player->mo->height>>1) - player->mo->momz > player->mo->waterz))
-		{
+			&& player->mo->z+(player->mo->height>>1) <= player->mo->waterz
+			&& player->mo->z+(player->mo->height>>1) - player->mo->momz >= player->mo->waterz
+			)
+		) {
 				if(player->mo->momz > 0)
 					player->mo->momz = player->mo->momz*1.706783369803; // Give the player a little out-of-water boost.
 

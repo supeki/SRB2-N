@@ -2257,6 +2257,7 @@ static void HWR_DrawSprite( gr_vissprite_t* spr )
         {
             switch((spr->mobj->frame & FF_TRANSMASK)>>FF_TRANSSHIFT)
             {
+				case tr_translo : Surf.FlatColor.s.alpha = 0xE0;blend = PF_Translucent; break;
                 case tr_transmed : Surf.FlatColor.s.alpha = 0x80;blend = PF_Translucent; break;
                 case tr_transmor : Surf.FlatColor.s.alpha = 0x40;blend = PF_Translucent; break;
                 case tr_transhi  : Surf.FlatColor.s.alpha = 0x30;blend = PF_Translucent; break;

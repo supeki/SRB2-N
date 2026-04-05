@@ -686,9 +686,12 @@ void R_RenderThickSideRange (drawseg_t* ds,
 
     if(ffloor->flags & FF_TRANSLUCENT)
     {
-      dc_transmap = ((1)<<FF_TRANSSHIFT) - 0x10000 + transtables;
+      dc_transmap = (tr_transmed<<FF_TRANSSHIFT) - 0x10000 + transtables;
       colfunc = fuzzcolfunc;
     }
+
+	if(ffloor->flags & FF_SWIMMABLE)
+		dc_transmap = (tr_translo<<FF_TRANSSHIFT) - 0x10000 + transtables;
 
     //SoM: Moved these up here so they are available for my lightlist calculations
     rw_scalestep = ds->scalestep;
@@ -991,30 +994,7 @@ void R_RenderSegLoop (void)
         {
             //added:18-02-98:WATER!
             yw = waterfrac>>HEIGHTBITS;
-            
-            // the markwater stuff...
-            if (waterplane->height<viewz)
-            {
-                top = yw;
-                bottom = waterclip[rw_x]-1;
-                
-                if (top <= ceilingclip[rw_x])
-                    top = ceilingclip[rw_x]+1;
-            }
-            else  //view from under
-            {
-                top = waterclip[rw_x]+1;
-                bottom = yw;
-                
-                if (bottom >= floorclip[rw_x])
-                    bottom = floorclip[rw_x]-1;
-            }
-            if (top <= bottom)
-            {
-                waterplane->top[rw_x] = top;
-                waterplane->bottom[rw_x] = bottom;
-            }
-            
+      
             // do it only if markwater else not needed!
             waterfrac += waterstep;   //added:18-02-98:WATER!
             //dc_wcolormap = colormaps+(32<<8);
@@ -1196,7 +1176,7 @@ void R_RenderSegLoop (void)
                 {
                     ceilingclip[rw_x] = yl-1;
 #ifdef OLDWATER
-                    if (!waterplane || markwater)
+                    if (markwater)
                          waterclip[rw_x] = yl-1;
 #endif
                 }
@@ -1227,7 +1207,7 @@ void R_RenderSegLoop (void)
 #endif
                     floorclip[rw_x] = mid;
 #ifdef OLDWATER
-                    if (waterplane && waterz<worldlow)
+                    if (waterz<worldlow)
                         waterclip[rw_x] = mid;
 #endif
                 }
@@ -1244,7 +1224,7 @@ void R_RenderSegLoop (void)
                 {
                     floorclip[rw_x] = yh+1;
 #ifdef OLDWATER
-                    if (!waterplane || markwater)
+                    if (markwater)
                         waterclip[rw_x] = yh+1;
 #endif
                 }
@@ -1419,16 +1399,6 @@ void R_StoreWallRange( int   start, int   stop )
     worldtop = frontsector->ceilingheight - viewz;
     worldbottom = frontsector->floorheight - viewz;
 
-#ifdef OLDWATER
-    //added:18-02-98:WATER!
-    if (waterplane)
-    {
-        waterz = waterplane->height - viewz;
-        if (waterplane->height >= frontsector->ceilingheight)
-            I_Error("eau plus haut que plafond");
-    }
-#endif
-
     midtexture = toptexture = bottomtexture = maskedtexture = 0;
     ds_p->maskedtexturecol = NULL;
     ds_p->numthicksides = numthicksides = 0;
@@ -1457,15 +1427,6 @@ void R_StoreWallRange( int   start, int   stop )
         // a single sided line is terminal, so it must mark ends
         markfloor = markceiling = true;
 
-
-#ifdef OLDWATER
-        //added:18-02-98:WATER! onesided marque toujours l'eau si ya dlo
-        if (waterplane)
-            markwater = true;
-        else
-            markwater = false;
-#endif
-        
         if (linedef->flags & ML_DONTPEGBOTTOM)
         {
             vtop = frontsector->floorheight +
@@ -1623,15 +1584,7 @@ void R_StoreWallRange( int   start, int   stop )
 
         // check TOP TEXTURE
         if (worldhigh < worldtop)
-        {
-#ifdef OLDWATER
-            //added:18-02-98:WATER! toptexture, check si ca touche watersurf
-            if (waterplane &&
-                waterz > worldhigh &&
-                waterz < worldtop)
-                markwater = true;
-#endif
-            
+        {   
             // top texture
             toptexture = texturetranslation[sidedef->toptexture];
             if (linedef->flags & ML_DONTPEGTOP)
@@ -1651,14 +1604,6 @@ void R_StoreWallRange( int   start, int   stop )
         // check BOTTOM TEXTURE
         if (worldlow > worldbottom)     //seulement si VISIBLE!!!
         {
-#ifdef OLDWATER
-            //added:18-02-98:WATER! bottomtexture, check si ca touche watersurf
-            if (waterplane &&
-                waterz < worldlow &&
-                waterz > worldbottom)
-                markwater = true;
-#endif
-
             // bottom texture
             bottomtexture = texturetranslation[sidedef->bottomtexture];
             
@@ -1817,17 +1762,9 @@ void R_StoreWallRange( int   start, int   stop )
     topstep = -FixedMul (rw_scalestep, worldtop);
     topfrac = (centeryfrac>>4) - FixedMul (worldtop, rw_scale);
 
-#ifdef OLDWATER
     //added:18-02-98:WATER!
     waterz >>= 4;
-    if (markwater)
-    {
-        if (waterplane==NULL)
-            I_Error("fuck no waterplane!");
-        waterstep = -FixedMul (rw_scalestep, waterz);
-        waterfrac = (centeryfrac>>4) - FixedMul (waterz, rw_scale);
-    }
-#endif
+
 
     bottomstep = -FixedMul (rw_scalestep,worldbottom);
     bottomfrac = (centeryfrac>>4) - FixedMul (worldbottom, rw_scale);
@@ -1965,20 +1902,6 @@ void R_StoreWallRange( int   start, int   stop )
       else
         markfloor = 0;
     }
-
-#ifdef OLDWATER
-    //added:18-02-98: il me faut un visplane pour l'eau...WATER!
-    if (markwater)
-    {
-        if (waterplane==NULL)
-            I_Error("pas de waterplane avec markwater!?");
-        waterplane = R_CheckPlane (waterplane, rw_x, rw_stopx-1);
-    }
-    // render it
-    //added:24-02-98:WATER! unused now, trying something neater
-    if (markwater)
-        colfunc = R_DrawWaterColumn;
-#endif
 
 #ifdef R_FAKEFLOORS
     ds_p->numffloorplanes = 0;
