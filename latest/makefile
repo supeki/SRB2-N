@@ -129,6 +129,54 @@ srb2-nozomi/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/srb2-nozomi.dir/build.make CMakeFiles/srb2-nozomi.dir/build
 .PHONY : srb2-nozomi/fast
 
+EXTRAS/srb.o: EXTRAS/srb.c.o
+.PHONY : EXTRAS/srb.o
+
+# target to build an object file
+EXTRAS/srb.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/srb2-nozomi.dir/build.make CMakeFiles/srb2-nozomi.dir/EXTRAS/srb.c.o
+.PHONY : EXTRAS/srb.c.o
+
+EXTRAS/srb.i: EXTRAS/srb.c.i
+.PHONY : EXTRAS/srb.i
+
+# target to preprocess a source file
+EXTRAS/srb.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/srb2-nozomi.dir/build.make CMakeFiles/srb2-nozomi.dir/EXTRAS/srb.c.i
+.PHONY : EXTRAS/srb.c.i
+
+EXTRAS/srb.s: EXTRAS/srb.c.s
+.PHONY : EXTRAS/srb.s
+
+# target to generate assembly for a file
+EXTRAS/srb.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/srb2-nozomi.dir/build.make CMakeFiles/srb2-nozomi.dir/EXTRAS/srb.c.s
+.PHONY : EXTRAS/srb.c.s
+
+EXTRAS/tetris.o: EXTRAS/tetris.c.o
+.PHONY : EXTRAS/tetris.o
+
+# target to build an object file
+EXTRAS/tetris.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/srb2-nozomi.dir/build.make CMakeFiles/srb2-nozomi.dir/EXTRAS/tetris.c.o
+.PHONY : EXTRAS/tetris.c.o
+
+EXTRAS/tetris.i: EXTRAS/tetris.c.i
+.PHONY : EXTRAS/tetris.i
+
+# target to preprocess a source file
+EXTRAS/tetris.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/srb2-nozomi.dir/build.make CMakeFiles/srb2-nozomi.dir/EXTRAS/tetris.c.i
+.PHONY : EXTRAS/tetris.c.i
+
+EXTRAS/tetris.s: EXTRAS/tetris.c.s
+.PHONY : EXTRAS/tetris.s
+
+# target to generate assembly for a file
+EXTRAS/tetris.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/srb2-nozomi.dir/build.make CMakeFiles/srb2-nozomi.dir/EXTRAS/tetris.c.s
+.PHONY : EXTRAS/tetris.c.s
+
 am_map.o: am_map.c.o
 .PHONY : am_map.o
 
@@ -1833,30 +1881,6 @@ sounds.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/srb2-nozomi.dir/build.make CMakeFiles/srb2-nozomi.dir/sounds.c.s
 .PHONY : sounds.c.s
 
-srb-nozomi/srb.o: srb-nozomi/srb.c.o
-.PHONY : srb-nozomi/srb.o
-
-# target to build an object file
-srb-nozomi/srb.c.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/srb2-nozomi.dir/build.make CMakeFiles/srb2-nozomi.dir/srb-nozomi/srb.c.o
-.PHONY : srb-nozomi/srb.c.o
-
-srb-nozomi/srb.i: srb-nozomi/srb.c.i
-.PHONY : srb-nozomi/srb.i
-
-# target to preprocess a source file
-srb-nozomi/srb.c.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/srb2-nozomi.dir/build.make CMakeFiles/srb2-nozomi.dir/srb-nozomi/srb.c.i
-.PHONY : srb-nozomi/srb.c.i
-
-srb-nozomi/srb.s: srb-nozomi/srb.c.s
-.PHONY : srb-nozomi/srb.s
-
-# target to generate assembly for a file
-srb-nozomi/srb.c.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/srb2-nozomi.dir/build.make CMakeFiles/srb2-nozomi.dir/srb-nozomi/srb.c.s
-.PHONY : srb-nozomi/srb.c.s
-
 st_lib.o: st_lib.c.o
 .PHONY : st_lib.o
 
@@ -2034,6 +2058,12 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... srb2-nozomi"
+	@echo "... EXTRAS/srb.o"
+	@echo "... EXTRAS/srb.i"
+	@echo "... EXTRAS/srb.s"
+	@echo "... EXTRAS/tetris.o"
+	@echo "... EXTRAS/tetris.i"
+	@echo "... EXTRAS/tetris.s"
 	@echo "... am_map.o"
 	@echo "... am_map.i"
 	@echo "... am_map.s"
@@ -2247,9 +2277,6 @@ help:
 	@echo "... sounds.o"
 	@echo "... sounds.i"
 	@echo "... sounds.s"
-	@echo "... srb-nozomi/srb.o"
-	@echo "... srb-nozomi/srb.i"
-	@echo "... srb-nozomi/srb.s"
 	@echo "... st_lib.o"
 	@echo "... st_lib.i"
 	@echo "... st_lib.s"

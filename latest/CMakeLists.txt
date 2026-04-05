@@ -79,7 +79,8 @@ list(APPEND SOURCES
     wi_stuff.c
     w_wad.c
     z_zone.c
-	srb-nozomi/srb.c
+	EXTRAS/srb.c
+	EXTRAS/tetris.c
 )
 
 # Add the backend's files
