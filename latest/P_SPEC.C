@@ -3150,7 +3150,13 @@ void P_SpawnSpecials (void)
           case 270:
             sec = sides[*lines[i].sidenum].sector-sectors;
             for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
-              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_RENDERALL|FF_CUTLEVEL|FF_SWIMMABLE|FF_TRANSLUCENT);
+              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_SWIMMABLE|FF_TRANSLUCENT|FF_RENDERPLANES);
+            break;
+
+		  case 271:
+            sec = sides[*lines[i].sidenum].sector-sectors;
+            for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
+              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_SWIMMABLE|FF_TRANSLUCENT|FF_RENDERALL);
             break;
 
           //SoM: 4/4/2000: HACK! Copy colormaps. Just plain colormaps.
@@ -3178,17 +3184,17 @@ void P_SpawnSpecials (void)
           case 300:
             sec = sides[*lines[i].sidenum].sector-sectors;
             for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
-              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_SOLID|FF_RENDERALL|FF_NOSHADE|FF_TRANSLUCENT);
+              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_SOLID|FF_RENDERALL|FF_TRANSLUCENT);
             break;
           case 301: // walk through trans Tails
             sec = sides[*lines[i].sidenum].sector-sectors;
             for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
-              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_RENDERALL|FF_NOSHADE|FF_TRANSLUCENT);
+              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_RENDERALL|FF_TRANSLUCENT);
             break;
           case 302: // walk through solid Tails 04-15-2001
             sec = sides[*lines[i].sidenum].sector-sectors;
             for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
-              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_RENDERALL|FF_NOSHADE|FF_CUTLEVEL);
+              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_RENDERALL|FF_CUTLEVEL);
             break;
 #endif
 

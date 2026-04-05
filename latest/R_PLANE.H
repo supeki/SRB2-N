@@ -84,6 +84,10 @@ typedef struct visplane_s
 extern visplane_t*    floorplane;
 extern visplane_t*    ceilingplane;
 
+#ifdef OLDWATER
+extern visplane_t*    waterplane;
+#endif
+
 #ifdef R_FAKEFLOORS
 extern visplane_t*    ffloorplane;
 

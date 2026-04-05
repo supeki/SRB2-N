@@ -779,7 +779,6 @@ consvar_t cv_respawnmonsterstime = {"respawnmonsterstime","12",CV_NETVAR,CV_Unsi
 void P_MobjCheckWater (mobj_t* mobj)
 {
     sector_t* sector;
-    fixed_t   z;
     int       oldeflags;
 
     if( demoversion<128 || mobj->type==MT_SPLASH) // splash don't do splash
