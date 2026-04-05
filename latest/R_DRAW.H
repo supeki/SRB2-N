@@ -156,8 +156,8 @@ void    R_DrawViewBorder (void);
 // -----------------
 
 void    ASMCALL R_DrawColumn_8 (void);
-#define R_DrawWallColumn_8	R_DrawColumn_8
-#define R_DrawSkyColumn_8	R_DrawColumn_8
+void    ASMCALL R_DrawWallColumn_8 (void);
+void    ASMCALL R_DrawSkyColumn_8 (void);
 void    ASMCALL R_DrawShadeColumn_8 (void);             //smokie test..
 void    ASMCALL R_DrawFuzzColumn_8 (void);
 void    ASMCALL R_DrawTranslucentColumn_8 (void);

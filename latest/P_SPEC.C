@@ -3146,17 +3146,14 @@ void P_SpawnSpecials (void)
               sectors[s].heightsec = sec;
             break;
 
-          //SoM: 3/20/2000: support for drawn heights coming from different sector
+		  //SoM: 3/20/2000: support for drawn heights coming from different sector
           case 270:
             sec = sides[*lines[i].sidenum].sector-sectors;
             for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
-              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_SWIMMABLE|FF_TRANSLUCENT|FF_RENDERPLANES);
-            break;
-
-		  case 271:
-            sec = sides[*lines[i].sidenum].sector-sectors;
-            for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
-              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_SWIMMABLE|FF_TRANSLUCENT|FF_RENDERALL);
+            {
+              sectors[s].heightsec = sec;
+              sectors[s].altheightsec = 1;
+            }
             break;
 
           //SoM: 4/4/2000: HACK! Copy colormaps. Just plain colormaps.
@@ -3195,6 +3192,16 @@ void P_SpawnSpecials (void)
             sec = sides[*lines[i].sidenum].sector-sectors;
             for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
               P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_RENDERALL|FF_CUTLEVEL);
+            break;
+		  case 303: // nozomi water!!
+            sec = sides[*lines[i].sidenum].sector-sectors;
+            for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
+              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_SWIMMABLE|FF_TRANSLUCENT|FF_RENDERPLANES);
+            break;
+		  case 304: // nozomi water w/ sides!!
+            sec = sides[*lines[i].sidenum].sector-sectors;
+            for (s = -1; (s = P_FindSectorFromLineTag(lines+i,s)) >= 0;)
+              P_AddFakeFloor(&sectors[s], &sectors[sec], lines+i, FF_EXISTS|FF_SWIMMABLE|FF_TRANSLUCENT|FF_RENDERALL);
             break;
 #endif
 

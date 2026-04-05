@@ -81,6 +81,14 @@ result_e T_MovePlane
       switch(direction)
       {
         case -1:
+          //SoM: 3/20/2000: Make splash when platform floor hits water
+          if(boomsupport && sector->heightsec != -1 && sector->altheightsec == 1)
+          {
+            if((sector->floorheight - speed) < sectors[sector->heightsec].floorheight
+               && sector->floorheight > sectors[sector->heightsec].floorheight)
+              S_StartSound((mobj_t *)&sector->soundorg, sfx_gloop);
+          }
+          // Moving a floor down
           if (sector->floorheight - speed < dest)
           {
             lastpos = sector->floorheight;
@@ -108,6 +116,15 @@ result_e T_MovePlane
           break;
                                                 
         case 1:
+          // Moving a floor up
+          // keep floor from moving thru ceilings
+          //SoM: 3/20/2000: Make splash when platform floor hits water
+          if(boomsupport && sector->heightsec != -1 && sector->altheightsec == 1)
+          {
+            if((sector->floorheight + speed) > sectors[sector->heightsec].floorheight
+               && sector->floorheight < sectors[sector->heightsec].floorheight)
+              S_StartSound((mobj_t *)&sector->soundorg, sfx_gloop);
+          }
           destheight = (!boomsupport || dest<sector->ceilingheight)?
                           dest : sector->ceilingheight;
           if (sector->floorheight + speed > destheight)
@@ -149,6 +166,12 @@ result_e T_MovePlane
       switch(direction)
       {
         case -1:
+          if(boomsupport && sector->heightsec != -1 && sector->altheightsec == 1)
+          {
+            if((sector->ceilingheight - speed) < sectors[sector->heightsec].floorheight
+               && sector->ceilingheight > sectors[sector->heightsec].floorheight)
+              S_StartSound((mobj_t *)&sector->soundorg, sfx_gloop);
+          }
           // moving a ceiling down
           // keep ceiling from moving thru floors
           destheight = (!boomsupport || dest>sector->floorheight)?
@@ -185,6 +208,12 @@ result_e T_MovePlane
           break;
                                                 
         case 1:
+          if(boomsupport && sector->heightsec != -1 && sector->altheightsec == 1)
+          {
+            if((sector->ceilingheight + speed) > sectors[sector->heightsec].floorheight
+               && sector->ceilingheight < sectors[sector->heightsec].floorheight)
+              S_StartSound((mobj_t *)&sector->soundorg, sfx_gloop);
+          }
           // moving a ceiling up
           if (sector->ceilingheight + speed > dest)
           {
