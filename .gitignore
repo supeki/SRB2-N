@@ -10,6 +10,19 @@ assets/*.backup*
 *.opt
 *.ncb
 
+objs
+*.cfg
+*.lmp
+*.bak
+*.dbs
+*.backup*
+*.ilk
+*.pcx
+*.png
+*.exe
+errlog.txt
+*.ssg
+
 # CMake ignores
 CMakeLists.txt.user
 CMakeCache.txt

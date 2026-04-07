@@ -225,6 +225,7 @@ typedef struct player_s
     int emerald5;
     int emerald6;
     int emerald7;
+	int emerald8;
 	int token; // Number of tokens collected in a level Tails 08-11-2001
 	int lastmap; // Last level you were at Tails 08-11-2001
 	int	sstimer; // Time allotted in the special stage Tails 08-11-2001
@@ -268,6 +269,7 @@ typedef struct player_s
 	int homingtimer; // A homing timer to prevent softlocks with the Homing Thok.
 	int autobrake; // Mid-air autobrake to prevent overshooting.
 	int ringtimer; // A timer that tics down, used for pitch scaling rings.
+	int runspeed; // How fast the player needs to be for running anims!
 
 	////////////////////////////
 	// Conveyor Belt Movement //

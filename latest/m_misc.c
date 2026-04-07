@@ -464,6 +464,7 @@ void M_ScreenShot (void)
     int         i;
     byte*       linear;
     char        lbmname[12];
+	void*       screenshot_pal;
 
 #ifdef HWRENDER // not win32 only 19990829 by Kin
     if (rendermode!=render_soft)
@@ -489,12 +490,18 @@ void M_ScreenShot (void)
         if (access(lbmname,0) == -1)
             break;      // file doesn't exist
     }
-    if (i<100)
+
+	if (players[displayplayer].mo && players[displayplayer].mo->eflags & MF_UNDERWATER)
+		screenshot_pal = W_CacheLumpName ("WATERPAL",PU_CACHE);
+	else
+		screenshot_pal = W_CacheLumpName ("PLAYPAL",PU_CACHE);
+
+    if (i<1000)
     {
        // save the pcx file
        WritePCXfile (lbmname, linear,
                      vid.width, vid.height,
-                     W_CacheLumpName ("PLAYPAL",PU_CACHE));
+                     screenshot_pal);
        players[consoleplayer].message = "screen shot";
     }
     else
@@ -520,7 +527,6 @@ char*   va(char *format, ...)
 
     return string;
 }
-
 
 // creates a copy of a string, null-terminated
 // returns ptr to the new duplicate string

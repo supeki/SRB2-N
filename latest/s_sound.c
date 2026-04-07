@@ -77,6 +77,7 @@ extern int msg_id;
 #include "command.h"
 #include "g_game.h"
 #include "m_argv.h"
+#include "p_local.h"
 #include "r_main.h"     //R_PointToAngle2() used to calc stereo sep.
 #include "r_things.h"     // for skins
 
@@ -736,6 +737,9 @@ void S_ChangeMusic( int                   musicnum,
 
 	if (musicnum == mus_supers && strlen(custom_supermusic) > 0)
 		strncpy(music_name, custom_supermusic, 8);
+
+	if (musicnum == mus_supers && cv_superman.value)
+		strncpy(music_name, "SUPERMAN", 8);
 
 	if (mus_playing && !stricmp(mus_playing->name, music_name))
 		return;

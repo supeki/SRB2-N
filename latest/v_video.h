@@ -196,7 +196,7 @@ void V_DrawFill (int x, int y, int w, int h, int c);
 void V_DrawFlatFill (int x, int y, int w, int h, int flatnum);
 
 //added:10-02-98: fade down the screen buffer before drawing the menu over
-void V_DrawFadeScreen (void);
+void V_DrawFadeScreen (int fadenum);
 
 //added:20-03-98: test console
 void V_DrawFadeConsBack (int x1, int y1, int x2, int y2);
@@ -206,6 +206,7 @@ void V_DrawCharacter (int x, int y, int c);
 
 //added:05-02-98: draw a string using the hu_font
 void V_DrawString (int x, int y, char* string);
+
 //added:05-02-98: V_DrawString which remaps text color to whites
 void V_DrawStringWhite (int x, int y, char* string);
 

@@ -445,7 +445,7 @@ boolean PIT_CheckThing (mobj_t* thing)
     if(!tmthing || !thing || thing == tmthing || thing->state == &states[S_DISS])
 		return true;
 
-    if(!(thing->flags & (MF_SOLID|MF_SPECIAL|MF_SHOOTABLE)))
+    if(!(thing->flags & (MF_SOLID|MF_SPECIAL|MF_SHOOTABLE)) && !(thing->info->flags2 & (MF2_SPRING)))
 		return true;
 
 	if(thing->type == MT_SPARK || tmthing->type == MT_SPARK)
@@ -471,51 +471,6 @@ boolean PIT_CheckThing (mobj_t* thing)
 			tmthing->momx = tmthing->momy = tmthing->momz = 0;
 			return false;           // stop moving
 		}
-    }
-
-// Snowballs can hit other things Tails 12-12-2001
-    if (tmthing->type == MT_SNOWBALL) // Tails 12-12-2001
-    {
-        // see if it went over / under
-        if (tmthing->z > thing->z + thing->height)
-            return true;                // overhead
-        if (tmthing->z+tmthing->height < thing->z)
-            return true;                // underneath
-
-        if (( tmthing->target && (
-            tmthing->target->type == thing->type)) )
-        {
-            // Don't hit same species as originator.
-            if (thing == tmthing->target)
-                return true;
-
-            if (thing->type != MT_PLAYER)
-            {
-                // Explode, but do no damage.
-                // Let players missile other players.
-                return false;
-            }
-        }
-
-        if (! (thing->flags & MF_SHOOTABLE) )
-        {
-            // didn't do any damage
-            return !(thing->flags & MF_SOLID);
-        }
-
-        // damage / explode
-        damage = ((P_Random()%8)+1)*tmthing->info->damage;
-		if(tmthing->type == MT_DETON)
-			P_DamageMobj (thing, tmthing, tmthing, damage); // New way Tails 12-10-2000
-		else
-			P_DamageMobj (thing, tmthing, tmthing->target, damage); // New way Tails 12-10-2000
-/*
-        if( P_DamageMobj (thing, tmthing, tmthing->target, damage) && (thing->flags & MF_NOBLOOD)==0 && demoversion>=129 )
-            P_SpawnBloodSplats (tmthing->x,tmthing->y,tmthing->z, damage, thing->momx, thing->momy);
-*/
-
-        // don't traverse any more
-			return true;
     }
 
     // missiles can hit other things
@@ -554,10 +509,6 @@ boolean PIT_CheckThing (mobj_t* thing)
 			P_DamageMobj (thing, tmthing, tmthing, damage); // New way Tails 12-10-2000
 		else
 			P_DamageMobj (thing, tmthing, tmthing->target, damage); // New way Tails 12-10-2000
-/*
-        if( P_DamageMobj (thing, tmthing, tmthing->target, damage) && (thing->flags & MF_NOBLOOD)==0 && demoversion>=129 )
-            P_SpawnBloodSplats (tmthing->x,tmthing->y,tmthing->z, damage, thing->momx, thing->momy);
-*/
 
         // don't traverse any more
 			return false;
@@ -568,8 +519,168 @@ boolean PIT_CheckThing (mobj_t* thing)
 	else if(thing->type == MT_SPIKEBALL && tmthing->player)
 		P_TouchSpecialThing(thing, tmthing);
 
+	// Spring logic recode! Nozomi 03-16-2026
+	if(((thing->z <= tmthing->z + tmthing->height) && (thing->z + thing->height >= tmthing->z)) || (tmthing->z == thing->z + thing->height + FRACUNIT)) // Are you touching the side of it?
+	{
+		mobj_t*	spring = NULL;
+		mobj_t* othermo = NULL;
+
+		if (thing->flags2 & MF2_SPRING) // Prioritize whatever's not moving.
+			spring = thing;
+		else if (tmthing->flags2 & MF2_SPRING)
+			spring = tmthing;
+
+		if (spring == thing)
+			othermo = tmthing;
+		else
+			othermo = thing;
+
+		if (spring && othermo) {
+			//if (othermo->eflags & MF_SPRUNG) {
+			//	return true;
+			//}
+
+			if (spring->info->damage != 0 || (othermo->player && othermo->player->homing)) {
+				othermo->momx = othermo->momy = 0;
+
+				P_UnsetThingPosition (othermo);
+				tmthing->x = spring->x;
+				tmthing->y = spring->y;
+				P_SetThingPosition (othermo);
+			}
+
+			if (spring->info->flags & MF_SOLID)
+				spring->flags &= ~MF_SOLID;
+
+			if (spring->info->mass != 0) {
+				P_UnsetThingPosition (othermo);
+				othermo->z = spring->z + spring->height + 1;
+				P_SetThingPosition (othermo);
+
+				othermo->momz = spring->info->mass;
+				if (othermo->player)
+					P_SetMobjState (othermo, S_PLAY_PLG1);
+			}
+
+			if (spring->info->damage != 0) {
+				if (spring->info->mass == 0)
+				{ // Partially stole this from 2.2 Nozomi 03-28-2026
+					fixed_t offx, offy;
+
+					// Overestimate the distance to position you at
+					offx = P_ReturnThrustX(othermo, spring->angle, (spring->radius + othermo->radius + 1) * 2);
+					offy = P_ReturnThrustY(othermo, spring->angle, (spring->radius + othermo->radius + 1) * 2);
+
+					if (offx > (thing->radius + tmthing->radius + 1))
+						offx = thing->radius + tmthing->radius + 1;
+					else if (offx < -(thing->radius + tmthing->radius + 1))
+						offx = -(thing->radius + tmthing->radius + 1);
+
+					if (offy > (thing->radius + tmthing->radius + 1))
+						offy = thing->radius + tmthing->radius + 1;
+					else if (offy < -(thing->radius + tmthing->radius + 1))
+						offy = -(thing->radius + tmthing->radius + 1);
+
+					// Set position!
+					P_UnsetThingPosition (othermo);
+					othermo->x = spring->x + offx;
+					othermo->y = spring->y + offy;
+					P_SetThingPosition (othermo);
+					
+					// force our angle for horiz :)
+					othermo->angle = spring->angle;
+					if (othermo->player && othermo->player==&players[consoleplayer])
+						localangle = spring->angle;
+				}
+
+				P_InstaThrust(othermo, spring->angle, spring->info->damage);
+
+				if(!othermo->player || (othermo->player && !(othermo->player->cmd.forwardmove || othermo->player->cmd.sidemove)))
+				{
+					othermo->angle = spring->angle;
+					if (othermo->player==&players[consoleplayer])
+						localangle = spring->angle;
+				}
+			}
+
+			// New spring state logic! Nozomi 03-28-2026
+			P_SetMobjState (spring, mobjinfo[spring->type].seestate);
+
+			if (spring->info->mass != 0 && othermo->player) {
+				othermo->player->mfspinning = 0;
+				othermo->player->mfjumped = 0;
+			}
+
+			if (othermo->player) {
+				othermo->player->homing = 0; // Don't continue homing in to springs! Nozomi 03-17-2026
+				othermo->player->gliding = 0;
+				othermo->player->glidetime = 0;
+				othermo->player->climbing = 0;
+			}
+
+			if (spring->info->flags & MF_SOLID)
+				spring->flags |= MF_SOLID;
+
+			othermo->eflags |= MF_SPRUNG;
+		}
+	}
+
+	// Fan & Steam logic recode! Nozomi 04-03-2026
+	{
+		mobj_t* fan = NULL;
+		mobj_t* othermo = NULL;
+
+		if ( // Prioritize whatever's not moving.
+			thing->type == MT_MISC34 
+			|| thing->type == MT_REDFAN
+			|| thing->type == MT_STEAM
+			)
+			fan = thing;
+		else if (
+			tmthing->type == MT_MISC34 
+			|| tmthing->type == MT_REDFAN
+			|| tmthing->type == MT_STEAM
+			)
+			fan = tmthing;
+
+		if (fan == thing)
+			othermo = tmthing;
+		else
+			othermo = thing;
+
+		if (fan && othermo && (othermo->z >= fan->z))
+		{
+			switch (fan->type) {
+				case MT_MISC34:
+					othermo->momz = 5*FRACUNIT;
+					break;
+				case MT_REDFAN:
+					if (othermo->momz < 0)
+						othermo->momz = JUMPGRAVITY;
+					else
+						othermo->momz += JUMPGRAVITY/8;
+					break;
+				case MT_STEAM:
+					if(fan->state == &states[S_STEAM1] && othermo->z <= fan->z + 16*FRACUNIT)
+						othermo->momz = 20*FRACUNIT;
+					break;
+			}
+
+			if (othermo->player) {
+				othermo->player->mfspinning = 0;
+				othermo->player->mfjumped = 0;
+				othermo->player->gliding = 0;
+				othermo->player->glidetime = 0;
+				othermo->player->climbing = 0;
+				
+				if((fan->type == MT_STEAM && (fan->state == &states[S_STEAM1] && othermo->z <= fan->z + 16*FRACUNIT)) || (fan->type != MT_STEAM && !(othermo->state == &states[S_PLAY_FALL1] || othermo->state == &states[S_PLAY_FALL2])))
+					P_SetMobjState (othermo, S_PLAY_FALL1);
+			}
+		}
+	}
+
    // check for special pickup
-	// WHY THE FUCK IS EGGMAN IN CEZ3 NOT APPLIED WITH MF_SPECIAL???
+	// WHY THE FUCK IS EGGMAN IN CEZ3 NOT APPLIED WITH MF_SPECIAL??? Nozomi
 	if(thing->flags & MF_SPECIAL || thing->flags & MF_ENEMY)
 	{
 		solid = thing->flags & MF_SOLID;
@@ -655,199 +766,10 @@ if(thing->player && tmthing->player && (((thing->z <= tmthing->z + tmthing->heig
 // End some Tag Mode stuff Tails 05-08-2001
 
 // Start snazzy new collision code! Tails 10-30-2000
-
-	if(thing->player && thing->z >= tmthing->z) // Stuff where da player don't gotta move Tails 05-29-2001
-	{
-		switch(tmthing->type)
-			{
-				case MT_MISC34: // fan
-					if(thing->z <= (thing->subsector->sector->ceilingheight - .25*(thing->subsector->sector->ceilingheight - thing->subsector->sector->floorheight)))
-					{
-						thing->momz = 5*FRACUNIT;
-						thing->player->mfspinning = 0;
-						thing->player->mfjumped = 0;
-						thing->player->gliding = 0;
-						thing->player->glidetime = 0;
-						thing->player->climbing = 0;
-						if(!(thing->state == &states[S_PLAY_FALL1] || thing->state == &states[S_PLAY_FALL2]))
-							P_SetMobjState (thing, S_PLAY_FALL1);
-					}
-					break;
-				case MT_REDFAN: // Red fan! Nozomi 03-15-2026
-					if(thing->z <= (thing->subsector->sector->ceilingheight - .25*(thing->subsector->sector->ceilingheight - thing->subsector->sector->floorheight)))
-					{
-						if (thing->momz < 0)
-							thing->momz = JUMPGRAVITY;
-						else
-							thing->momz += JUMPGRAVITY/8;
-						thing->player->mfspinning = 0;
-						thing->player->mfjumped = 0;
-						thing->player->gliding = 0;
-						thing->player->glidetime = 0;
-						thing->player->climbing = 0;
-						if(!(thing->state == &states[S_PLAY_FALL1] || thing->state == &states[S_PLAY_FALL2]))
-							P_SetMobjState (thing, S_PLAY_FALL1);
-					}
-					break;
-				case MT_STEAM: // Steam, duh! Can't you read? Tails 05-28-2001
-					if(tmthing->state == &states[S_STEAM1] && thing->z <= tmthing->z + 16*FRACUNIT) // Only when it bursts
-					{
-						thing->momz = 20*FRACUNIT;
-						thing->player->mfspinning = 0;
-						thing->player->mfjumped = 0;
-						thing->player->gliding = 0;
-						thing->player->glidetime = 0;
-						thing->player->climbing = 0;
-						if(!(thing->state == &states[S_PLAY_FALL1] || thing->state == &states[S_PLAY_FALL2]))
-							P_SetMobjState (thing, S_PLAY_FALL1);
-					}
-					break;
-			default:
-				break;
-			}
-	}
-
 if(tmthing->player) // Is the moving/interacting object the player?
 	{
-	if(tmthing->z >= thing->z)
-	{
-		switch(thing->type)
-			{
-			case MT_MISC34: // fan
-				if(tmthing->z <= (tmthing->subsector->sector->ceilingheight - .25*(tmthing->subsector->sector->ceilingheight - tmthing->subsector->sector->floorheight)))
-				{
-				tmthing->momz = 5*FRACUNIT;
-                tmthing->player->mfspinning = 0;
-                tmthing->player->mfjumped = 0;
-                tmthing->player->gliding = 0;
-                tmthing->player->glidetime = 0;
-                tmthing->player->climbing = 0;
-				if(!(tmthing->state == &states[S_PLAY_FALL1] || tmthing->state == &states[S_PLAY_FALL2]))
-					P_SetMobjState (tmthing, S_PLAY_FALL1);
-				}
-				break;
-			case MT_REDFAN: // Red fan! Nozomi 03-15-2026
-				if(tmthing->z <= (tmthing->subsector->sector->ceilingheight - .25*(tmthing->subsector->sector->ceilingheight - tmthing->subsector->sector->floorheight)))
-				{
-					if (tmthing->momz < 0)
-						tmthing->momz = JUMPGRAVITY;
-					else
-						tmthing->momz += JUMPGRAVITY/8;
-					tmthing->player->mfspinning = 0;
-					tmthing->player->mfjumped = 0;
-					tmthing->player->gliding = 0;
-					tmthing->player->glidetime = 0;
-					tmthing->player->climbing = 0;
-					if(!(tmthing->state == &states[S_PLAY_FALL1] || tmthing->state == &states[S_PLAY_FALL2]))
-						P_SetMobjState (tmthing, S_PLAY_FALL1);
-				}
-				break;
-			case MT_STEAM: // Steam, duh! Can't you read? Tails 05-28-2001
-				if(thing->state == &states[S_STEAM1] && tmthing->z <= thing->z + 16*FRACUNIT) // Only when it bursts
-				{
-				tmthing->momz = 20*FRACUNIT;
-                tmthing->player->mfspinning = 0;
-                tmthing->player->mfjumped = 0;
-                tmthing->player->gliding = 0;
-                tmthing->player->glidetime = 0;
-                tmthing->player->climbing = 0;
-				if(!(tmthing->state == &states[S_PLAY_FALL1] || tmthing->state == &states[S_PLAY_FALL2]))
-					P_SetMobjState (tmthing, S_PLAY_FALL1);
-				}
-				break;
-			default:
-				break;
-				}
-	}
 	if(((thing->z <= tmthing->z + tmthing->height) && (thing->z + thing->height >= tmthing->z)) || (tmthing->z == thing->z + thing->height + FRACUNIT)) // Are you touching the side of it?
 		{
-
-		// Spring logic recode! Nozomi 03-16-2026
-		if (thing->flags2 & MF2_SPRING) {
-			if (tmthing->eflags & MF_SPRUNG)
-				return false;
-
-			if (thing->info->damage || tmthing->player->homing) {
-				tmthing->player->mo->momx = tmthing->player->mo->momy = 0;
-
-				P_UnsetThingPosition (tmthing);
-				tmthing->player->mo->x = thing->x;
-				tmthing->player->mo->y = thing->y;
-				
-				if (thing->info->mass > 0)
-					tmthing->player->mo->z = thing->z + thing->height + 1;
-				P_SetThingPosition (tmthing);
-			}
-
-			if (thing->info->mass > 0) {
-				tmthing->player->mo->z++;
-				tmthing->player->mo->momz = thing->info->mass;
-				P_SetMobjState (tmthing->player->mo, S_PLAY_PLG1);
-			}
-
-			thing->flags &= ~(MF_SOLID);
-			thing->flags2 &= ~(MF2_SPRING);
-
-			if (thing->info->damage > 0) {
-				if (thing->info->mass == 0)
-				{ // Partially stole this from 2.2 Nozomi 03-28-2026
-					fixed_t offx, offy;
-					// Horizontal springs teleport you in FRONT of them.
-					tmthing->momx = tmthing->momy = 0;
-
-					// Overestimate the distance to position you at
-					offx = P_ReturnThrustX(thing, thing->angle, (thing->radius + tmthing->radius + 1) * 2);
-					offy = P_ReturnThrustY(thing, thing->angle, (thing->radius + tmthing->radius + 1) * 2);
-
-					// Make it square by clipping
-					if (offx > (thing->radius + tmthing->radius + 1))
-						offx = thing->radius + tmthing->radius + 1;
-					else if (offx < -(thing->radius + tmthing->radius + 1))
-						offx = -(thing->radius + tmthing->radius + 1);
-
-					if (offy > (thing->radius + tmthing->radius + 1))
-						offy = thing->radius + tmthing->radius + 1;
-					else if (offy < -(thing->radius + tmthing->radius + 1))
-						offy = -(thing->radius + tmthing->radius + 1);
-
-					// Set position!
-					P_UnsetThingPosition (tmthing);
-					tmthing->player->mo->x = thing->x + offx;
-					tmthing->player->mo->y = thing->y + offy;
-					P_SetThingPosition (tmthing);
-					
-					// force our angle for horiz :)
-					tmthing->player->mo->angle = thing->angle;
-					if (tmthing->player==&players[consoleplayer])
-						localangle = thing->angle;
-				}
-
-				P_InstaThrust(tmthing, thing->angle, thing->info->damage);
-
-				if(!(tmthing->player->cmd.forwardmove || tmthing->player->cmd.sidemove))
-				{
-					tmthing->player->mo->angle = thing->angle;
-					if (tmthing->player==&players[consoleplayer])
-						localangle = thing->angle;
-				}
-			}
-
-			// New spring state logic! Nozomi 03-28-2026
-			P_SetMobjState (thing, mobjinfo[thing->type].seestate);
-
-			if (thing->info->mass != 0) {
-				tmthing->player->mfspinning = 0;
-				tmthing->player->mfjumped = 0;
-			}
-
-			tmthing->player->homing = 0; // Don't continue homing in to springs! Nozomi 03-17-2026
-            tmthing->player->gliding = 0;
-            tmthing->player->glidetime = 0;
-            tmthing->player->climbing = 0;
-			tmthing->eflags |= MF_SPRUNG;
-			thing->flags |= MF_SOLID;
-			thing->flags2 |= MF2_SPRING;
-		}
 
 		if((tmthing->player->mfjumped == 1) || (tmthing->player->mfspinning == 1) || (tmthing->player->powers[pw_invulnerability]) || (tmthing->player->powers[pw_super])) // Do you possess the ability to subdue the object?
 		{
@@ -872,12 +794,12 @@ if(tmthing->player) // Is the moving/interacting object the player?
 					}
 					break;
 				 case MT_SPEEDPAD: // Speed Pad
-                   tmthing->player->mo->momx = 0;
-                   tmthing->player->mo->momy = 0;
+                   tmthing->momx = 0;
+                   tmthing->momy = 0;
 				   P_UnsetThingPosition (tmthing);
-				   tmthing->player->mo->x = thing->x;
-				   tmthing->player->mo->y = thing->y;
-				   tmthing->player->mo->z = thing->z;
+				   tmthing->x = thing->x;
+				   tmthing->y = thing->y;
+				   tmthing->z = thing->z;
 				   P_SetThingPosition (tmthing);
                    P_InstaThrust(tmthing, thing->angle, 60*FRACUNIT);
 				   break;
@@ -889,20 +811,14 @@ if(tmthing->player) // Is the moving/interacting object the player?
 		{
 			switch(thing->type)
 			{
-                 case MT_MISC70: // Yellow vertical spring (pointing up)
-                   P_SetMobjState (thing, S_HEADSONSTICK2);
-                   break;
-                 case MT_MISC84: // Red vertical spring (pointing up)
-                   P_SetMobjState (thing, S_COLONGIBS2);
-                   break;
 				 case MT_SPEEDPAD: // Speed Pad
-                   tmthing->player->mo->momx = 0;
-                   tmthing->player->mo->momy = 0;
+                   tmthing->momx = 0;
+                   tmthing->momy = 0;
 				   P_UnsetThingPosition (tmthing);
-				   tmthing->player->mo->x = thing->x;
-				   tmthing->player->mo->y = thing->y;
-				   tmthing->player->mo->z = thing->z;
-				   tmthing->player->mo->angle = ANG45 * (thing->angle/45);
+				   tmthing->x = thing->x;
+				   tmthing->y = thing->y;
+				   tmthing->z = thing->z;
+				   tmthing->angle = ANG45 * (thing->angle/45);
 				if (tmthing->player==&players[consoleplayer])
 					localangle = thing->angle;
 				   P_SetThingPosition (tmthing);
@@ -1168,9 +1084,9 @@ boolean P_TryMove ( mobj_t*       thing,
     thing->y = y;
 
     //added:28-02-98:
-//    if (tmfloorthing)
-//        thing->eflags &= ~MF_ONGROUND;  //not on real floor
-//    else
+    //if (tmfloorthing)
+    //    thing->eflags &= ~MF_ONGROUND;  //not on real floor
+    //else {
         thing->eflags |= MF_ONGROUND;
 
     P_SetThingPosition (thing);
@@ -2080,6 +1996,57 @@ fixed_t P_AimLineAttack ( mobj_t*       t1,
     return 0;
 }
 
+// nozomi ver for homing
+fixed_t P_HomingLineAttack ( mobj_t*       t1,
+                          angle_t       angle,
+                          fixed_t       distance )
+{
+    fixed_t     x2;
+    fixed_t     y2;
+
+#ifdef PARANOIA
+    if(!t1)
+       I_Error("P_aimlineattack: mobj == NULL !!!");
+#endif
+
+    angle >>= ANGLETOFINESHIFT;
+    shootthing = t1;
+
+    {
+        x2 = t1->x + (distance>>FRACBITS)*finecosine[angle];
+        y2 = t1->y + (distance>>FRACBITS)*finesine[angle];
+
+        //added:15-02-98: Fab comments...
+        // Doom's base engine says that at a distance of 160,
+        // the 2d graphics on the plane x,y correspond 1/1 with plane units
+        topslope = 100*FRACUNIT/160;
+        bottomslope = -100*FRACUNIT/160;
+    }
+    shootz = t1->z + (t1->height>>1) + 8*FRACUNIT;
+
+    // can't shoot outside view angles
+
+
+    attackrange = distance;
+    linetarget = NULL;
+
+    //added:15-02-98: comments
+    // traverse all linedefs and mobjs from the blockmap containing t1,
+    // to the blockmap containing the dest. point.
+    // Call the function for each mobj/line on the way,
+    // starting with the mobj/linedef at the shortest distance...
+    P_PathTraverse ( t1->x, t1->y,
+                     x2, y2,
+                     PT_ADDLINES|PT_ADDTHINGS,
+                     PTR_AimTraverse );
+
+    //added:15-02-98: linetarget is only for mobjs, not for linedefs
+    if (linetarget)
+        return aimslope;
+
+    return 0;
+}
+
 
 //
 // P_LineAttack
@@ -2089,7 +2056,7 @@ fixed_t P_AimLineAttack ( mobj_t*       t1,
 //added:16-02-98: Fab comments...
 //                t1       est l'attaquant (player ou monstre)
 //                angle    est l'angle de tir sur le plan x,y (orientation)
-//                distance est la portï¿½e maximale de la balle
+//                distance est la port‚e maximale de la balle
 //                slope    est la pente vers la destination (up/down)
 //                damage   est les degats infliges par la balle
 void P_LineAttack ( mobj_t*       t1,
@@ -2353,7 +2320,7 @@ boolean PIT_ChangeSector (mobj_t*       thing)
     // crunch bodies to giblets
     if (thing->health <= 0)
     {
-        // P_SetMobjState (thing, S_GIBS); Nope.
+        P_SetMobjState (thing, S_GIBS);
 
         thing->flags &= ~MF_SOLID;
         thing->height = 0;

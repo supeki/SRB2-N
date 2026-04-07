@@ -103,16 +103,16 @@ int EV_Teleport ( line_t*       line,
                 if (!P_TeleportMove (thing, m->x, m->y))
                     return 0;
 
-                thing->z = thing->floorz;  //fixme: not needed?
+                //thing->z = thing->floorz;  //fixme: not needed?
                 if (thing->player)
                     thing->player->viewz = thing->z+thing->player->viewheight;
 
-                // NO
-                /*fog = P_SpawnMobj (oldx, oldy, oldz, MT_TFOG);
+                // spawn teleport fog at source and destination
+                fog = P_SpawnMobj (oldx, oldy, oldz, MT_TFOG);
                 S_StartSound (fog, sfx_telept);
                 an = m->angle >> ANGLETOFINESHIFT;
                 fog = P_SpawnMobj (m->x+20*finecosine[an], m->y+20*finesine[an]
-                                   , thing->z, MT_TFOG);*/
+                                   , thing->z, MT_TFOG);
 
                 // emit sound, where?
                 S_StartSound (fog, sfx_telept);

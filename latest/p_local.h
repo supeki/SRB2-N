@@ -70,6 +70,7 @@ extern int MAXHEALTH;   // 100
 
 // default viewheight is changeable at console
 extern consvar_t cv_viewheight; // p_mobj.c
+extern consvar_t cv_superman;
 
 // mapblocks are used to check movement
 // against lines and things
@@ -203,6 +204,9 @@ mobj_t* P_SpawnMissile (mobj_t* source, mobj_t* dest, mobjtype_t type);
 
 //added:16-02-98: added arg3 player_t* since its only used for player its ok
 void    P_SpawnPlayerMissile (mobj_t* source, mobjtype_t type, player_t* pl);
+mobj_t* P_SpawnCorona(mobj_t* mo);
+void P_SetSuperColor(mobj_t* mo);
+void P_SetHyperColor(mobj_t* mo);
 
 
 //
@@ -279,6 +283,13 @@ P_AimLineAttack
 ( mobj_t*       t1,
   angle_t       angle,
   fixed_t       distance );
+
+fixed_t
+P_HomingLineAttack
+( mobj_t*       t1,
+  angle_t       angle,
+  fixed_t       distance );
+
 
 void
 P_LineAttack

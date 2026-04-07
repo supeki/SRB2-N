@@ -58,10 +58,13 @@
 
 boolean  P_NukeEnemies (player_t* player);
 boolean  PIT_NukeEnemies (mobj_t* thing);
-boolean  P_LookForEnemies (player_t* player, boolean boss);
+boolean  P_LookForEnemies (player_t* player, boolean boss, boolean homing);
 boolean  P_HomingAttack (player_t* player, mobj_t* enemy);
 void D_StartTitle(); // Tails
 void P_FindEmerald();
+
+// For Jisk ... Nozomi
+consvar_t cv_superman = {"superman", "0", CV_NETVAR|CV_SAVE, CV_OnOff};
 
 
 // Index of the special effects (INVUL inverse) map.
@@ -219,6 +222,19 @@ extern int ticruned,ticmiss;
 extern consvar_t cv_homing; // Tails 07-02-2001
 extern consvar_t cv_numsnow; // Tails 12-25-200
 
+void P_SetSuperColor(mobj_t* mo)
+{
+	mo->color = SKINCOLOR_SUPER + abs((((signed)leveltime >> 1) % 9) - 4) + 1;
+}
+
+void P_SetHyperColor(mobj_t* mo)
+{
+	if (leveltime % 6 < 3)
+		mo->color = SKINCOLOR_HYPER+1;
+	else
+		mo->color = SKINCOLOR_HYPER2 + floor(leveltime/6 % 6) + 1;
+}
+
 //
 // P_MovePlayer
 //
@@ -240,7 +256,6 @@ void P_MovePlayer (player_t* player)
 	int waterspeed;
 	int flyspeed;
 	int topspeed;
-	int runspeed;
 	msecnode_t *node;
 	sector_t *sec;
     fixed_t   movepushforward=0,movepushside=0;
@@ -264,7 +279,7 @@ void P_MovePlayer (player_t* player)
 	if (cv_bosslockon.value && level_has_bosses) // awesome global that's set to false at P_SetupLevel and set to true when any mobj spawns with MF2_BOSS :3 Nozomi 03-27-2026
 	{
 		if ((leveltime % 4 == 0) && !player->mo->tracer)
-			P_LookForEnemies(player, true);
+			P_LookForEnemies(player, true, false);
 	}
 
 	movepushsideangle = movepushangle-ANG90;
@@ -328,10 +343,10 @@ void P_MovePlayer (player_t* player)
 	snormalspeed = 5 * normalspeed / 3;
 	swaterspeed = 5 * waterspeed / 3;
 	sflyspeed = 5 * flyspeed / 3;
-	runspeed = skins[player->skin].runspeed;
+	player->runspeed = skins[player->skin].runspeed;
 
-	if (!runspeed)
-		runspeed = normalspeed/3*2;
+	if (!player->runspeed)
+		player->runspeed = normalspeed/3*2;
 
 	// So... why wasn't SSNTails handling it this way before...?
 	// That... I do not know. Nozomi 03-18-2026
@@ -366,8 +381,6 @@ void P_MovePlayer (player_t* player)
 
 	if (player->powers[pw_strength] || player->powers[pw_super])
 		player->acceleration *= 2;
-
-	player->mo->eflags &= ~MF_SPRUNG;
 
 	// Autobrake by Jisk, turned into a player option by Nozomi 03-19-2026
 	if (!onground && !(cmd->forwardmove || cmd->sidemove) && player->autobrake && player->mfjumped && !(player->mfspinning || player->gliding || player->climbing || (player->mo->state == &states[S_PLAY_PAIN] && player->powers[pw_invisibility]))) {
@@ -466,7 +479,7 @@ void P_MovePlayer (player_t* player)
 					movepushside >>= 2;
 			}
 			// Allow a bit of movement while spinning
-			else if (player->mfspinning)
+			else if (player->mfspinning) // This can like, cause speed gain but idrc Nozomi
 			{
 				if (player->mfstartdash)
 					movepushside = 0;
@@ -532,7 +545,7 @@ void P_MovePlayer (player_t* player)
 		{
 	// If the player is moving fast enough,
 	// break into a run!
-			if((player->speed > runspeed) && player->walking && (onground))
+			if((player->speed > player->runspeed) && player->walking && (onground))
 				P_SetMobjState (player->mo, S_PLAY_SPD1);
 
 	// Otherwise, just walk.
@@ -591,16 +604,9 @@ void P_MovePlayer (player_t* player)
 		else
 			player->mo->flags &= ~MF_SHADOW;
 
-		// "If the player is Super Sonic and is pressing the
-		// forward/back or left/right keys and running, play
-		// Super Sonic's running animation."
-/*		if  (player->powers[pw_super] && (cmd->forwardmove || cmd->sidemove)
-			&& player->running)
-		        P_SetMobjState (player->mo, S_PLAY_ABL1);*/
-
 		// If your running animation is playing, and you're
 		// going too slow, switch back to the walking frames.
-		if (player->running && !(player->speed >= runspeed))
+		if (player->running && !(player->speed >= player->runspeed))
 			P_SetMobjState (player->mo, S_PLAY_RUN1);
 
 		// If Springing, but travelling DOWNWARD, change back!
@@ -858,15 +864,18 @@ void P_MovePlayer (player_t* player)
 		}
 
 // Jump out of water stuff Tails 12-06-2000
-		if((player->mo->eflags & ~MF_UNDERWATER
+		if(
+			(player->mo->eflags & ~MF_UNDERWATER
 			&& player->mo->momz > 0
 			&& player->mo->z+(player->mo->height>>1) > player->mo->waterz
-			&& player->mo->z+(player->mo->height>>1) - player->mo->momz < player->mo->waterz)
-			|| (player->mo->eflags & MF_UNDERWATER
+			&& player->mo->z+(player->mo->height>>1) - player->mo->momz < player->mo->waterz
+			)
+			|| (player->mo->eflags & MF_TOUCHWATER
 			&& player->mo->momz < 0
-			&& player->mo->z+(player->mo->height>>1) < player->mo->waterz
-			&& player->mo->z+(player->mo->height>>1) - player->mo->momz > player->mo->waterz))
-		{
+			&& player->mo->z+(player->mo->height>>1) <= player->mo->waterz
+			&& player->mo->z+(player->mo->height>>1) - player->mo->momz >= player->mo->waterz
+			)
+		) {
 				if(player->mo->momz > 0)
 					player->mo->momz = player->mo->momz*1.706783369803; // Give the player a little out-of-water boost.
 
@@ -940,12 +949,10 @@ void P_MovePlayer (player_t* player)
 //////////////////////////
 
 // Does player have all emeralds? If so, flag the "Ready For Super!" Tails 04-08-2000
-		if((player->emerald1) && (player->emerald2) && (player->emerald3) && (player->emerald4) && (player->emerald5) && (player->emerald6) && (player->emerald7) && (player->health > 50))
+		if((player->emerald1) && (player->emerald2) && (player->emerald3) && (player->emerald4) && (player->emerald5) && (player->emerald6) && (player->emerald7) && (player->health > 50) && skins[player->skin].no_super == 0)
 			player->superready = true;
 		else
 			player->superready = false;
-
-
 
 		if(player->powers[pw_super])
 		{
@@ -953,6 +960,20 @@ void P_MovePlayer (player_t* player)
 			// This is fucking stupid. Nozomi 03-16-2026
 			/*if(!(player->skin == 0))
 				player->powers[pw_super] = 0;*/
+
+			// Change your color to flash!
+			if (!cv_superman.value) {
+				if (player->emerald8)
+					P_SetHyperColor(player->mo);
+				else
+					P_SetSuperColor(player->mo);
+			}
+			else if (player->mo->color > MAXSKINCOLORS)
+				player->mo->color = player->skincolor;
+
+			// Force animation frames if standing...
+			if (!cv_superman.value && player->mo->state == &states[S_PLAY] && !strcmp(skins[player->skin].name, "sonic"))
+				player->mo->frame = (leveltime / (TICRATE/2)) % 2;
 
 			// Deplete one ring every second while super
 			if((leveltime % TICRATE == 0) && !(player->exiting))
@@ -972,6 +993,9 @@ void P_MovePlayer (player_t* player)
 				if (cv_supermusic.value)
 					S_ChangeMusic(mus_runnin + gamemap - 1, 1);
 
+				// Restore your skincolor.
+				player->mo->color = player->skincolor;
+
 				// If you had a shield, restore its visual significance.
 				if(player->powers[pw_blueshield])
 					P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z, MT_BLUEORB)->target = player->mo;
@@ -982,14 +1006,6 @@ void P_MovePlayer (player_t* player)
 				else if(player->powers[pw_blackshield])
 					P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z, MT_BLACKORB)->target = player->mo;
 			}
-
-			// If Super Sonic is moving fast enough, run across the water!
-	/*		if((player->powers[pw_super]) && (player->mo->z < player->mo->waterz+10*FRACUNIT) && (player->mo->z > player->mo->waterz-10*FRACUNIT) && (cmd->forwardmove) && (player->rmomx) && (player->rmomy) && (player->mo->momz < 0) && (player->speed > 10))
-			{
-				 player->mo->z = player->mo->waterz;
-				 player->mo->momz = 0;
-	//			 P_SpawnSplash (player->mo, (player->mo->z));
-			}*/
 		}
 
 ///////////////////////////
@@ -1290,20 +1306,11 @@ void P_MovePlayer (player_t* player)
 				{
 					case 0:
 						// Now it's Sonic's abilities turn!
-						if (player->mfjumped)
+						if (player->mfjumped && (!player->superready || player->powers[pw_super]))
 						{
 							if(player->powers[pw_super])		// If you're Super Sonic,
 							{									// do a little upward boost
 								player->mo->momz += 2*FRACUNIT; // instead!
-							}
-							else if(player->superready) // If you can turn into Super
-							{							// and aren't, do it!
-								// Insert flashy transformation animation here.
-								player->powers[pw_super] = true;
-								P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z + player->mo->height, MT_CAPE)->target = player->mo; // A cape... "Super" Sonic, get it? Ha...ha...
-							
-								if (cv_supermusic.value)
-									S_ChangeMusic(mus_supers, true);
 							}
 							else if(!player->homing) // Otherwise, THOK!
 							{
@@ -1320,7 +1327,7 @@ void P_MovePlayer (player_t* player)
 								// Must press jump while holding down spin to activate.
 								if(cv_homing.value && !player->homing && player->mfjumped)
 								{
-									if(P_LookForEnemies(player, false))
+									if(P_LookForEnemies(player, false, true))
 										if(player->mo->tracer)
 											player->homing = 1;
 								}
@@ -1336,7 +1343,7 @@ void P_MovePlayer (player_t* player)
 					case 1:
 						// If currently in the air from a jump, and you pressed the
 						// button again and have the ability to fly, do so!
-						if(!(player->powers[pw_tailsfly]) && (player->mfjumped))
+						if(!(player->powers[pw_tailsfly]) && (player->mfjumped) && !player->superready)
 						{
 							P_SetMobjState (player->mo, S_PLAY_ABL1); // Change to the flying animation
 							player->jumpdown = true;
@@ -1357,7 +1364,7 @@ void P_MovePlayer (player_t* player)
 
 					case 2:
 						// Now Knuckles-type abilities are checked.
-						if (player->mfjumped)
+						if (player->mfjumped && !player->superready)
 						{
 							player->gliding = 1;
 							player->glidetime = 0;
@@ -1370,6 +1377,23 @@ void P_MovePlayer (player_t* player)
 						break;
 					default:
 						break;
+				}
+
+				if(player->mfjumped && player->superready && !player->powers[pw_super]) // If you can turn into Super
+				{							// and aren't, do it!
+					// Insert flashy transformation animation here.
+					player->powers[pw_super] = true;
+
+					if (cv_superman.value) // Jisk got upset when I said I wanted to remove the cape ... Nozomi
+						P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z + player->mo->height, MT_CAPE)->target = player->mo; // A cape... "Super" Sonic, get it? Ha...ha...
+				
+					if (cv_supermusic.value)
+						if (player->emerald8)
+							S_ChangeMusicName("NFFZ", true);
+						else
+							S_ChangeMusic(mus_supers, true);
+
+					P_SpawnCorona(player->mo);
 				}
 			}
 		}
@@ -1791,8 +1815,8 @@ void P_MovePlayer (player_t* player)
 			}
 	}
 
-	// Display a ghost if you have Speed Sneakers and are going fast enough! Nozomi Date Unknown
-	if (((player->speed + abs(player->mo->momz/FRACUNIT)) > normalspeed/3*2 && player->powers[pw_strength]) || player->homing) {
+	// Display a ghost if you have Speed Sneakers (or are Super!) and are going fast enough! Nozomi Date Unknown
+	if (((player->speed + abs(player->mo->momz/FRACUNIT)) > normalspeed/3*2 && (player->powers[pw_strength] || player->powers[pw_super])) || player->homing || (player->mo->color > SKINCOLOR_HYPER && (player->speed + abs(player->mo->momz/FRACUNIT) > 2))) {
 		mobj_t* ghost;
 		ghost = P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z, MT_THOK);
 		ghost->skin = player->mo->skin;
@@ -1801,10 +1825,30 @@ void P_MovePlayer (player_t* player)
 		ghost->color = player->mo->color;
 		ghost->angle = player->mo->angle;
 		ghost->flags |= MF_TRANSLATION;
+		ghost->target = player->mo;
 		if (player->homing)
 			ghost->fuse = 4;
 		else
 			ghost->fuse = 2;
+
+		// Add a second one if you're Hyper!
+		if (player->mo->color > SKINCOLOR_HYPER)
+		{
+			mobj_t* ghost2;
+			// Make this ghost lag behind a bit..
+			ghost2 = P_SpawnMobj(player->mo->x-player->mo->momx, player->mo->y-player->mo->momy, player->mo->z-player->mo->momz, MT_THOK);
+			ghost2->skin = player->mo->skin;
+			ghost2->sprite = player->mo->sprite;
+			ghost2->frame = player->mo->frame; // This one isn't translucent!
+			ghost2->color = player->mo->color;
+			ghost2->angle = player->mo->angle;
+			ghost2->flags |= MF_TRANSLATION;
+			ghost2->target = player->mo;
+			if (player->homing)
+				ghost2->fuse = 4;
+			else
+				ghost2->fuse = 2;
+		}
 	}
 }
 
@@ -1893,12 +1937,11 @@ boolean PIT_NukeEnemies (mobj_t* thing)
     return true;
 }
 
-
 //
 // P_LookForEnemies
 // Looks for something you can hit - Used for homing attack Tails 06-20-2001
 //
-boolean P_LookForEnemies (player_t* player, boolean boss)
+boolean P_LookForEnemies (player_t* player, boolean boss, boolean homing)
 {
     int                 i;
     angle_t             an;
@@ -1908,7 +1951,10 @@ boolean P_LookForEnemies (player_t* player, boolean boss)
     {
         an = player->mo->angle - ANG90/2 + ANG90/40*i;
 
-        P_AimLineAttack (player->mo, an, 16*64*FRACUNIT);
+		if (homing)
+			P_HomingLineAttack (player->mo, an, 16*64*FRACUNIT);
+		else
+			P_AimLineAttack (player->mo, an, 16*64*FRACUNIT);
 
         if (!linetarget)
             continue;
@@ -2712,8 +2758,11 @@ void P_PlayerThink (player_t* player)
     if (player->powers[pw_tailsfly]) // tails fly
         player->powers[pw_tailsfly]--; // counter Tails 03-05-2000
 
-    if (player->powers[pw_underwater]) // underwater
+	// Don't drown if you're Hyper!
+    if (player->powers[pw_underwater] && player->mo->color < SKINCOLOR_HYPER) // underwater
         player->powers[pw_underwater]--; // timer Tails 03-06-2000
+	else if (player->powers[pw_underwater] && player->mo->color > SKINCOLOR_HYPER)
+		player->powers[pw_underwater] = 30*TICRATE;
 
     if (player->powers[pw_extralife]) // what's it look like pal?
         player->powers[pw_extralife]--; // duuuuh Tails 03-14-2000
@@ -2724,35 +2773,12 @@ void P_PlayerThink (player_t* player)
     if (player->bonuscount)
         player->bonuscount--;
 
+	// Nozomi Ring Timer for Ring Pitch
 	if (player->ringtimer && !(leveltime % 8))
 		player->ringtimer--;
 
 	if (player->ringtimer > 10)
 		player->ringtimer = 10;
 
-    // Handling colormaps.
-	// DIEE!!!! Tails 01-06-2001
-/*
-    if (player->powers[pw_invulnerability])
-    {
-        if (player->powers[pw_invulnerability] > 4*TICRATE
-            || (player->powers[pw_invulnerability]&8) )
-            player->fixedcolormap = INVERSECOLORMAP;
-        else
-            player->fixedcolormap = 0;
-    }
-    else if (player->powers[pw_infrared])
-    {
-        if (player->powers[pw_infrared] > 4*TICRATE
-            || (player->powers[pw_infrared]&8) )
-        {
-            // almost full bright
-            player->fixedcolormap = 1;
-        }
-        else
-            player->fixedcolormap = 0;
-    }
-    else*/
-        player->fixedcolormap = 0;
-
+    player->fixedcolormap = 0;
 }

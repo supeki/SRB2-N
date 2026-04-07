@@ -112,6 +112,7 @@
 #include "st_stuff.h"
 #include "w_wad.h"
 #include "z_zone.h"
+#include "p_local.h"
 
 #include "m_misc.h" // For M_MapNumber Nozomi 03-11-2026
 
@@ -618,11 +619,22 @@ void R_DrawMaskedColumn (column_t* column)
         if (dc_yl <= mceilingclip[dc_x])
             dc_yl = mceilingclip[dc_x]+1;
 
-        if (dc_yl <= dc_yh && dc_yl < vid.height && dc_yh > 0)
+		if (dc_yl < 0)
+			dc_yl = 0;
+		if (dc_yh >= vid.height) // dc_yl must be < vid.height, so reduces number of checks in tight loop
+			dc_yh = vid.height - 1;
+
+        if(colfunc == R_DrawFogColumn_8)
+        {
+          dc_yh = mfloorclip[dc_x] - 1;
+          dc_yl = mceilingclip[dc_x] + 1;
+        }
+
+        if (dc_yl <= dc_yh && dc_yh > 0)
         {
             dc_source = (byte *)column + 3;
             dc_texturemid = basetexturemid - (column->topdelta<<FRACBITS);
-            // dc_source = (byte *)column + 3 - column->topdelta;
+            //dc_source = (byte *)column + 3 - column->topdelta;
 
             // Drawn by either R_DrawColumn
             //  or (SHADOW) R_DrawFuzzColumn.
@@ -776,6 +788,9 @@ static void R_ProjectSprite (mobj_t* thing)
     int                 light = 0;
 	fixed_t				skinscale = FRACUNIT;
 
+	if (!thing || thing->state == &states[S_DISS])
+		return;
+
     if(thing->subsector->sector->numlights)
     {
       int lightnum;
@@ -832,7 +847,22 @@ static void R_ProjectSprite (mobj_t* thing)
 
     //Fab:02-08-98: 'skin' override spritedef currently used for skin
     if (thing->skin)
-        sprdef = &((skin_t *)thing->skin)->spritedef;
+		if (!cv_superman.value && thing->player && thing->player->powers[pw_super] && skins[thing->player->skin].no_super_sprites == 0) {
+			sprdef = &((skin_t *)thing->skin)->superspritedef;
+			thing->frame |= FF_FULLBRIGHT; // Full bright super! Nozomi
+		} else if (
+			!cv_superman.value
+			&& thing->type == MT_THOK 
+			&& thing->sprite == SPR_PLAY
+			&& thing->target 
+			&& thing->target->player 
+			&& thing->target->player->powers[pw_super]
+			&& skins[thing->target->player->skin].no_super_sprites == 0
+		) { // large ass hack for the ghosts :3 Nozomi
+			sprdef = &((skin_t *)thing->target->skin)->superspritedef;
+			thing->frame |= FF_FULLBRIGHT; // Full bright super! Nozomi
+		} else
+			sprdef = &((skin_t *)thing->skin)->spritedef;
     else
         sprdef = &sprites[thing->sprite];
 
@@ -949,7 +979,7 @@ static void R_ProjectSprite (mobj_t* thing)
 
 		if (vis->mobj->skin) {
 			skin_t* visskin = (skin_t*)vis->mobj->skin;
-			char skinname[25] = ""; // WHY IS IT TRYING TO WRITE TO INITIALLY EMPTY STRINGS
+			char* skinname = "";
 
 			strcpy(skinname, visskin->name);
 			scale = visskin->spritescale;
@@ -1005,6 +1035,9 @@ static void R_ProjectSprite (mobj_t* thing)
 
             // diminished light
             index = xscale>>(LIGHTSCALESHIFT-detailshift);
+
+			if (thing->frame & FF_HALFBRIGHT)
+				index = (xscale*2)>>(LIGHTSCALESHIFT-detailshift);
 
             if (index >= MAXLIGHTSCALE)
                 index = MAXLIGHTSCALE-1;
@@ -1917,6 +1950,7 @@ void Sk_SetDefaultValue(skin_t *skin)
             skin->soundsid[S_sfx[i].skinsound] = i;
         }
     memcpy(&skins[0].spritedef, &sprites[SPR_PLAY], sizeof(spritedef_t));
+	memcpy(&skins[0].superspritedef, &sprites[SPR_SUPR], sizeof(spritedef_t));
 }
 
 //
@@ -2113,6 +2147,12 @@ void R_AddSkins (int wadnum)
                 strupr (skins[numskins].face);
             }
 			else
+            if (!stricmp(token,"superface"))
+            {
+                strncpy (skins[numskins].superface, value, 9);
+                strupr (skins[numskins].superface);
+            }
+			else
 			if (!stricmp(token,"hudname"))
             {
                 strncpy (skins[numskins].hudname, value, 9);
@@ -2144,6 +2184,16 @@ void R_AddSkins (int wadnum)
             if (!stricmp(token,"runspeed"))
             {
                 skins[numskins].runspeed = atoi(value);
+            }
+			else
+			if (!stricmp(token,"no_super"))
+            {
+                skins[numskins].no_super = atoi(value);
+            }
+			else
+			if (!stricmp(token,"no_super_sprites"))
+            {
+                skins[numskins].no_super_sprites = atoi(value);
             }
 // end character type identification Tails 03-01-2000
             else
@@ -2185,6 +2235,23 @@ next_token:
 
         // allocate (or replace) sprite frames, and set spritedef
         R_AddSingleSpriteDef (sprname, &skins[numskins].spritedef, wadnum, lumpnum, lastlump);
+
+		if (!skins[numskins].no_super_sprites) 
+		{
+			// get the base name of this skin's super sprite (4 chars)
+			lumpnum++;
+			lumpinfo = wadfiles[wadnum]->lumpinfo;
+			sprname = lumpinfo[lumpnum].name;
+			intname = *(int *)sprname;
+
+			// skip to end of this skin's frames
+			lastlump = lumpnum;
+			while (*(int *)lumpinfo[lastlump].name == intname)
+				lastlump++;
+
+			// allocate (or replace) sprite frames, and set spritedef
+			R_AddSingleSpriteDef (sprname, &skins[numskins].superspritedef, wadnum, lumpnum, lastlump);
+		}
 
         CONS_Printf ("added skin '%s'\n", skins[numskins].name);
 #ifdef SKINVALUES
@@ -2382,6 +2449,12 @@ void R_AddMapHeader (int wadnum)
 			{
 				// Weather! Nozomi 03-05-2026
 				mapheaders[levelnum].weather = atoi(value);
+			}
+
+			if (!stricmp(token,"corona"))
+			{
+				// Coronas! Nozomi 04-05-2026
+				mapheaders[levelnum].corona = atoi(value) > 0 ? true : false;
 			}
 
 			if (!stricmp(token,"next"))

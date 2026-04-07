@@ -43,10 +43,12 @@
 #include "g_game.h"
 #include "hu_stuff.h"
 #include "m_easing.h"
+#include "m_random.h"
 #include "p_tick.h"
 #include "r_local.h"
 #include "s_sound.h"
 #include "i_video.h"
+#include "i_system.h"
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
@@ -368,12 +370,12 @@ static patch_t* ttspop5;
 static patch_t* ttspop6;
 static patch_t* ttspop7;
 
+static void F_StartMADventure(void);
+
 void F_StartTitleScreen(void)
 {
 	gamestate = GS_NOZOMITITLE;
-
-	// IWAD dependent stuff.
-	S_ChangeMusic(mus_dm2ttl, false);
+	nozo_specialtitle = false;
 
 	finalecount = 0;
 	finalestage = 0;
@@ -394,6 +396,19 @@ void F_StartTitleScreen(void)
 	ttspop5 = W_CachePatchName("TTSPOP5", PU_LEVEL);
 	ttspop6 = W_CachePatchName("TTSPOP6", PU_LEVEL);
 	ttspop7 = W_CachePatchName("TTSPOP7", PU_LEVEL);
+
+	{
+		localtime_t nozotime = I_GetLocalTime();
+
+		if (nozotime.month == 11 && nozotime.day == 3)
+		{
+			F_StartMADventure();
+			return;
+		}
+	
+	}
+
+	S_ChangeMusic(mus_dm2ttl, false);
 }
 
 void F_TitleScreenTicker(void)
@@ -405,10 +420,22 @@ void F_TitleScreenTicker(void)
 static fixed_t ttlscale = FRACUNIT;
 static int titletimer;
 
+static void MADventure_Drawer(void);
+
 void Title_Drawer(void) 
 {
-	if (gamestate != GS_NOZOMITITLE && !demoplayback)
+	localtime_t nozotime = I_GetLocalTime();
+
+	if (gamestate != GS_NOZOMITITLE)
 		return;
+
+	if (nozotime.month == 11 && nozotime.day == 3) // Sonic MADventure
+	{
+		titletimer = finalecount;
+		// Commented out until I can make it. Nozomi
+		MADventure_Drawer();
+		return;
+	}
 
 	if (!demoplayback) {
 		F_SkyScroll();
@@ -453,4 +480,64 @@ void Title_Drawer(void)
 	}
 
 	V_DrawCustomScaledTranslationPatch(48, 142, ttlscale, 0,ttbanner, colormaps);
+}
+
+static patch_t* madtitle;
+static patch_t* madsonic;
+static patch_t* madtails;
+static patch_t* madknux;
+static patch_t* madamy;
+static patch_t* madredxvi;
+static patch_t* madcredits;
+
+static void F_StartMADventure(void)
+{
+	nozo_specialtitle = true;
+	S_ChangeMusicName("redxvi", true);
+
+	madtitle = W_CachePatchName("MADTITLE", PU_LEVEL);
+	madsonic = W_CachePatchName("MADCHAR3", PU_LEVEL);
+	madtails = W_CachePatchName("MADCHAR4", PU_LEVEL);
+	madknux = W_CachePatchName("MADCHAR1", PU_LEVEL);
+	madamy = W_CachePatchName("MADCHAR5", PU_LEVEL);
+	madredxvi = W_CachePatchName("MADCHAR2", PU_LEVEL);
+	madcredits = W_CachePatchName("MADCREDI", PU_LEVEL);
+}
+
+static boolean draw_sonic = true;
+static boolean draw_tails = true;
+static boolean draw_knux = true;
+static boolean draw_amy = true;
+static boolean draw_redxvi = true;
+
+static int MADrandom(INT32 a)
+{
+	return (INT32)((rand()/((unsigned)RAND_MAX+1.0f))*a);
+}
+
+static void MADventure_Drawer(void)
+{
+	V_DrawScaledPatch(0, 0, 0, madtitle);
+
+	if (MADrandom(100) == 2)
+		draw_amy = (!draw_amy);
+	if (MADrandom(100) == 4)
+		draw_knux = (!draw_knux);
+	if (MADrandom(100) == 6)
+		draw_redxvi = (!draw_redxvi);
+	if (MADrandom(100) == 8)
+		draw_tails = (!draw_tails);
+
+	if (draw_knux)
+		V_DrawScaledPatch(6, 200 - (26+madknux->height), 0, madknux);
+	if (draw_amy)
+		V_DrawScaledPatch(320 - (6+madamy->width), 200 - (26+madamy->height), 0, madamy);
+	if (draw_redxvi)
+		V_DrawScaledPatch(70, 200 - (17+madredxvi->height), 0, madredxvi);
+	if (draw_tails)
+		V_DrawScaledPatch(320 - (70+madtails->width), 200 - (17+madtails->height), 0, madtails);
+	if (draw_sonic)
+		V_DrawScaledPatch(160 - (madsonic->width/2), 200 - (9+madsonic->height), 0, madsonic);
+
+	V_DrawScaledPatch(160 - (madcredits->width/2), 200 - (madcredits->height) - 1, 0, madcredits);
 }

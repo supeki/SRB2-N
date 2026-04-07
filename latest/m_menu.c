@@ -687,7 +687,7 @@ void M_DrawSetupMultiPlayerMenu(void)
 		strcpy(colorname, setupm_cvcolor->string);
 		for (i=0; i<((int)strlen(colorname)); i++)
 			if (colorname[i] == '_')
-				colorname[i] = ' ';
+				colorname[i] = '\n'; // pulling this from the DSi port
 		V_DrawString (mx+90+PLBOXW*8+16, my+16, colorname);
 	}
 
@@ -3277,7 +3277,7 @@ void M_Drawer (void)
     scaledofs = vid.centerofs;
 
     // now that's more readable with a faded background (yeah like Quake...)
-    V_DrawFadeScreen (); // Tails 11-30-2000
+    V_DrawFadeScreen (-1); // Tails 11-30-2000
 	// So like, why was the above commented out? Nozomi 03-10-2026
 
     if (currentMenu->drawroutine)

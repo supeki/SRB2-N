@@ -1340,6 +1340,7 @@ void R_RegisterEngineStuff (void)
     // Default viewheight is changeable,
     // initialized to standard viewheight
     CV_RegisterVar (&cv_viewheight);
+	CV_RegisterVar (&cv_superman); // this prolly shouldnt be here idrc Nozomi
     CV_SetValue (&cv_viewheight, VIEWHEIGHT);
 
     //26-07-98

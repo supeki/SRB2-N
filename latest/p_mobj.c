@@ -157,6 +157,17 @@ static boolean P_SetPrecipMobjState(precipmobj_t* mobj, statenum_t state)
 	return true;
 }
 
+// IDK where to put this but... here... Nozomi
+
+mobj_t* P_SpawnCorona(mobj_t* mo)
+{
+	mobj_t* corona = P_SpawnMobj(mo->x, mo->y, mo->z+mo->height/2, MT_CORONA);
+	corona->color = mo->color;
+	corona->target = mo;
+	mo->corona = corona;
+	return corona;
+}
+
 //
 // P_ExplodeMissile
 //
@@ -213,101 +224,86 @@ void P_XYFriction (mobj_t* mo, fixed_t oldx, fixed_t oldy, boolean oldfriction)
     //valid only if player avatar
     player_t*   player = mo->player;
 
-	if(player)
+	if (player)
 	{
-    if (player->rmomx > -STOPSPEED
-        && player->rmomx < STOPSPEED
-        && player->rmomy > -STOPSPEED
-        && player->rmomy < STOPSPEED
-        && (player->cmd.forwardmove == 0
-                && player->cmd.sidemove == 0 && !player->mfspinning))
-    {
-        // if in a walking frame, stop moving
-        if ( (player && player->walking==1) && (mo->type!=MT_SPIRIT)) // use my new walking variable! Tails 10-30-2000
-           {
-/*          if(player->powers[pw_super])
-		   {
-            P_SetMobjState (player->mo, S_PLAY_SPC1); // Super Sonic Stuff Tails 04-18-2000
+		if (
+			player->rmomx > -STOPSPEED
+			&& player->rmomx < STOPSPEED
+			&& player->rmomy > -STOPSPEED
+			&& player->rmomy < STOPSPEED
+			&& (
+				player->cmd.forwardmove == 0
+				&& player->cmd.sidemove == 0 
+				&& !player->mfspinning
+			)
+		) {
+			// if in a walking frame, stop moving
+			if (player && player->walking == 1 && mo->type != MT_SPIRIT)
+				P_SetMobjState (player->mo, S_PLAY);
 
-		   }
-           else*/
-            P_SetMobjState (player->mo, S_PLAY);
-                        }
-	mo->momx = player->cmomx;
-	mo->momy = player->cmomy;
+			mo->momx = player->cmomx;
+			mo->momy = player->cmomy;
+		}
+		else
+		{
+			if (oldfriction)
+			{
+				mo->momx = FixedMul (mo->momx, FRICTION);
+				mo->momy = FixedMul (mo->momy, FRICTION);
+			}
+			else
+			{
+				if (oldx == mo->x && oldy == mo->y)
+				{
+					mo->momx = FixedMul(mo->momx,ORIG_FRICTION);
+					mo->momy = FixedMul(mo->momy,ORIG_FRICTION);
+				}
+				else
+				{
+					mo->momx = FixedMul(mo->momx,mo->friction);
+					mo->momy = FixedMul(mo->momy,mo->friction);
+				}
+
+				mo->friction = ORIG_FRICTION;
+			}
+		}
 	}
-
-    else
+	else
     {
-      if(oldfriction)
-      {
-        mo->momx = FixedMul (mo->momx, FRICTION);
-        mo->momy = FixedMul (mo->momy, FRICTION);
-      }
-      else
-      {
-        //SoM: 3/28/2000: Use boom friction.
-        if ((oldx == mo->x) && (oldy == mo->y)) // Did you go anywhere?
-        {
-          mo->momx = FixedMul(mo->momx,ORIG_FRICTION);
-          mo->momy = FixedMul(mo->momy,ORIG_FRICTION);
-        }
-        else
-        {
-          mo->momx = FixedMul(mo->momx,mo->friction);
-          mo->momy = FixedMul(mo->momy,mo->friction);
-        }
-        mo->friction = ORIG_FRICTION;
-      }
-    }
+		if (
+			mo->momx > -STOPSPEED
+			&& mo->momx < STOPSPEED
+			&& mo->momy > -STOPSPEED
+			&& mo->momy < STOPSPEED
+		) {
+			mo->momx = 0;
+			mo->momy = 0;
+		}
+		else
+		{
+			if (oldfriction)
+			{
+				mo->momx = FixedMul (mo->momx, FRICTION);
+				mo->momy = FixedMul (mo->momy, FRICTION);
+			}
+			else
+			{
+				if (oldx == mo->x && oldy == mo->y)
+				{
+					mo->momx = FixedMul(mo->momx,ORIG_FRICTION);
+					mo->momy = FixedMul(mo->momy,ORIG_FRICTION);
+				}
+				else
+				{
+					mo->momx = FixedMul(mo->momx,mo->friction);
+					mo->momy = FixedMul(mo->momy,mo->friction);
+				}
 
+				mo->friction = ORIG_FRICTION;
+			}
+		}
 	}
-	else if (!player)
-    {
-		if (mo->momx > -STOPSPEED
-        && mo->momx < STOPSPEED
-        && mo->momy > -STOPSPEED
-        && mo->momy < STOPSPEED)
-    {
-        // if in a walking frame, stop moving
-        if ( (player && player->walking==1) && (mo->type!=MT_SPIRIT)) // use my new walking variable! Tails 10-30-2000
-           {
-/*           if(player->powers[pw_super])
-		   {
-            P_SetMobjState (player->mo, S_PLAY_SPC1); // Super Sonic Stuff Tails 04-18-2000
-		   }
-           else*/
-            P_SetMobjState (player->mo, S_PLAY);
-                        }
-        mo->momx = 0;
-        mo->momy = 0;
-    }
-    else
-    {
-      if(oldfriction)
-      {
-        mo->momx = FixedMul (mo->momx, FRICTION);
-        mo->momy = FixedMul (mo->momy, FRICTION);
-      }
-      else
-      {
-        //SoM: 3/28/2000: Use boom friction.
-        if ((oldx == mo->x) && (oldy == mo->y)) // Did you go anywhere?
-        {
-          mo->momx = FixedMul(mo->momx,ORIG_FRICTION);
-          mo->momy = FixedMul(mo->momy,ORIG_FRICTION);
-        }
-        else
-        {
-          mo->momx = FixedMul(mo->momx,mo->friction);
-          mo->momy = FixedMul(mo->momy,mo->friction);
-        }
-        mo->friction = ORIG_FRICTION;
-      }
-    }
-}}
-
-
+}
 
 void P_XYMovement (mobj_t* mo)
 {
@@ -316,29 +312,29 @@ void P_XYMovement (mobj_t* mo)
     player_t*   player;
     fixed_t     xmove;
     fixed_t     ymove;
-    fixed_t     oldx, oldy; //reducing bobbing/momentum on ice
-                            //when up against walls
+    fixed_t     oldx, oldy;
 
-	if((mo->type == MT_REDFLAG || mo->type == MT_BLUEFLAG) && (mo->subsector->sector->special == 16 || mo->subsector->sector->special == 5) && mo->z == mo->floorz) // Remove CTF flag if in death pit
-		mo->fuse = 1; // Tails 08-02-2001
+	if ( // Remove CTF flag if in death pit
+		(mo->type == MT_REDFLAG || mo->type == MT_BLUEFLAG) 
+		&& (mo->subsector->sector->special == 16 || mo->subsector->sector->special == 5) // Replace this with a single general Death Pit special Nozomi
+		&& mo->z == mo->floorz
+	)
+		mo->fuse = 1;
 
-    //added:18-02-98: if it's stopped
     if (!mo->momx && !mo->momy)
     {
         if (mo->flags2 & MF2_SKULLFLY)
         {
-            // the skull slammed into something
             mo->flags2 &= ~MF2_SKULLFLY;
             mo->momx = mo->momy = mo->momz = 0;
 
-            //added:18-02-98: comment: set in 'search new direction' state?
 			if(mo->type != MT_EGGMOBILE)
 				P_SetMobjState (mo, mo->info->spawnstate);
         }
         return;
     }
 
-    player = mo->player;        //valid only if player avatar
+    player = mo->player;
 
     if (mo->momx > MAXMOVE)
         mo->momx = MAXMOVE;
@@ -358,161 +354,145 @@ void P_XYMovement (mobj_t* mo)
 
     do
     {
-        if (xmove > MAXMOVE/2 || ymove > MAXMOVE/2)
-        {
-            ptryx = mo->x + xmove/2;
-            ptryy = mo->y + ymove/2;
-            xmove >>= 1;
-            ymove >>= 1;
-        }
-        else
-        {
-            ptryx = mo->x + xmove;
-            ptryy = mo->y + ymove;
-            xmove = ymove = 0;
-        }
+		if (xmove > MAXMOVE/2 || ymove > MAXMOVE/2)
+		{
+			ptryx = mo->x + xmove/2;
+			ptryy = mo->y + ymove/2;
+			xmove >>= 1;
+			ymove >>= 1;
+		}
+		else
+		{
+			ptryx = mo->x + xmove;
+			ptryy = mo->y + ymove;
+			xmove = ymove = 0;
+		}
 
-        if (!P_TryMove (mo, ptryx, ptryy, true)) //SoM: 4/10/2000
-        {
-            // blocked move
+		if (!P_TryMove (mo, ptryx, ptryy, true))
+		{
+			if ( // THIS NEEDS TO BE REPLACED WITH A MOBJFLAG ASAP Nozomi
+				mo->player 
+				|| mo->type==MT_CHASECAM 
+				|| mo->type == MT_JETTBOMBER 
+				|| mo->type == MT_JETTGUNNER 
+				|| mo->type == MT_MISC2 
+				|| mo->type == MT_FLINGRING 
+				|| mo->type == MT_GARGOYLE
+			) {
+				P_SlideMove (mo);
+			}
+			else if (mo->flags & MF_MISSILE)
+			{
+				// Explode Missile objects.
 
-            //added:26-02-98: slidemove also for ChaseCam
-            // note : the SPIRIT have a valide player field
-            if (mo->player || mo->type==MT_CHASECAM || mo->type == MT_JETTBOMBER || mo->type == MT_JETTGUNNER || mo->type == MT_MISC2 || mo->type == MT_FLINGRING || mo->type == MT_GARGOYLE) // Tails 08-18-2001
-            {   // try to slide along it
-                P_SlideMove (mo);
-            }
-            else if (mo->flags & MF_MISSILE)
-            {
-                // explode a missile
-                if (ceilingline &&
-                    ceilingline->backsector &&
-                    ceilingline->backsector->ceilingpic == skyflatnum &&
-                    ceilingline->frontsector &&
-                    ceilingline->frontsector->ceilingpic == skyflatnum &&
-                    mo->subsector->sector->ceilingheight == mo->ceilingz)
-                  if (!boomsupport ||
-                    mo->z > ceilingline->backsector->ceilingheight)//SoM: 4/7/2000: DEMO'S
-                {
-                    // Hack to prevent missiles exploding
-                    // against the sky.
-                    // Does not handle sky floors.
-                    //SoM: 4/3/2000: Check frontsector as well..
-                    P_RemoveMobj (mo);
-                    return;
-                }
+				// Check to prevent exploding missiles hitting the sky boundaries.
+				if (ceilingline &&
+					(
+						(
+							(
+								(ceilingline->backsector && ceilingline->backsector->ceilingpic == skyflatnum) 
+								|| (ceilingline->frontsector && ceilingline->frontsector->ceilingpic == skyflatnum)
+							)
+							&& mo->subsector->sector->ceilingheight <= mo->ceilingz
+						) || ( // floor support since it didn't exist before or something Nozomi
+							(
+								(ceilingline->backsector && ceilingline->backsector->floorpic == skyflatnum) 
+								|| (ceilingline->frontsector && ceilingline->frontsector->floorpic == skyflatnum)
+							)
+							&& mo->subsector->sector->floorheight >= mo->floorz
+						)
+					)
 
-                // draw damage on wall
-                //SPLAT TEST ----------------------------------------------------------
-                #ifdef WALLSPLATS
-                if (blockingline && demoversion>=129)   //set by last P_TryMove() that failed
-                {
-                    divline_t   divl;
-                    divline_t   misl;
-                    fixed_t     frac;
+				)
+					if (
+							(
+								ceilingline->backsector
+								&& (
+									mo->z > ceilingline->backsector->ceilingheight 
+									|| mo->z < ceilingline->backsector->floorheight
+								)
+							) || (
+								ceilingline->frontsector
+								&& (
+									mo->z > ceilingline->frontsector->ceilingheight 
+									|| mo->z < ceilingline->frontsector->floorheight
+								)
+							)
+					) {
+						// This mobj hit a sky boundary, so lets just remove it!
+						P_RemoveMobj (mo);
+						return;
+					}
 
-                    P_MakeDivline (blockingline, &divl);
-                    misl.x = mo->x;
-                    misl.y = mo->y;
-                    misl.dx = mo->momx;
-                    misl.dy = mo->momy;
-                    frac = P_InterceptVector (&divl, &misl);
-                    R_AddWallSplat (blockingline, P_PointOnLineSide(mo->x,mo->y,blockingline)
-                                   ,"A_DMG3", mo->z, frac, SPLATDRAWMODE_SHADE);
-                }
-                #endif
-                // --------------------------------------------------------- SPLAT TEST
-
-                P_ExplodeMissile (mo);
-            }
-            else
-                mo->momx = mo->momy = 0;
-        }
-        else
-            // hack for playability : walk in-air to jump over a small wall
-            if (mo->player)
-                mo->player->cheats &= ~CF_JUMPOVER;
-
-
+				// Otherwise explode!
+				P_ExplodeMissile (mo);
+			}
+			else
+				mo->momx = mo->momy = 0;
+		}
+		else
+			// Walk over small walls, we should remove cheat flags and make this a mobjflag maybe... Nozomi
+			if (mo->player)
+				mo->player->cheats &= ~CF_JUMPOVER;
     } while (xmove || ymove);
 
-    // slow down
+    // Player friction, now in one general area...? Nozomi
     if (player)
-    {
-        if (player->cheats & CF_NOMOMENTUM)
-        {
-            // debug option for no sliding at all
-            mo->momx = mo->momy = 0;
-            return;
-        }
-        else
-        if (player->cheats & CF_FLYAROUND)
-        {
-            P_XYFriction (mo, oldx, oldy, true);
-            return;
-        }
-        if(mo->friction != ORIG_FRICTION && mo->z <= mo->subsector->sector->floorheight)
-          P_XYFriction (mo, oldx, oldy, false);
-    }
+	{
+		// If we're homing, we have NO FRICTION.
+		if (player->homing)
+			return;
 
-    if ((mo->flags & (MF_MISSILE) || mo->flags2 & (MF2_SKULLFLY) || mo->type == MT_SNOWBALL) && !mo->type == MT_DETON) // Tails 12-12-2001
-        return;         // no friction for missiles ever
+		// Ground friction.
+		if (mo->friction != ORIG_FRICTION && mo->z <= mo->subsector->sector->floorheight)
+			P_XYFriction (mo, oldx, oldy, false);
 
-	if(mo->player) // No Friction
-		if(mo->player->homing) // For Homing
-			return; // Tails 09-02-2001
-
-    // slow down in water, not too much for playability issues
-/*    if (demoversion>=128 && (mo->eflags & MF_UNDERWATER))
-    {
-        mo->momx = FixedMul (mo->momx, FRICTION*3/4);
-        mo->momy = FixedMul (mo->momy, FRICTION*3/4);
-        return;
-    }
-*/
-// start spinning friction Tails 02-28-2000
-if(player)
-{
-   if (player->mfspinning == 1 && (player->rmomx || player->rmomy) && !player->mfstartdash)
-      {
-        mo->momx = FixedMul (mo->momx, FRICTION*1.1);
-        mo->momy = FixedMul (mo->momy, FRICTION*1.1);
-        return;
-       }
-}
-// end spinning friction Tails 02-28-2000
-// Ice on a ledge Tails 11-29-2000
-
- if (mo->subsector->sector->ffloors)
-   {
-	 		ffloor_t* rover;
-	         for(rover = mo->subsector->sector->ffloors; rover; rover = rover->next)
-			 {
-	   if(mo->z == *rover->topheight && !mo->momz && *rover->special == 256)
-	   {
-		mo->momx = FixedMul (mo->momx, FRICTION*1.1);
-        mo->momy = FixedMul (mo->momy, FRICTION*1.1);
-		   return;
+		// Rolling friction.
+		if (
+			player->mfspinning
+			&& (player->rmomx || player->rmomy) 
+			&& !player->mfstartdash
+			) {
+			mo->momx = FixedMul (mo->momx, FRICTION * 1.1); // Why 1.1, and not 1.1f?
+			mo->momy = FixedMul (mo->momy, FRICTION * 1.1); // I won't question it honestly. Nozomi
+			return;
 		}
-   }
- }
-     if (mo->z > mo->floorz && mo->type != MT_CRAWLACOMMANDER)
-        return;         // no friction when airborne
+	}
 
-    if (mo->flags & MF_CORPSE)
-    {
-        // do not stop sliding
-        //  if halfway off a step with some momentum
-        if (mo->momx > FRACUNIT/4
-            || mo->momx < -FRACUNIT/4
-            || mo->momy > FRACUNIT/4
-            || mo->momy < -FRACUNIT/4)
-        {
-            if (mo->floorz != mo->subsector->sector->floorheight)
-                return;
-        }
-    }
-    P_XYFriction (mo, oldx, oldy, true);
+	// Tails why...
+	// Also I'm removing all the old XMAS support for new stuff.
+	// Anyways, no friction for missiles or objects with SKULLFLY (like Eggman) Nozomi
+    if ((mo->flags & MF_MISSILE || mo->flags2 & MF2_SKULLFLY) && !mo->type == MT_DETON)
+        return;
+
+	// ORIGINAL SSN COMMENT: Ice on a ledge Tails 11-29-2000
+	// I'll let the above do the explaining... Nozomi
+
+	// This is for FOFs with Ice friction. Nozomi
+	if (mo->subsector->sector->ffloors)
+	{
+		ffloor_t* rover;
+		for(rover = mo->subsector->sector->ffloors; rover; rover = rover->next)
+		{
+			if(mo->z == *rover->topheight && !mo->momz && *rover->special == 256) // Remind me to make constants for all the specials. Nozomi
+			{ // I think this is supposed to keep you moving at the same speed? Odd. Nozomi
+				mo->momx = FixedMul (mo->momx, FRICTION*1.1);
+				mo->momy = FixedMul (mo->momy, FRICTION*1.1);
+				return;
+			}
+		}
+	}
+
+	// No airborne friction...
+	// Unless you're a Crawla Commander. Why??? Nozomi
+	if (mo->z > mo->floorz && mo->type != MT_CRAWLACOMMANDER)
+		return;
+
+	// Corpses...???? We don't need that. Nozomi
+	// Yeah, so like there used to be code for corpses here. Nozomi
+
+	// Apply our friction. Nozomi
+	P_XYFriction (mo, oldx, oldy, true);
 }
 
 //
@@ -536,16 +516,19 @@ void P_ZMovement (mobj_t* mo)
             = ((cv_viewheight.value<<FRACBITS) - mo->player->viewheight)>>3;
     }
 
+	// IDK what the above does but it scares me. Nozomi
+
+	// OMG YOU DID IT TAILS YOU MADE SOMETHING SIMPLE THAT JUST WORKS!! Nozomi
 	// Snowflake Tails 12-02-2001
-	if(mo->type == MT_SNOWFLAKE)
+	if (mo->type == MT_SNOWFLAKE)
 	{
 		if(mo->z + mo->momz <= mo->floorz || mo->z < mo->waterz)
 			P_RemoveMobj(mo);
 		else
-			mo->momz = -2*FRACUNIT;
+			mo->momz = -2*FRACUNIT; // Why hardcode the momentum though Tails? Nozomi
 	}
 
-    // adjust height
+	// Add Z momentum to our Z coordinate. Nozomi
     mo->z += mo->momz;
 
 	// Ignore still rings Tails 09-02-2001
@@ -586,47 +569,19 @@ void P_ZMovement (mobj_t* mo)
         //  somebody left this after the setting momz to 0,
         //  kinda useless there.
         if (mo->flags2 & MF2_SKULLFLY)
-        {
-            // the skull slammed into something
-            mo->momz = -mo->momz;
-        }
+			mo->momz = -mo->momz;
 
-// start spin Tails
-/*        if (mo->player)
-        {
-         if(!(mo->player->rmomx || mo->player->rmomy) && mo->player->mfspinning && mo->health)
-         {
-          mo->player->mfspinning = 0;
-       if(mo->player->powers[pw_super])
-          P_SetMobjState (mo, S_PLAY_SPC1); // Super Sonic Stuff Tails 04-18-2000
-       else
-          P_SetMobjState (mo, S_PLAY);
-         }
-        }*/
-// end spin Tails
-
-// Mine explodes upon ground contact Tails 06-13-2000
-if((mo->type==MT_MINE) && (mo->z <= mo->floorz) && !(mo->state == &states[S_MINE_BOOM1]
-   || mo->state == &states[S_MINE_BOOM2] || mo->state == &states[S_MINE_BOOM3]
-   || mo->state == &states[S_MINE_BOOM4] || mo->state == &states[S_DISS]))
-{
-  P_ExplodeMissile(mo);
-}
+		// Mine explodes upon ground contact Tails 06-13-2000
+		if((mo->type==MT_MINE) && (mo->z <= mo->floorz) && !(mo->state == &states[S_MINE_BOOM1]
+		   || mo->state == &states[S_MINE_BOOM2] || mo->state == &states[S_MINE_BOOM3]
+		   || mo->state == &states[S_MINE_BOOM4] || mo->state == &states[S_DISS]))
+			P_ExplodeMissile(mo);
 
         if (mo->momz < 0) // falling
         {
             if (mo->player && (mo->momz < -8*FRACUNIT))
-            {
-                // Squat down.
-                // Decrease viewheight for a moment
-                // after hitting the ground (hard),
-                // and utter appropriate sound.
                 mo->player->deltaviewheight = mo->momz>>3;
- //               S_StartSound (mo, sfx_spring); Don't say OOF!! Tails 11-05-99
-            }
 
-            // set it once and not continuously
-// Tails
 			if(tmfloorthing)
 			{
 				// Bouncing boxes Tails 09-28-2001
@@ -650,66 +605,54 @@ if((mo->type==MT_MINE) && (mo->z <= mo->floorz) && !(mo->state == &states[S_MINE
 							break;
 					}
 				}
-			switch(tmfloorthing->type)
-			{
-				case MT_GARGOYLE: // Deep Sea Gargoyle
-				case MT_MISC50: // Blue shield box
-				case MT_MISC48: // Yellow shield box
-				case MT_MISC31: // Green shield box
-				case MT_BKTV: // Black shield box
-				case MT_MISC74: // Super Sneaker box
-				case MT_PRUP: // 1-Up box
-				case MT_MISC10: // 10-Ring box
-				case MT_MISC11: // 25-Ring box
-				case MT_INV: // Invincibility box
+
+				switch(tmfloorthing->type)
+				{
+					case MT_GARGOYLE: // Deep Sea Gargoyle
+					case MT_MISC50: // Blue shield box
+					case MT_MISC48: // Yellow shield box
+					case MT_MISC31: // Green shield box
+					case MT_BKTV: // Black shield box
+					case MT_MISC74: // Super Sneaker box
+					case MT_PRUP: // 1-Up box
+					case MT_MISC10: // 10-Ring box
+					case MT_MISC11: // 25-Ring box
+					case MT_INV: // Invincibility box
+						if(mo->player)
+							if(!(mo->player->mfjumped))
+								tmfloorthing = 0;
+						break;
+					default:
+						break;
+				}
+			}
+
+            if ((mo->z <= mo->floorz) && !(tmfloorthing))
+            {
+				mo->eflags |= MF_JUSTHITFLOOR;
+
 				if(mo->player)
 				{
-					if(!(mo->player->mfjumped))
-					tmfloorthing = 0;
+					mo->player->scoreadd = 0;
+					mo->player->mfjumped = 0;
+					mo->player->gliding = 0;
+					mo->player->glidetime = 0;
+					mo->player->climbing = 0;
 				}
-					break;
-				default:
-					break;
-			}
-			}
-            if ((mo->z <= mo->floorz) && !(tmfloorthing)) // Tails 9-15-99 Spin Attack
-              {
-              mo->eflags |= MF_JUSTHITFLOOR; // Tails 9-15-99 Spin Attack
-			if(mo->player)
-			{
-			mo->player->scoreadd = 0; // Tails 11-03-2000
-              if(mo->player->mfjumped == 1) // Tails 9-15-99 Spin Attack
-			  {
-              mo->player->mfjumped = 0; // Tails 9-15-99 Spin Attack
-			  }
-			  mo->player->gliding = 0;
-			  mo->player->glidetime = 0;
-			  mo->player->climbing = 0;
-			}
-			}
-// end Tails
-
-			if(mo->player)
-			{
-             if(mo->player->mfspinning == 0)
-                {
-                 mo->player->mfstartdash = 0; // dashing stuff Tails 02-27-2000
-                 }
 			}
 
-            //SOM: Flingrings bounce
-            if(mo->type == MT_FLINGRING)
-			{
-              mo->momz = -mo->momz * 0.85;
-			}
-            else if (!(tmfloorthing) || (tmfloorthing->type == MT_GARGOYLE || tmfloorthing->type == MT_PLAYER))
-              mo->momz = 0;
-//		if(!(tmfloorthing))
-//            mo->momz = 0;
+			if(mo->player && mo->player->mfspinning == 0)
+				mo->player->mfstartdash = 0;
+
+			//SOM: Flingrings bounce
+			if(mo->type == MT_FLINGRING)
+				mo->momz = -mo->momz * 0.85;
+			else if (!(tmfloorthing) || (tmfloorthing->type == MT_GARGOYLE || tmfloorthing->type == MT_PLAYER))
+				mo->momz = 0;
         }
 
-	if(mo->type == MT_STEAM) // Tails 05-29-2001
-		return; // Tails 05-29-2001
+		if(mo->type == MT_STEAM)
+			return;
 
         mo->z = mo->floorz;
 
@@ -729,25 +672,13 @@ if((mo->type==MT_MINE) && (mo->z <= mo->floorz) && !(mo->state == &states[S_MINE
         //     TO BE SURE there is no problem for the release..
         //     (this is done in P_Mobjthinker below normally)
         mo->eflags &= ~MF_JUSTHITFLOOR;
-/*
-        if (mo->momz == 0)
-            mo->momz = -cv_gravity.value*2;      // push down
-        else
-            mo->momz -= cv_gravity.value;        // accelerate fall
-*/
+
         gravityadd = -cv_gravity.value;
 
 		if(mo->eflags & MF_UNDERWATER) // Tails
 			gravityadd = -cv_gravity.value/3; // Tails
 
-        // if waist under water, slow down the fall
-/*        if ( mo->eflags & MF_UNDERWATER) {
-            if ( mo->eflags & MF_SWIMMING )
-                gravityadd = 0;     // gameplay: no gravity while swimming
-            else
-                gravityadd >>= 1; // proper gravity in water Tails 04-04-2000
-        }
-        else*/ if (mo->momz==0)
+		if (mo->momz==0)
             // mobj at stop, no floor, so feel the push of gravity!
             gravityadd <<= 1;
 
@@ -760,6 +691,7 @@ playergravity:
 				gravityadd = -cv_gravity.value/3; // less gravity while gliding
 			if(mo->player->climbing)
 				gravityadd = 0;
+
 			if(mo->player->playerstate == PST_DEAD) // Added crash check Tails 11-16-2001)
 			{
 				gravityadd = -cv_gravity.value;
@@ -768,18 +700,13 @@ playergravity:
 			}
 		}
 
-			mo->momz += gravityadd;
+		mo->momz += gravityadd;
     }
 
     if (mo->z + mo->height > mo->ceilingz)
     {
         mo->z = mo->ceilingz - mo->height;
 
-        //added:22-02-98: player avatar hits his head on the ceiling, ouch!
-/*        if (mo->player && (demoversion>=112)  
-            && !(mo->player->cheats & CF_FLYAROUND) && mo->momz>8*FRACUNIT )
-            S_StartSound (mo, sfx_gasp);
-*/ // Don't say ouch Tails
         // hit the ceiling
         if (mo->momz > 0)
 			mo->momz = 0;
@@ -817,7 +744,6 @@ P_NightmareRespawn (mobj_t* mobj)
     fixed_t             x;
     fixed_t             y;
     fixed_t             z;
-    subsector_t*        ss;
     mobj_t*             mo;
     mapthing_t*         mthing;
 
@@ -827,12 +753,8 @@ P_NightmareRespawn (mobj_t* mobj)
     // somthing is occupying it's position?
     if (!P_CheckPosition (mobj, x, y) )
         return; // no respwan
-        
-    // initiate teleport sound
-    S_StartSound (mo, sfx_telept);
 
-    // spawn a teleport fog at the new spot
-    ss = R_PointInSubsector (x,y);
+    // No more teleport fog. Nozomi
 
     // spawn the new monster
     mthing = mobj->spawnpoint;
@@ -868,8 +790,8 @@ consvar_t cv_respawnmonsterstime = {"respawnmonsterstime","12",CV_NETVAR,CV_Unsi
 void P_MobjCheckWater (mobj_t* mobj)
 {
     sector_t* sector;
-    fixed_t   z;
     int       oldeflags;
+	int z;
 
     if( demoversion<128 || mobj->type==MT_SPLASH) // splash don't do splash
         return;
@@ -878,9 +800,9 @@ void P_MobjCheckWater (mobj_t* mobj)
     //
     sector = mobj->subsector->sector;
     oldeflags = mobj->eflags;
+	mobj->waterz = mobj->floorz - 10000*FRACUNIT;
 
-    //SoM: 3/28/2000: Only use 270 water type of water. Some boom levels get messed up.
-    if ((sector->heightsec > -1 && sector->altheightsec == 1) ||
+	if ((sector->heightsec > -1 && sector->altheightsec == 1) ||
         (levelflats[sector->floorpic].iswater && sector->heightsec == -1))
     {
         if (sector->heightsec > -1)  //water hack
@@ -888,27 +810,28 @@ void P_MobjCheckWater (mobj_t* mobj)
         else
             z = sector->floorheight + (FRACUNIT/4); // water texture
 
-        if (z && mobj->z+(mobj->height>>1) <= z) // Added crash check Tails 11-16-2001
+        if (mobj->z+(mobj->height>>1) <= z) // Added crash check Tails 11-16-2001
         { // Tails 03-06-2000
             mobj->eflags |= MF_UNDERWATER;
-			if(mobj->player)
-			{
-         if(!((mobj->player->powers[pw_super]) || (mobj->player->powers[pw_invulnerability])))
-            mobj->player->powers[pw_yellowshield] = false;
-        if (mobj->player->powers[pw_underwater] <= 0 && !(mobj->player->powers[pw_greenshield])) // Tails 03-06-2000
-            {// Tails 03-06-2000
-            mobj->player->powers[pw_underwater] = 30*TICRATE + 1; // Tails 03-06-2000
-            }// Tails 03-06-2000
+
+			if(mobj->player) {
+				if(!((mobj->player->powers[pw_super]) || (mobj->player->powers[pw_invulnerability])))
+					mobj->player->powers[pw_yellowshield] = false;
+				if (mobj->player->powers[pw_underwater] <= 0 && !(mobj->player->powers[pw_greenshield])) // Tails 03-06-2000
+					mobj->player->powers[pw_underwater] = 30*TICRATE + 1; // Tails 03-06-2000
 			}
 		}
-        else
-         {
+        else // Tails 03-06-2000 (I guess I'm just comment-happy today!)
             mobj->eflags &= ~MF_UNDERWATER;
-          } // Tails 03-06-2000 (I guess I'm just comment-happy today!)
 
-    }
-    else if(sector->ffloors)
-    {
+		if(mobj->z + mobj->height > z && mobj->z <= z)
+            mobj->eflags |= MF_TOUCHWATER;
+        else
+            mobj->eflags &= ~MF_TOUCHWATER;
+
+		mobj->waterz = z;
+		return;
+    } else if (sector->ffloors) {
       ffloor_t*  rover;
 
       mobj->eflags &= ~(MF_UNDERWATER|MF_TOUCHWATER);
@@ -917,8 +840,14 @@ void P_MobjCheckWater (mobj_t* mobj)
       {
         if(!(rover->flags & FF_SWIMMABLE) || rover->flags & FF_SOLID)
           continue;
+
+		if (*rover->topheight <= mobj->z)
+			mobj->waterz = *rover->topheight;
+
         if(*rover->topheight < mobj->z || *rover->bottomheight > (mobj->z + (mobj->height / 2)))
           continue;
+
+		mobj->waterz = *rover->topheight;
 
         if(mobj->z + mobj->height > *rover->topheight)
             mobj->eflags |= MF_TOUCHWATER;
@@ -928,43 +857,21 @@ void P_MobjCheckWater (mobj_t* mobj)
         if(mobj->z + mobj->height < *rover->topheight)
 		{ // Tails
             mobj->eflags |= MF_UNDERWATER;
-			if(mobj->player)
-			{
-         if(!((mobj->player->powers[pw_super]) || (mobj->player->powers[pw_invulnerability])))
-            mobj->player->powers[pw_yellowshield] = false;
-        if (mobj->player->powers[pw_underwater] <= 0 && !(mobj->player->powers[pw_greenshield])) // Tails 03-06-2000
-            {// Tails 03-06-2000
-            mobj->player->powers[pw_underwater] = 30*TICRATE + 1; // Tails 03-06-2000
-            }// Tails 03-06-2000
+
+			if(mobj->player) {
+				if(!((mobj->player->powers[pw_super]) || (mobj->player->powers[pw_invulnerability])))
+					mobj->player->powers[pw_yellowshield] = false;
+				if (mobj->player->powers[pw_underwater] <= 0 && !(mobj->player->powers[pw_greenshield])) // Tails 03-06-2000
+					mobj->player->powers[pw_underwater] = 30*TICRATE + 1; // Tails 03-06-2000
 			}
 		} // Tails
         else
             mobj->eflags &= ~MF_UNDERWATER;
-/*
-        if(  !(oldeflags & (MF_TOUCHWATER|MF_UNDERWATER))
-           && ((mobj->eflags & MF_TOUCHWATER) ||
-               (mobj->eflags & MF_UNDERWATER)    )
-           && mobj->type != MT_BLOOD)
-            P_SpawnSplash (mobj, *rover->topheight); */ // Tails 12-05-2001
       }
       return;
     }
     else
         mobj->eflags &= ~(MF_UNDERWATER|MF_TOUCHWATER);
-/*
-    // blood doesnt make noise when it falls in water
-    if(  !(oldeflags & (MF_TOUCHWATER|MF_UNDERWATER)) 
-       && ((mobj->eflags & MF_TOUCHWATER) || 
-           (mobj->eflags & MF_UNDERWATER)    )         
-      && mobj->type == MT_PLAYER) // Tails 04-04-2000
-        P_SpawnSplash (mobj, z); //SoM: 3/17/2000
-*/
-// Return of WaterZ! Tails 10-31-2000
-if(mobj->subsector->sector->heightsec != -1 && mobj->subsector->sector->altheightsec == 1)
-  mobj->waterz = sectors[mobj->subsector->sector->heightsec].floorheight;
-else
-mobj->waterz = mobj->floorz - 10000*FRACUNIT;
-
 }
 
 //
@@ -979,199 +886,151 @@ void P_MobjThinker (mobj_t* mobj)
 
 // Start Level end sign stuff Tails 01-14-2001
 
-if(mobj->type == MT_SIGN)
-{
-//for (i=0 ; i< MAXPLAYERS ; i++)
-//{
-
-	if(plyr->exiting)
-	{
+	if (mobj->type == MT_SIGN && plyr->exiting)
 		if (mobj->state == &states[S_SIGN49])
 		{
 			P_SetMobjState (mobj, S_SIGN1);
 			S_StartSound(mobj, sfx_lvpass);
 		}
-	}
-//}
-}
 
 // End Level end sign stuff Tails 01-14-2001
 
 // Fans spawn bubbles underwater Tails 02-28-2001
 // ONLY with MF_AMBUSH! Nozomi 03-13-2026
-if((mobj->type == MT_MISC34 || mobj->type == MT_REDFAN) && mobj->flags & MF_AMBUSH)
-{
-	int dist = 0;
-
-	if (!P_LookForPlayers(mobj, true))
-		return;
-
-	dist = R_PointToDist2(mobj->x, mobj->y, mobj->target->x, mobj->target->y);
-
-	if (dist > 1024*FRACUNIT) {
-		mobj->target = NULL;
-		return;
-	}
-
-	if (mobj->z + mobj->height < mobj->waterz) {
-		if(!(P_Random() % 16))
-		{
-			P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_SMALLBUBBLE);
-		}
-		if(!(P_Random() % 96))
-		{
-			P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_MEDIUMBUBBLE);
-		}
-	}
-	else if (!(leveltime % (4 + (((byte)dist) % 7)))) // air particles!!! Nozomi 03-13-2026
+	if((mobj->type == MT_MISC34 || mobj->type == MT_REDFAN) && mobj->flags & MF_AMBUSH)
 	{
-		if(!(P_Random() % 16))
-		{
-			if (mobj->type == MT_REDFAN)
-				P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE3);
-			else
-				P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE);
+		int dist = 0;
+
+		if (!P_LookForPlayers(mobj, true))
+			return;
+
+		dist = R_PointToDist2(mobj->x, mobj->y, mobj->target->x, mobj->target->y);
+
+		if (dist > 1024*FRACUNIT) {
+			mobj->target = NULL;
+			return;
 		}
-		if(!(P_Random() % 32))
+
+		if (mobj->z + mobj->height < mobj->waterz) {
+			if(!(P_Random() % 16))
+			{
+				P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_SMALLBUBBLE);
+			}
+			if(!(P_Random() % 96))
+			{
+				P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_MEDIUMBUBBLE);
+			}
+		}
+		else if (!(leveltime % (4 + (((byte)dist) % 7)))) // air particles!!! Nozomi 03-13-2026
 		{
-			if (mobj->type == MT_REDFAN)
-				P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE4);
-			else
-				P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE2);
+			if(!(P_Random() % 16))
+			{
+				if (mobj->type == MT_REDFAN)
+					P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE3);
+				else
+					P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE);
+			}
+			if(!(P_Random() % 32))
+			{
+				if (mobj->type == MT_REDFAN)
+					P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE4);
+				else
+					P_SpawnMobj (mobj->x, mobj->y, mobj->z + (mobj->height / 1.25), MT_AIRPARTICLE2);
+			}
 		}
 	}
-}
 
     if(mobj->player)
 	{
 		if(mobj->eflags & MF_JUSTHITFLOOR && mobj->z<=mobj->floorz && mobj->health)
-    {
-  if(false/*mobj->player->powers[pw_super]*/)
-  {
-	  if(mobj->player->rmomx || mobj->player->rmomy)
-     P_SetMobjState (mobj, S_PLAY_ABL1);  // Super Sonic Stuff Tails 04-18-2000
-	  else
-     P_SetMobjState (mobj, S_PLAY_SPC1);  // Super Sonic Stuff Tails 04-18-2000
-  }
-  else
-  {
-	  if(mobj->player->cmomx || mobj->player->cmomy)
-	  {
-	  if(mobj->player->speed > 18 && !mobj->player->running)
-	 P_SetMobjState (mobj, S_PLAY_SPD1);
-	  else if ((mobj->player->rmomx > STOPSPEED || mobj->player->rmomy > STOPSPEED) && (mobj->player->cmomx || mobj->player->cmomy) && !mobj->player->walking)
-     P_SetMobjState (mobj, S_PLAY_RUN1);
-	  else if ((mobj->momx > STOPSPEED || mobj->momy > STOPSPEED) && !mobj->player->walking)
-     P_SetMobjState (mobj, S_PLAY_RUN1);
-	  else if ((mobj->player->rmomx < FRACUNIT || mobj->player->rmomy < FRACUNIT) && (mobj->player->cmomx || mobj->player->cmomy) && !(mobj->player->walking || mobj->player->running))
-     P_SetMobjState (mobj, S_PLAY);
-	  }
-	else
-	{
-	  if(mobj->player->speed > 18 && !mobj->player->running)
-	 P_SetMobjState (mobj, S_PLAY_SPD1);
-	  else if ((mobj->momx || mobj->momy) && !mobj->player->walking)
-     P_SetMobjState (mobj, S_PLAY_RUN1);
-	  else if (!(mobj->momx && mobj->momy) && !(mobj->player->walking || mobj->player->running))
-     P_SetMobjState (mobj, S_PLAY);
-	}
-  }
+		{
+			// This is fucking stupid, but let it exist. It has a purpose... and I'll let it use the runspeed var I made. :3 Nozomi
+			if(mobj->player->cmomx || mobj->player->cmomy)
+			{
+				if(mobj->player->speed > mobj->player->runspeed && !mobj->player->running)
+					P_SetMobjState (mobj, S_PLAY_SPD1);
+				else if ((mobj->player->rmomx > STOPSPEED || mobj->player->rmomy > STOPSPEED) && (mobj->player->cmomx || mobj->player->cmomy) && !mobj->player->walking)
+					P_SetMobjState (mobj, S_PLAY_RUN1);
+				else if ((mobj->momx > STOPSPEED || mobj->momy > STOPSPEED) && !mobj->player->walking)
+					P_SetMobjState (mobj, S_PLAY_RUN1);
+				else if ((mobj->player->rmomx < FRACUNIT || mobj->player->rmomy < FRACUNIT) && (mobj->player->cmomx || mobj->player->cmomy) && !(mobj->player->walking || mobj->player->running))
+					P_SetMobjState (mobj, S_PLAY);
+			}
+			else
+			{
+				if(mobj->player->speed > mobj->player->runspeed && !mobj->player->running)
+					P_SetMobjState (mobj, S_PLAY_SPD1);
+				else if ((mobj->momx || mobj->momy) && !mobj->player->walking)
+					P_SetMobjState (mobj, S_PLAY_RUN1);
+				else if (!(mobj->momx && mobj->momy) && !(mobj->player->walking || mobj->player->running))
+					P_SetMobjState (mobj, S_PLAY);
+			}
 
-      if(mobj->player->mfjumped == 1)
-      {
-       mobj->player->mfjumped = 0;
-      }
-	  if(mobj->player->mfspinning == 1)
-	  {
+			mobj->player->mfjumped = 0;
 			mobj->player->mfspinning = 0;
-	  }
-	  mobj->player->gliding = 0;
-	  mobj->player->glidetime = 0;
-	  mobj->player->climbing = 0;
+			mobj->player->gliding = 0;
+			mobj->player->glidetime = 0;
+			mobj->player->climbing = 0;
+		}
+	}
+	
+	//SOM: Check fuse
+	if(mobj->fuse) {
+		mobj->fuse--;
+
+		if(!mobj->fuse) {
+
+			subsector_t* ss;
+			fixed_t             x;
+			fixed_t             y;
+			fixed_t             z;
+			mobj_t*			flagmo;
+
+			if(mobj->type == MT_BLUEFLAG)
+			{
+				x = mobj->spawnpoint->x << FRACBITS;
+				y = mobj->spawnpoint->y << FRACBITS;
+				ss = R_PointInSubsector(x, y);
+				z = ss->sector->floorheight;
+				flagmo = P_SpawnMobj(x, y, z, MT_BLUEFLAG);
+				flagmo->spawnpoint = mobj->spawnpoint;
+			}
+			else if(mobj->type == MT_REDFLAG)
+			{
+				x = mobj->spawnpoint->x << FRACBITS;
+				y = mobj->spawnpoint->y << FRACBITS;
+				ss = R_PointInSubsector(x, y);
+				z = ss->sector->floorheight;
+				flagmo = P_SpawnMobj(x, y, z, MT_REDFLAG);
+				flagmo->spawnpoint = mobj->spawnpoint;
+			}
+
+			switch(mobj->type)
+			{
+					case MT_MISC50: // Blue shield box
+					case MT_MISC48: // Yellow shield box
+					case MT_MISC31: // Green shield box
+					case MT_BKTV: // Black shield box
+					case MT_MISC74: // Super Sneaker box
+					case MT_PRUP: // 1-Up box
+					case MT_MISC10: // 10-Ring box
+					case MT_MISC11: // 25-Ring box
+					case MT_INV: // Invincibility box
+						P_SetMobjState(mobj, S_DISS); // make sure they dissapear tails
+						break;
+					default:
+						if(mobj->info->deathstate)
+							P_ExplodeMissile(mobj);
+						else
+							P_SetMobjState(mobj, S_DISS); // make sure they dissapear tails
+						break;
 			}
 		}
-	
-    //SOM: Check fuse
-    if(mobj->fuse) {
-      mobj->fuse--;
-      if(!mobj->fuse) {
-
-		  subsector_t* ss;
-		  fixed_t             x;
-		  fixed_t             y;
-		  fixed_t             z;
-		  mobj_t*			flagmo;
-		if(mobj->type == MT_BLUEFLAG)
-		{
-			x = mobj->spawnpoint->x << FRACBITS;
-			y = mobj->spawnpoint->y << FRACBITS;
-			ss = R_PointInSubsector(x, y);
-			z = ss->sector->floorheight;
-			flagmo = P_SpawnMobj(x, y, z, MT_BLUEFLAG);
-			flagmo->spawnpoint = mobj->spawnpoint;
-		}
-		else if(mobj->type == MT_REDFLAG)
-		{
-			x = mobj->spawnpoint->x << FRACBITS;
-			y = mobj->spawnpoint->y << FRACBITS;
-			ss = R_PointInSubsector(x, y);
-			z = ss->sector->floorheight;
-			flagmo = P_SpawnMobj(x, y, z, MT_REDFLAG);
-			flagmo->spawnpoint = mobj->spawnpoint;
-		}
-		switch(mobj->type)
-		{
-				case MT_MISC50: // Blue shield box
-				case MT_MISC48: // Yellow shield box
-				case MT_MISC31: // Green shield box
-				case MT_BKTV: // Black shield box
-				case MT_MISC74: // Super Sneaker box
-				case MT_PRUP: // 1-Up box
-				case MT_MISC10: // 10-Ring box
-				case MT_MISC11: // 25-Ring box
-				case MT_INV: // Invincibility box
-					P_SetMobjState(mobj, S_DISS); // make sure they dissapear tails
-					break;
-				default:
-					if(mobj->info->deathstate)
-						P_ExplodeMissile(mobj);
-					else
-						P_SetMobjState(mobj, S_DISS); // make sure they dissapear tails
-					break;
-		}
-        }
-      }
+	}
 
     //
     // momentum movement
     //
-#ifdef CLIENTPREDICTION2
-    if((mobj->type==MT_PLAYER) && (mobj->player) && 
-        (mobj->player->cmd.angleturn&(TICCMD_XY|TICCMD_RECEIVED)==(TICCMD_XY|TICCMD_RECEIVED)) && 
-        (mobj->player->playerstate == PST_LIVE))
-    {
-        if( mobj->x!=mobj->player->cmd.x || mobj->y!=mobj->player->cmd.y )
-        {
-            mobj->eflags |= MF_NOZCHECKING;
-            // cross special lines and pick up things
-            if(!P_TryMove (mobj, mobj->player->cmd.x, mobj->player->cmd.y, true))
-            {
-                if (mobj->player-players==consoleplayer)
-                {
-                    // reset spirit possition
-                    CL_ResetSpiritPosition(mobj);
-
-                    //if(devparm)
-                    CONS_Printf("\2MissPrediction\n");
-                }
-            }
-            mobj->eflags &= ~MF_NOZCHECKING;
-        }
-        P_XYFriction (mobj);
-
-    }
-    else
-#endif
     if ( mobj->momx ||
          mobj->momy ||
         (mobj->flags2&MF2_SKULLFLY) )
@@ -1192,22 +1051,17 @@ if((mobj->type == MT_MISC34 || mobj->type == MT_REDFAN) && mobj->flags & MF_AMBU
           ) )
     {
         // if didnt check things Z while XYMovement, do the necessary now
-        if (!checkedpos && (demoversion>=112))
+        if (!checkedpos)
         {
-            // FIXME : should check only with things, not lines
             P_CheckPosition (mobj, mobj->x, mobj->y);
 
-            /* ============ BIG DIRTY MESS : FIXME FAB!!! =============== */
             mobj->floorz = tmfloorz;
             mobj->ceilingz = tmceilingz;
+
             if (tmfloorthing)
                 mobj->eflags &= ~MF_ONGROUND;  //not on real floor
             else
                 mobj->eflags |= MF_ONGROUND;
-            /* ============ BIG DIRTY MESS : FIXME FAB!!! =============== */
-
-            // now mobj->floorz should be the current sector's z floor
-            // or a valid thing's top z
         }
 
         P_ZMovement (mobj);
@@ -1218,6 +1072,9 @@ if((mobj->type == MT_MISC34 || mobj->type == MT_REDFAN) && mobj->flags & MF_AMBU
     }
     else
         mobj->eflags &= ~MF_JUSTHITFLOOR;
+
+	if (!mobj->player)
+		mobj->eflags &= ~MF_SPRUNG;
 
     // cycle through states,
     // calling action functions at transitions
@@ -1253,50 +1110,52 @@ if((mobj->type == MT_MISC34 || mobj->type == MT_REDFAN) && mobj->flags & MF_AMBU
         P_NightmareRespawn (mobj);
     }
 
-if(mobj->type == MT_EGGMOBILE && mobj->health < 3 && leveltime & 1 && mobj->health > 0)
-	P_SpawnMobj(mobj->x, mobj->y, mobj->z, MT_SMOK);
+	mobj->eflags &= ~MF_SPRUNG;
 
-if(mobj->type == MT_EGGMOBILE && mobj->flags2 & MF2_SKULLFLY)
+	if(mobj->type == MT_EGGMOBILE && mobj->health < 3 && leveltime & 1 && mobj->health > 0)
+		P_SpawnMobj(mobj->x, mobj->y, mobj->z, MT_SMOK);
+
+	if(mobj->type == MT_EGGMOBILE && mobj->flags2 & MF2_SKULLFLY)
 	{
 		mobj_t* thok;
 		thok = P_SpawnMobj(mobj->x, mobj->y, mobj->z, MT_THOK);
-		thok->color = 2;
+		thok->color = SKINCOLOR_YELLOW;
 	}
 
-// I hope this wasn't needed... Save 01-04-2026
-/*if (mobj->type==MT_BFG)
-    P_SetMobjState (mobj, S_BFGLAND3);
+	// Some black shield code Tails 04-08-2000
+	if (mobj->type==MT_BFG)
+		P_SetMobjState (mobj, S_BFGLAND3);
 
-if (mobj->state == &states[S_BFGLAND3])
-    P_SetMobjState (mobj, S_DISS);*/
+	if (mobj->state == &states[S_BFGLAND3])
+		P_SetMobjState (mobj, S_DISS);
 
-// start bubble dissipate Tails
-  if((mobj->type==MT_SMALLBUBBLE || mobj->type==MT_MEDIUMBUBBLE || mobj->type==MT_EXTRALARGEBUBBLE) && (mobj->z >= mobj->waterz || mobj->z + mobj->height >= mobj->ceilingz))
-   {
-     P_SetMobjState (mobj, S_DISS);
-   }
-// end bubble dissipate Tails
+	// start bubble dissipate Tails
+	if((mobj->type==MT_SMALLBUBBLE || mobj->type==MT_MEDIUMBUBBLE || mobj->type==MT_EXTRALARGEBUBBLE) && (mobj->z >= mobj->waterz || mobj->z + mobj->height >= mobj->ceilingz))
+	{
+		P_SetMobjState (mobj, S_DISS);
+	}
+	// end bubble dissipate Tails
 
-   // air particle dissipate Nozomi
-  if((mobj->type==MT_AIRPARTICLE || mobj->type==MT_AIRPARTICLE2 || mobj->type==MT_AIRPARTICLE3 || mobj->type==MT_AIRPARTICLE4) && (mobj->z + mobj->height >= mobj->ceilingz))
-   {
-     P_SetMobjState (mobj, S_DISS);
-   }
+	// air particle dissipate Nozomi
+	if((mobj->type==MT_AIRPARTICLE || mobj->type==MT_AIRPARTICLE2 || mobj->type==MT_AIRPARTICLE3 || mobj->type==MT_AIRPARTICLE4) && (mobj->z + mobj->height >= mobj->ceilingz))
+	{
+		P_SetMobjState (mobj, S_DISS);
+	}
+	// air particle dissipate Nozomi
 
-// start make sure player shows dead Tails 03-15-2000
-if(mobj->player)
-{
-   if(mobj->health <= 0)
-   {
-     P_SetMobjState (mobj, S_PLAY_DIE3);
-   }
-}
-// end make sure player shows dead Tails 03-15-2000
+	// start make sure player shows dead Tails 03-15-2000
+	if(mobj->player)
+	{
+	   if(mobj->health <= 0)
+	   {
+		 P_SetMobjState (mobj, S_PLAY_DIE3);
+	   }
+	}
+	// end make sure player shows dead Tails 03-15-2000
 
-// Keep Skim at water surface Tails 06-13-2000
-if((mobj->type==MT_SKIM) && ((mobj->z > mobj->waterz) || (mobj->z < mobj->waterz)))
-mobj->z = mobj->waterz;
-
+	// Keep Skim at water surface Tails 06-13-2000
+	if((mobj->type==MT_SKIM) && ((mobj->z > mobj->waterz) || (mobj->z < mobj->waterz)))
+		mobj->z = mobj->waterz;
 }
 
 static void CalculatePrecipFloor(precipmobj_t* mobj)
@@ -1331,12 +1190,55 @@ void P_RecalcPrecipInSector(sector_t* sector)
 	sector = NULL; // warning C4100: 'sector' : unreferenced formal parameter
 }
 
+static void P_PrecipMobjCheckWater (precipmobj_t* mobj)
+{
+    sector_t* sector;
+	int z;
+
+    //
+    // see if we are in water, and set some flags for later
+    //
+    sector = mobj->subsector->sector;
+	mobj->waterz = mobj->floorz - 10000*FRACUNIT;
+
+	if ((sector->heightsec > -1 && sector->altheightsec == 1) ||
+        (levelflats[sector->floorpic].iswater && sector->heightsec == -1))
+    {
+        if (sector->heightsec > -1)  //water hack
+            z = (sectors[sector->heightsec].floorheight);
+        else
+            z = sector->floorheight + (FRACUNIT/4); // water texture
+
+		mobj->waterz = z;
+		return;
+    } else if (sector->ffloors) {
+      ffloor_t*  rover;
+
+      for(rover = sector->ffloors; rover; rover = rover->next)
+      {
+        if(!(rover->flags & FF_SWIMMABLE) || rover->flags & FF_SOLID)
+          continue;
+
+		if (*rover->topheight <= mobj->z)
+			mobj->waterz = *rover->topheight;
+
+        if(*rover->topheight < mobj->z || *rover->bottomheight > mobj->z)
+          continue;
+
+		mobj->waterz = *rover->topheight;
+      }
+      return;
+    }
+}
+
 void P_SnowThinker(precipmobj_t* mobj)
 {
 	// adjust height
 	mobj->z += mobj->momz;
 
-	if(mobj->z <= mobj->floorz)
+	P_PrecipMobjCheckWater(mobj);
+
+	if(mobj->z <= mobj->floorz || mobj->z <= mobj->waterz)
 		mobj->z = mobj->subsector->sector->ceilingheight;
 
 	return;
@@ -1346,6 +1248,8 @@ void P_RainThinker(precipmobj_t* mobj)
 {
 	// adjust height
 	mobj->z += mobj->momz;
+
+	P_PrecipMobjCheckWater(mobj);
 
 	if(mobj->state != &states[S_RAIN1])
 	{
@@ -1368,7 +1272,7 @@ void P_RainThinker(precipmobj_t* mobj)
 			P_SetPrecipMobjState(mobj, S_RAIN1);
 		}
 	}
-	else if(mobj->z <= mobj->floorz && mobj->momz)
+	else if((mobj->z <= mobj->floorz || mobj->z <= mobj->waterz) && mobj->momz)
 	{
 		// no splashes on sky or bottomless pits
 		if(mobj->z <= mobj->subsector->sector->floorheight
@@ -1378,7 +1282,10 @@ void P_RainThinker(precipmobj_t* mobj)
 		else
 		{
 			mobj->momz = 0;
-			mobj->z = mobj->floorz;
+			if (mobj->waterz > mobj->floorz)
+				mobj->z = mobj->waterz;
+			else
+				mobj->z = mobj->floorz;
 			P_SetPrecipMobjState(mobj, S_SPLASH1);
 		}
 	}
@@ -1459,32 +1366,6 @@ mobj_t* P_SpawnMobj ( fixed_t       x,
         //added:28-02-98: defaults onground
         mobj->eflags |= MF_ONGROUND;
 
-        //added:28-02-98: dirty hack : dont stack monsters coz it blocks
-        //                moving floors and anyway whats the use of it?
-
-		/*        if (mobj->flags & MF_NOBLOOD)
-        {
-            mobj->z = mobj->floorz;
-
-            // first check the tmfloorz
-            P_CheckPosition(mobj,x,y);
-            mobj->z = tmfloorz+FRACUNIT;
-
-            // second check at the good z pos
-            P_CheckPosition(mobj,x,y);
-
-            mobj->floorz = tmfloorz;
-            mobj->ceilingz = tmsectorceilingz;
-            mobj->z = tmfloorz;
-            // thing not on solid ground
-            if (tmfloorthing)
-                mobj->eflags &= ~MF_ONGROUND;
-
-            //if (mobj->type == MT_BARREL)
-            //   fprintf(stderr,"barrel at z %d floor %d ceiling %d\n",mobj->z,mobj->floorz,mobj->ceilingz);
-
-        }
-        else*/
 		if((mobj->type == MT_MISC2 && (mobj->flags & MF_AMBUSH)) || mobj->type == MT_DETON || mobj->type == MT_JETTBOMBER || mobj->type == MT_JETTGUNNER) // Special flag for rings Tails 06-03-2001
 			mobj->z = mobj->floorz + 32*FRACUNIT;
 		else
@@ -1511,6 +1392,17 @@ mobj_t* P_SpawnMobj ( fixed_t       x,
     //SOM: Fuse for bunnies, squirls, and flingrings
       if(mobj->type == MT_BIRD || mobj->type == MT_SQRL || mobj->type == MT_MOUSE)
         mobj->fuse = 300 + (P_Random() % 50);
+
+	if (mapheaders[gamemap].corona)
+	  switch (mobj->type) {
+		case MT_MISC2:
+		case MT_FLINGRING:
+		case MT_TOKEN:
+		case MT_EMMY:
+			P_SpawnCorona(mobj);
+		default:
+			break;
+	  }
 
     return mobj;
 }
@@ -1656,6 +1548,9 @@ void P_RemoveMobj (mobj_t* mobj)
 
     // stop any playing sound
     S_StopSound (mobj);
+
+	if (mobj->corona)
+		P_RemoveMobj(mobj->corona);
 
     // free block
     P_RemoveThinker ((thinker_t*)mobj);
@@ -1872,6 +1767,8 @@ void P_RespawnSpecials (void)
 
     // spawn a teleport fog at the new spot
     ss = R_PointInSubsector (x,y);
+    mo = P_SpawnMobj (x, y, ss->sector->floorheight , MT_IFOG);
+    S_StartSound (mo, sfx_itmbk);
 
     // find which type to spawn
     for (i=0 ; i< NUMMOBJTYPES ; i++)
@@ -1888,12 +1785,87 @@ void P_RespawnSpecials (void)
     else
         z = ONFLOORZ;
 
+    mo = P_SpawnMobj (x,y,z, i);
+    mo->spawnpoint = mthing;
+    mo->angle = ANG45 * (mthing->angle/45);
+
     // pull it from the que
     iquetail = (iquetail+1)&(ITEMQUESIZE-1);
 }
 
 // used when we are going from deathmatch 2 to deathmatch 1
-void P_RespawnWeapons(void){}
+void P_RespawnWeapons(void)
+{
+    fixed_t             x;
+    fixed_t             y;
+    fixed_t             z;
+
+    subsector_t*        ss;
+    mobj_t*             mo;
+    mapthing_t*         mthing;
+
+    int                 i,j,freeslot;
+
+    freeslot=iquetail;
+    for(j=iquetail;j!=iquehead;j=(j+1)&(ITEMQUESIZE-1))
+    {
+        mthing = itemrespawnque[j];
+
+        i=0;
+        switch(mthing->type) {
+            case 2001 : //mobjinfo[MT_SHOTGUN].doomednum  :
+                 i=MT_SHOTGUN;
+                 break;
+            case 82   : //mobjinfo[MT_SUPERSHOTGUN].doomednum :
+                 i=MT_SUPERSHOTGUN;
+                 break;
+            case 2002 : //mobjinfo[MT_CHAINGUN].doomednum :
+                 i=MT_CHAINGUN;
+                 break;
+            case 2006 : //mobjinfo[MT_BFG9000].doomednum   : // bfg9000
+                 i=MT_BFG9000;
+                 break;
+            case 2004 : //mobjinfo[MT_PLASMAGUNMISC28].doomednum   : // plasma launcher
+                 i=MT_PLASMAGUN;
+                 break;
+            case 2003 : //mobjinfo[MT_ROCKETLAUNCH].doomednum   : // rocket launcher
+                 i=MT_ROCKETLAUNCH;
+                 break;
+            case 2005 : //mobjinfo[MT_SHAINSAW].doomednum   : // shainsaw
+                 i=MT_SHAINSAW;
+                 break;
+            default:
+                 if(freeslot!=j)
+                 {
+                     itemrespawnque[freeslot]=itemrespawnque[j];
+                     itemrespawntime[freeslot]=itemrespawntime[j];
+                 }
+
+                 freeslot=(freeslot+1)&(ITEMQUESIZE-1);
+                 continue;
+        }
+        // respwan it
+        x = mthing->x << FRACBITS;
+        y = mthing->y << FRACBITS;
+
+        // spawn a teleport fog at the new spot
+        ss = R_PointInSubsector (x,y);
+        mo = P_SpawnMobj (x, y, ss->sector->floorheight , MT_IFOG);
+        S_StartSound (mo, sfx_itmbk);
+
+        // spawn it
+        if (mobjinfo[i].flags & MF_SPAWNCEILING)
+            z = ONCEILINGZ;
+        else
+            z = ONFLOORZ;
+
+        mo = P_SpawnMobj (x,y,z, i);
+        mo->spawnpoint = mthing;
+        mo->angle = ANG45 * (mthing->angle/45);
+        // here don't increment freeslot
+    }
+    iquehead=freeslot;
+}
 
 extern byte weapontobutton[NUMWEAPONS];
 
@@ -2193,19 +2165,20 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	else
 	//P_SpawnMapThing tmp
 	// Nozomi Fake Player Additions
-	// 9996 - Standing Sonic
-	// 9997 - Tired Tails
-	// 9998 - Knuckles?
-	if (mthing->type >= 9996 && mthing->type < 9999) {
-		int skin = mthing->type-9996;
+	// 9995 - Standing Sonic
+	// 9996 - Tired Tails
+	// 9997 - Knuckles?
+	if (mthing->type >= 9995 && mthing->type < 9998) {
+		int skin = mthing->type-9995;
 		mobj = P_SpawnMobj (x,y,z, MT_PLAYER);
 		mobj->spawnpoint = mthing;
 
 		mobj->skin = &skins[skin];
-		mobj->color = (skin == 0) ? SKINCOLOR_LIGHTBLUE : (skin == 1) ? SKINCOLOR_APRICOT : SKINCOLOR_GREEN;
+
+		mobj->color = (skin == 0) ? SKINCOLOR_BLUE+1 : (skin == 1) ? SKINCOLOR_APRICOT+1 : SKINCOLOR_BRIGHTRED+1;
 		mobj->flags |= MF_TRANSLATION;
 		P_SetMobjState(mobj, (skin == 0) ? S_DUMMY_STND : (skin == 1) ? S_PLAY_TAP1 : S_DUMMY_STND);
-		mobj->angle = ANG45 * (mthing->angle/45);
+		mobj->angle = FixedAngle(mthing->angle*FRACUNIT);
 	}
 	else
 	{
@@ -2246,8 +2219,15 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	if (mobj->flags2 & MF2_PUSHABLE && mthing->options & MTF_AMBUSH)
 		mobj->flags2 &= ~MF2_PUSHABLE;
 
-	if (mobj->flags2 & MF2_SPRING && mobj->flags & MF_TRANSLATION)
-		mobj->color = mobjinfo[i].speed+1;
+
+	if (mobj->flags2 & MF2_SPRING) 
+	{
+		if (mobj->flags & MF_TRANSLATION)
+			mobj->color = mobjinfo[i].speed+1;
+	}
+		
+	if (mobj->type == MT_FLINGRING)
+		mobj->flags |= MF_AMBUSH;
 }
 
 
@@ -2255,56 +2235,6 @@ void P_SpawnMapThing (mapthing_t* mthing)
 //
 // GAME SPAWN FUNCTIONS
 //
-
-/* Crummy function Tails 12-05-2001
-//
-// P_SpawnSplash
-//
-// when player moves in water
-void P_SpawnSplash (mobj_t* mo, boolean flatwater)
-                                // flatwater : old water FWATER flat texture
-{
-    mobj_t*     th;
-    fixed_t     z;
-
-    if (demoversion<125)
-        return;
-
-    // we are supposed to be in water sector and my current
-    // hack uses negative tag as water height
-    if (flatwater)
-        z = mo->subsector->sector->floorheight + (FRACUNIT/4);
-    else
-        z = sectors[mo->subsector->sector->heightsec].floorheight; //SoM: 3/17/2000
-
-    // need to touch the surface because the splashes only appear at surface
-    if (mo->z > z || mo->z + mo->height < z)
-        return;
-
-    // note pos +1 +1 so it doesn't eat the sound of the player..
-    th = P_SpawnMobj (mo->x+1,mo->y+1,z, MT_SPLASH);
-    //if( z - mo->subsector->sector->floorheight > 4*FRACUNIT)
-        S_StartSound (th, sfx_gloop);
-    //else
-    //    S_StartSound (th,sfx_splash);
-    th->tics -= P_Random()&3;
-
-    if (th->tics < 1)
-        th->tics = 1;
-
-
-    // get rough idea of speed
-    
-    thrust = (mo->momx + mo->momy) >> FRACBITS+1;
-
-    if (thrust >= 2 && thrust<=3)
-        P_SetMobjState (th,S_SPLASH2);
-    else
-    if (thrust < 2)
-        P_SetMobjState (th,S_SPLASH3);
-    
-}
-*/
 
 // --------------------------------------------------------------------------
 // P_SpawnSmoke
@@ -2341,6 +2271,21 @@ void P_SpawnPuff ( fixed_t       x,
                    fixed_t       y,
                    fixed_t       z )
 {
+    mobj_t*     th;
+
+    z += P_Random()<<10;
+    z -= P_Random()<<10;
+
+    th = P_SpawnMobj (x,y,z, MT_PUFF);
+    th->momz = FRACUNIT;
+    th->tics -= P_Random()&3;
+
+    if (th->tics < 1)
+        th->tics = 1;
+
+    // don't make punches spark on the wall
+    if (attackrange == MELEERANGE)
+        P_SetMobjState (th, S_PUFF3);
 }
 
 
@@ -2488,7 +2433,32 @@ void P_SpawnBlood ( fixed_t       x,
                     fixed_t       y,
                     fixed_t       z,
                     int           damage )
-{}
+{
+    mobj_t*     th;
+
+    z += P_Random()<<10;
+    z -= P_Random()<<10;
+    th = P_SpawnMobj (x,y,z, MT_BLOOD);
+    if(demoversion>=128)
+    {
+        th->momx  = P_Random()<<12; //faB:19jan99
+        th->momx -= P_Random()<<12; //faB:19jan99
+        th->momy  = P_Random()<<12; //faB:19jan99
+        th->momy -= P_Random()<<12; //faB:19jan99
+    }
+    th->momz = FRACUNIT*2;
+    th->tics -= P_Random()&3;
+
+    if (th->tics < 1)
+        th->tics = 1;
+
+    if (damage <= 12 && damage >= 9)
+        P_SetMobjState (th,S_BLOOD2);
+    else if (damage < 9)
+        P_SetMobjState (th,S_BLOOD3);
+
+    bloodthing = th;
+}
 
 
 //

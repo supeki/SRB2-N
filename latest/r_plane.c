@@ -71,6 +71,7 @@
 #include "r_state.h"
 #include "r_splats.h"   //faB(21jan):testing
 #include "r_sky.h"
+#include "p_tick.h"
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
@@ -99,6 +100,7 @@ static visplane_t **freehead = &freetail;
 
 visplane_t*             floorplane;
 visplane_t*             ceilingplane;
+visplane_t*             waterplane;
 
 visplane_t*             currentplane;
 
@@ -131,10 +133,8 @@ short                   floorclip[MAXVIDWIDTH];
 short                   ceilingclip[MAXVIDWIDTH];
 fixed_t                 flatscale[MAXVIDWIDTH];
 
-#ifdef OLDWATER
-  short                   waterclip[MAXVIDWIDTH];   //added:18-02-98:WATER!
-  boolean                 itswater;       //added:24-02-98:WATER!
-#endif
+short                   waterclip[MAXVIDWIDTH];   //added:18-02-98:WATER!
+boolean                 itswater;       //added:24-02-98:WATER!
 
 //
 // spanstart holds the start of a plane span
@@ -206,10 +206,8 @@ void R_InitPlanes (void)
 //
 // BASIC PRIMITIVE
 //
-#ifdef OLDWATER
 static int bgofs;
 static int wtofs=0;
-#endif
 
 void R_MapPlane
 ( int           y,              // t1
@@ -249,24 +247,22 @@ void R_MapPlane
     ds_xfrac = viewx + FixedMul(finecosine[angle], length) + xoffs;
     ds_yfrac = -viewy - FixedMul(finesine[angle], length)  + yoffs;
 
-#ifdef OLDWATER
     if (itswater)
-    {
-        int         fuck;
-        //ripples da water texture
-        fuck = (wtofs + (distance>>10) ) & 8191;
-        bgofs = FixedDiv(finesine[fuck],distance>>9)>>16;
+	{
+		const INT32 yay = (wtofs + (distance>>9) ) & 8191;
+		// ripples da water texture
+		bgofs = FixedDiv(finesine[yay], (1<<12) + (distance>>11))>>FRACBITS;
+		angle = (viewangle + xtoviewangle[x1])>>ANGLETOFINESHIFT;
 
-        angle = (angle + 2048) & 8191;  //90ø
-        ds_xfrac += FixedMul(finecosine[angle], (bgofs<<FRACBITS));
-        ds_yfrac += FixedMul(finesine[angle], (bgofs<<FRACBITS));
+		angle = (angle + 2048) & 8191;  // 90 degrees
+		ds_xfrac += FixedMul(finecosine[angle], (bgofs<<FRACBITS));
+		ds_yfrac += FixedMul(finesine[angle], (bgofs<<FRACBITS));
 
-        if (y+bgofs>=viewheight)
-            bgofs = viewheight-y-1;
-        if (y+bgofs<0)
-            bgofs = -y;
-    }
-#endif
+		if (y+bgofs>=viewheight)
+			bgofs = viewheight-y-1;
+		if (y+bgofs<0)
+			bgofs = -y;
+	}
 
     if (fixedcolormap)
         ds_colormap = fixedcolormap;
@@ -317,10 +313,6 @@ void R_ClearPlanes (player_t *player)
     int         i, p;
     angle_t     angle;
 
-#ifdef OLDWATER
-    int         waterz;
-#endif
-
     // opening / clipping determination
     for (i=0 ; i<viewwidth ; i++)
     {
@@ -337,25 +329,6 @@ void R_ClearPlanes (player_t *player)
     }
 
     numffloors = 0;
-
-#ifdef OLDWATER
-    //added:18-02-98:WATER! clear the waterclip
-    if (player->mo->subsector->sector->tag<0)
-        waterz = (-player->mo->subsector->sector->tag)<<FRACBITS;
-    else
-        waterz = MININT;
-
-    if (viewz>waterz)
-    {
-        for (i=0; i<viewwidth; i++)
-            waterclip[i] = viewheight;
-    }
-    else
-    {
-        for (i=0; i<viewwidth; i++)
-            waterclip[i] = -1;
-    }
-#endif
 
     //lastvisplane = visplanes;
 
@@ -604,128 +577,89 @@ void R_MakeSpans
 }
 
 
-#ifdef OLDWATER
 static int waterofs;
 
-// la texture flat anim‚e de l'eau contient en fait des index
-// de colormaps , plutot qu'une transparence, il s'agit d'ombrer et
-// d'eclaircir pour donner l'effet de bosses de l'eau.
-#ifdef couille
-void R_DrawWaterSpan (void)
+static void R_DrawTranslucentWaterSpan_8(void)
 {
-    fixed_t             xfrac;
-    fixed_t             yfrac;
-    byte*               dest;
-    int                 count;
-    int                 spot;
+	UINT32 xposition;
+	UINT32 yposition;
+	UINT32 xstep, ystep;
 
-    //byte*               brighten = transtables+(84<<8);
-    byte*               brighten = colormaps;
+	byte *source;
+	byte *colormap;
+	byte *dest;
+	byte *dsrc;
 
-//#ifdef RANGECHECK
-    if (ds_x2 < ds_x1
-        || ds_x1<0
-        || ds_x2>=vid.width
-        || (unsigned)ds_y>=vid.height)
-    {
-        I_Error( "R_DrawWaterSpan: %i to %i at %i",
-                 ds_x1,ds_x2,ds_y);
-    }
-//      dscount++;
-//#endif
+	size_t count;
 
+	// SoM: we only need 6 bits for the integer part (0 thru 63) so the rest
+	// can be used for the fraction part. This allows calculation of the memory address in the
+	// texture with two shifts, an OR and one AND. (see below)
+	// for texture sizes > 64 the amount of precision we can allow will decrease, but only by one
+	// bit per power of two (obviously)
+	// Ok, because I was able to eliminate the variable spot below, this function is now FASTER
+	// than the original span renderer. Whodathunkit?
+	xposition = ds_xfrac << nflatshiftup; yposition = (ds_yfrac + waterofs) << nflatshiftup;
+	xstep = ds_xstep << nflatshiftup; ystep = ds_ystep << nflatshiftup;
 
-    xfrac = ds_xfrac;
-    yfrac = (ds_yfrac + waterofs) & 0x3fffff;
+	source = ds_source;
+	colormap = ds_colormap;
+	dest = ylookup[ds_y] + columnofs[ds_x1];
+	dsrc = screens[1] + (ds_y+bgofs)*vid.width + ds_x1;
+	count = ds_x2 - ds_x1 + 1;
 
-    dest = ylookup[ds_y] + columnofs[ds_x1];
+	while (count >= 8)
+	{
+		// SoM: Why didn't I see this earlier? the spot variable is a waste now because we don't
+		// have the uber complicated math to calculate it now, so that was a memory write we didn't
+		// need!
+		dest[0] = *(ds_transmap + (colormap[source[((yposition >> nflatyshift) & nflatmask) | (xposition >> nflatxshift)]] << 8) + dest[0]);
+		xposition += xstep;
+		yposition += ystep;
 
-    // We do not check for zero spans here?
-    count = ds_x2 - ds_x1;
+		dest[1] = *(ds_transmap + (colormap[source[((yposition >> nflatyshift) & nflatmask) | (xposition >> nflatxshift)]] << 8) + dest[1]);
+		xposition += xstep;
+		yposition += ystep;
 
-// *dest++ = 192;
-// --count;
-    do //while(count--)
-    {
-        // Current texture index in u,v.
-        spot = ((yfrac>>(16-6))&(63*64)) + ((xfrac>>16)&63);
+		dest[2] = *(ds_transmap + (colormap[source[((yposition >> nflatyshift) & nflatmask) | (xposition >> nflatxshift)]] << 8) + dest[2]);
+		xposition += xstep;
+		yposition += ystep;
 
-        // Lookup pixel from flat texture tile,
-        //  re-index using light/colormap.
-        *dest++ = *( brighten + (ds_source[spot]<<8) + (*dest) );
-        // Next step in u,v.
-        xfrac += ds_xstep;
-        yfrac += ds_ystep;
+		dest[3] = *(ds_transmap + (colormap[source[((yposition >> nflatyshift) & nflatmask) | (xposition >> nflatxshift)]] << 8) + dest[3]);
+		xposition += xstep;
+		yposition += ystep;
 
-    } while(count--); //
-// if (count==-1)
-//     *dest = 200;
+		dest[4] = *(ds_transmap + (colormap[source[((yposition >> nflatyshift) & nflatmask) | (xposition >> nflatxshift)]] << 8) + dest[4]);
+		xposition += xstep;
+		yposition += ystep;
+
+		dest[5] = *(ds_transmap + (colormap[source[((yposition >> nflatyshift) & nflatmask) | (xposition >> nflatxshift)]] << 8) + dest[5]);
+		xposition += xstep;
+		yposition += ystep;
+
+		dest[6] = *(ds_transmap + (colormap[source[((yposition >> nflatyshift) & nflatmask) | (xposition >> nflatxshift)]] << 8) + dest[6]);
+		xposition += xstep;
+		yposition += ystep;
+
+		dest[7] = *(ds_transmap + (colormap[source[((yposition >> nflatyshift) & nflatmask) | (xposition >> nflatxshift)]] << 8) + dest[7]);
+		xposition += xstep;
+		yposition += ystep;
+
+		dest += 8;
+		count -= 8;
+	}
+	while (count--)
+	{
+		*dest = *(ds_transmap + (colormap[source[((yposition >> nflatyshift) & nflatmask) | (xposition >> nflatxshift)]] << 8) + *dest);
+		dest++;
+		xposition += xstep;
+		yposition += ystep;
+	}
 }
-#endif //couille
-
-void R_DrawWaterSpan_8 (void)
-{
-    fixed_t             xfrac;
-    fixed_t             yfrac;
-    byte*               dest;
-    byte*               dsrc;
-    int                 count;
-    int                 spot;
-
-    //byte*               brighten = transtables+(84<<8);
-    byte*               brighten = colormaps-(8*256);
-
-//#ifdef RANGECHECK
-    if (ds_x2 < ds_x1
-        || ds_x1<0
-        || ds_x2>=vid.width
-        || ds_y>=vid.height)
-    {
-        I_Error( "R_DrawWaterSpan: %i to %i at %i",
-                 ds_x1,ds_x2,ds_y);
-    }
-//      dscount++;
-//#endif
-
-    xfrac = ds_xfrac;
-    yfrac = (ds_yfrac + waterofs) & 0x3fffff;
-
-    // methode a : le fond est d‚form‚
-    dest = ylookup[ds_y] + columnofs[ds_x1];
-    dsrc = screens[2] + ((ds_y+bgofs)*vid.width) + columnofs[ds_x1];
-
-    // m‚thode b : la surface est d‚form‚e !
-    //dest = ylookup[ds_y+bgofs] + columnofs[ds_x1];
-    //dsrc = screens[2] + (ds_y*vid.width) + columnofs[ds_x1];
-
-    // We do not check for zero spans here?
-    count = ds_x2 - ds_x1;
-
-// *dest++ = 192;
-// --count;
-
-    do //while(count--)
-    {
-        // Current texture index in u,v.
-        spot = ((yfrac>>(16-6))&(63*64)) + ((xfrac>>16)&63);
-
-        // Lookup pixel from flat texture tile,
-        //  re-index using light/colormap.
-        *dest++ = *( brighten + (ds_source[spot]<<8) + (*dsrc++) );
-        // Next step in u,v.
-        xfrac += ds_xstep;
-        yfrac += ds_ystep;
-
-    } while(count--); //
-// if (count==-1)
-//     *dest = 200;
-}
-
 
 
 
 static int wateranim;
-#endif //Oldwater
 
 
 byte* R_GetFlat (int  flatnum);
@@ -737,18 +671,9 @@ void R_DrawPlanes (void)
     int                 angle;
     int                 i; //SoM: 3/23/2000
 
-#ifdef OLDWATER
-    //added:18-02-98:WATER!
-    boolean             watertodraw;
-#endif
-
     //
     // DRAW NON-WATER VISPLANES FIRST
     //
-#ifdef OLDWATER
-    watertodraw = false;
-    itswater = false;
-#endif
 
     spanfunc = basespanfunc;
 	wallcolfunc = walldrawerfunc;
@@ -756,13 +681,6 @@ void R_DrawPlanes (void)
     for (i=0;i<MAXVISPLANES;i++, pl++)
     for (pl=visplanes[i]; pl; pl=pl->next)
     {
-#ifdef OLDWATER
-        if (pl->picnum==1998)   //dont draw water visplanes now.
-        {
-            watertodraw = true;
-            continue;
-        }
-#endif
 
         // sky flat
 		if (pl->picnum == skyflatnum)
@@ -802,48 +720,8 @@ void R_DrawPlanes (void)
         R_DrawSinglePlane(pl, true);
     }
 
-
-    //
-    // DRAW WATER VISPLANES AFTER
-    //
-
-#ifdef OLDWATER
-    R_DrawSprites ();   //draw sprites before water. just a damn hack
-
-
-    //added:24-02-98: SALE GROS HACK POURRI
-    if (!watertodraw)
-      goto skipwaterdraw;
-
-    VID_BlitLinearScreen ( screens[0], screens[2],
-                           vid.width, vid.height,
-                           vid.width, vid.width );
-
-    spanfunc = R_DrawWaterSpan_8;
-    itswater = true;
-    // always the same flat!!!
-    ds_source = W_CacheLumpNum(firstwaterflat + ((wateranim>>3)&7), PU_STATIC);
-
-    for (i=0;i<MAXVISPLANES;i++, pl++)
-    for (pl=visplanes[i]; pl; pl=pl->next)
-    {
-        if (pl->picnum!=1998)
-            continue;
-
-        R_DrawSinglePlane(pl, false);
-    }
-    Z_ChangeTag (ds_source, PU_CACHE);
-    itswater = false;
-    spanfunc = basespanfunc;
-
-skipwaterdraw:
-
-    waterofs += (1<<14);
-    wateranim++;
-    wtofs += 75;
-    //if (!wateranim)
-    //    waterofs -= (32<<16);
-#endif //OLDWATER
+	waterofs = (leveltime & 1)*16384;
+	wtofs = leveltime * 140;
 }
 
 
@@ -854,20 +732,93 @@ void R_DrawSinglePlane(visplane_t* pl, boolean handlesource)
   int                 light;
   int                 x;
   int                 stop;
+  size_t size;
 
   if (pl->minx > pl->maxx)
     return;
 
+  itswater = false;
+  spanfunc = basespanfunc;
+
+  if (pl->ffloor)
+  {
+	  if (pl->ffloor->flags & (FF_TRANSLUCENT|FF_SWIMMABLE))
+	  {
+		spanfunc = R_DrawTranslucentSpan_8;
+		ds_transmap = ((1)<<FF_TRANSSHIFT) - 0x10000 + transtables;
+
+		if (!pl->extra_colormap)
+			light = (pl->lightlevel >> LIGHTSEGSHIFT)+extralight;
+		else
+			light = LIGHTLEVELS-1;
+	  }
+	  else light = (pl->lightlevel >> LIGHTSEGSHIFT)+extralight;
+
+	  if (pl->ffloor->flags & FF_SWIMMABLE) {
+		itswater = true;
+		if (spanfunc == R_DrawTranslucentSpan_8) {
+			ds_transmap = (tr_translo<<FF_TRANSSHIFT) - 0x10000 + transtables;
+			spanfunc = R_DrawTranslucentWaterSpan_8;
+		}
+	  }
+  }
+  else light = (pl->lightlevel >> LIGHTSEGSHIFT)+extralight;
+
   currentplane = pl;
 
-  if(handlesource)
-    ds_source = (byte *) R_GetFlat (levelflats[pl->picnum].lumpnum);
+  ds_source = (byte *) W_CacheLumpNum (levelflats[pl->picnum].lumpnum, PU_STATIC);
+
+  size = W_LumpLength(levelflats[pl->picnum].lumpnum);
+
+  switch (size)
+	{
+		case 4194304: // 2048x2048 lump
+			nflatmask = 0x3FF800;
+			nflatxshift = 21;
+			nflatyshift = 10;
+			nflatshiftup = 5;
+			break;
+		case 1048576: // 1024x1024 lump
+			nflatmask = 0xFFC00;
+			nflatxshift = 22;
+			nflatyshift = 12;
+			nflatshiftup = 6;
+			break;
+		case 262144:// 512x512 lump'
+			nflatmask = 0x3FE00;
+			nflatxshift = 23;
+			nflatyshift = 14;
+			nflatshiftup = 7;
+			break;
+		case 65536: // 256x256 lump
+			nflatmask = 0xFF00;
+			nflatxshift = 24;
+			nflatyshift = 16;
+			nflatshiftup = 8;
+			break;
+		case 16384: // 128x128 lump
+			nflatmask = 0x3F80;
+			nflatxshift = 25;
+			nflatyshift = 18;
+			nflatshiftup = 9;
+			break;
+		case 1024: // 32x32 lump
+			nflatmask = 0x3E0;
+			nflatxshift = 27;
+			nflatyshift = 22;
+			nflatshiftup = 11;
+			break;
+		default: // 64x64 lump
+			nflatmask = 0xFC0;
+			nflatxshift = 26;
+			nflatyshift = 20;
+			nflatshiftup = 10;
+			break;
+	}
 
   xoffs = pl->xoffs;
   yoffs = pl->yoffs;
   planeheight = abs(pl->height-viewz);
-
-  light = (pl->lightlevel >> LIGHTSEGSHIFT)+extralight;
 
   if (light >= LIGHTLEVELS)
       light = LIGHTLEVELS-1;
@@ -880,6 +831,8 @@ void R_DrawSinglePlane(visplane_t* pl, boolean handlesource)
   //set the MAXIMUM value for unsigned
   pl->top[pl->maxx+1] = 0xffff;
   pl->top[pl->minx-1] = 0xffff;
+  pl->bottom[pl->maxx+1] = 0x0000;
+  pl->bottom[pl->minx-1] = 0x0000;
 
   stop = pl->maxx + 1;
 
@@ -891,8 +844,7 @@ void R_DrawSinglePlane(visplane_t* pl, boolean handlesource)
                 pl->bottom[x]);
   }
 
-  if(handlesource)
-    Z_ChangeTag (ds_source, PU_CACHE);
+  Z_ChangeTag (ds_source, PU_CACHE);
 }
 
 
@@ -902,11 +854,11 @@ void R_PlaneBounds(visplane_t* plane, int *hi, int *low)
   *hi = plane->top[plane->minx];
   *low = plane->bottom[plane->minx];
 
-  for(i = plane->minx + 1; i <= plane->maxx; i++)
+  for (i = plane->minx + 1; i <= plane->maxx; i++)
   {
-    if(plane->top[i] < *hi)
-      *hi = plane->top[i];
-    if(plane->bottom[i] > *low)
-      *low = plane->bottom[i];
+  	if (plane->top[i] < *hi)
+  	*hi = plane->top[i];
+  	if (plane->bottom[i] > *low)
+  	*low = plane->bottom[i];
   }
 }

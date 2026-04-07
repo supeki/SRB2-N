@@ -730,7 +730,7 @@ void P_LoadSideDefs2(int lump)
       switch (sd->special)
         {
         case 242:                       // variable colormap via 242 linedef
-        case 270:                       //SoM: 3/22/2000: New water type.
+		case 270:
         case 272:                       //SoM: 4/4/2000: Just colormap transfer
   #ifdef HWRENDER
           if(rendermode == render_soft)

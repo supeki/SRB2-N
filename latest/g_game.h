@@ -40,6 +40,7 @@
 #include "doomdef.h"
 #include "doomstat.h"
 #include "d_event.h"
+#include "w_wad.h"
 
 //added:11-02-98: yeah now you can change it!
 // changed to 2d array 19990220 by Kin
@@ -56,6 +57,8 @@ extern  boolean xmasmode; // Xmas mode Tails 12-02-2001
 extern  boolean mariomode; // Mario mode Tails 12-18-2001
 
 // srb2-nozomi stuff
+extern boolean nozo_specialtitle;
+
 // time attack
 extern boolean nozo_timeattack;
 extern consvar_t cv_nozotimeattacklevel;
@@ -63,9 +66,9 @@ extern consvar_t cv_nozotimeattacklevel;
 // bumblebore -> jetty-syns for sam because he cannot fathom the idea that bumblebores are the best badniks to ever be conceived in the 25+ years of this one fangame
 extern boolean nozo_antibee;
 
-extern  char      gamemapname[128];
+extern  char      gamemapname[MAX_WADPATH];
 
-extern  player_t        players[MAXPLAYERS];
+extern  player_t  players[MAXPLAYERS];
 extern  boolean   playeringame[MAXPLAYERS];
 
 // ======================================

@@ -295,7 +295,8 @@ void A_WeaponReady ( player_t*     player,
 //        P_SetMobjState (player->mo, S_PLAY);
 //    }
 
-    if (player->readyweapon == wp_chainsaw)
+    if (player->readyweapon == wp_chainsaw
+        && psp->state == &states[S_SAW])
     {
         S_StartSound (player->mo, sfx_putput);
     }
@@ -591,6 +592,8 @@ void A_FireBFG ( player_t*     player,
                  pspdef_t*     psp )
 {
     player->ammo[weaponinfo[player->readyweapon].ammo] -= weaponinfo[wp_bfg].ammopershoot;
+    //added:16-02-98:added player arg3
+    P_SpawnPlayerMissile (player->mo, MT_BFG, player);
 }
 
 
@@ -607,6 +610,8 @@ void A_FirePlasma ( player_t*     player,
                   ps_flash,
                   weaponinfo[player->readyweapon].flashstate+(P_Random ()&1) );
 
+    //added:16-02-98: added player arg3
+    P_SpawnPlayerMissile (player->mo, MT_PLASMA, player);
 }
 
 
@@ -800,6 +805,12 @@ void A_FireCGun ( player_t*     player,
 //    P_SetMobjState (player->mo, S_PLAY_ATK2); // nono Tails 12-03-99
     player->ammo[weaponinfo[player->readyweapon].ammo]--;
 
+    P_SetPsprite (player,
+                  ps_flash,
+                  weaponinfo[player->readyweapon].flashstate
+                  + psp->state
+                  - &states[S_CHAIN1] );
+
     //added:18-02-98: if AUTOAIM, try to aim at something
     if (player->autoaim_toggle && cv_allowautoaim.value)
         P_BulletSlope (player->mo);
@@ -861,7 +872,10 @@ void A_BFGSpray (mobj_t* mo)
         if (!linetarget)
             continue;
 
-
+        P_SpawnMobj (linetarget->x,
+                     linetarget->y,
+                     linetarget->z + (linetarget->height>>2),
+                     MT_EXTRABFG);
 
         damage = 0;
         for (j=0;j<15;j++)

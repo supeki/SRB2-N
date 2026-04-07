@@ -901,20 +901,6 @@ void R_Subsector (int num)
         waterheight = ((-frontsector->tag) <<16) + (1<<15);
     else
         waterheight = dev_waterheight;
-
-    //
-    if (waterheight > frontsector->floorheight &&
-        waterheight < frontsector->ceilingheight )
-    {
-        waterplane = R_FindPlane (waterheight,
-                                  1998,
-                                  frontsector->lightlevel,
-                                  0, 0,
-                                  frontsector->extra_colormap,
-                                  NULL);
-    }
-    else
-        waterplane = NULL;
 #endif
     // -------------------- WATER IN DEV. TEST ------------------------
 
