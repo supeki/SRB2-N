@@ -144,7 +144,9 @@ typedef struct sockaddr_ipx {
 #ifdef __WIN32__
     // some undifined under win32
     #define IPPORT_USERRESERVED 5000
+#ifndef errno
     #define errno             h_errno // some very strange things happen when not use h_error ?!?
+#endif
     #define EWOULDBLOCK   WSAEWOULDBLOCK
     #define EMSGSIZE      WSAEMSGSIZE
     #define ECONNREFUSED  WSAECONNREFUSED

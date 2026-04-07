@@ -215,6 +215,7 @@ char *Color_Names[MAXSKINCOLORS+1]={
    "White",
    "Silver",
    "Gray", 
+   "Carbon",
    "Pink",
    "Cherry_Blossom", // I made this color! :D Nozomi Date Unknown
    "Bright_Red", // Someone asked for this... Nozomi Date Unknown
@@ -280,6 +281,7 @@ void R_InitTranslationTables (void)
         if (i >= 0x70 && i<= 0x7f)
         {
             translationtables [i + SKINCOLOR_GREY*256] = 0x60 + (i&0xf); // Gray
+			translationtables [i + SKINCOLOR_CARBON*256] = 0x68 + (i&0xf)/2; // Carbon, like Speccy!
 			translationtables [i + SKINCOLOR_PINK*256] = 0x10 + (i&0xf); // Pink
 			translationtables [i + SKINCOLOR_CHERRYBLOSSOM*256] = 0xa8 + (i&0xf)/3;   // Cherry Blossom by Nozomi
 			translationtables [i + SKINCOLOR_RED*256] = 0xb0 + (i&0xf); // Red (renamed from Light Red)

@@ -1247,14 +1247,14 @@ state_t states[NUMSTATES] = {
 // Crawla Commander Tails 12-30-2001
 	{SPR_CCOM,0,1,{A_CrawlaCommanderThink}, S_CCOMMAND2}, // S_CCOMMAND1
 	{SPR_CCOM,1,1,{A_CrawlaCommanderThink}, S_CCOMMAND1}, // S_CCOMMAND2
-	{SPR_CCOM,0,1,{A_CrawlaCommanderThink}, S_CCOMMAND4}, // S_CCOMMAND3
-	{SPR_CCOM,1,1,{A_CrawlaCommanderThink}, S_CCOMMAND3}, // S_CCOMMAND4
+	{SPR_CCOM,2,1,{A_CrawlaCommanderThink}, S_CCOMMAND4}, // S_CCOMMAND3
+	{SPR_CCOM,3,1,{A_CrawlaCommanderThink}, S_CCOMMAND3}, // S_CCOMMAND4
 	{SPR_CCOM,0,1,{A_CrawlaCommanderThink}, S_CCOMMAND2}, // S_CCOMMAND5
-	{SPR_CCOM,0,1,{A_CrawlaCommanderThink}, S_CCOMMAND2}, // S_CCOMMAND6
+	{SPR_CCOM,2,1,{A_CrawlaCommanderThink}, S_CCOMMAND2}, // S_CCOMMAND6
 	{SPR_CCOM,0,1,{A_CrawlaCommanderThink}, S_CCOMMAND2}, // S_CCOMMAND7
-	{SPR_CCOM,0,1,{A_CrawlaCommanderThink}, S_CCOMMAND2}, // S_CCOMMAND8
+	{SPR_CCOM,2,1,{A_CrawlaCommanderThink}, S_CCOMMAND2}, // S_CCOMMAND8
 	{SPR_CCOM,0,1,{A_CrawlaCommanderThink}, S_CCOMMAND2}, // S_CCOMMAND9
-	{SPR_CCOM,0,1,{A_CrawlaCommanderThink}, S_CCOMMAND2}, // S_CCOMMAND10
+	{SPR_CCOM,2,1,{A_CrawlaCommanderThink}, S_CCOMMAND2}, // S_CCOMMAND10
 
 // start air particles Nozomi 03-13-2026
 

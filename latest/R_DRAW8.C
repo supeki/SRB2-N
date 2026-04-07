@@ -382,7 +382,7 @@ void R_DrawWallColumn_8(void)
 	}
 }
 
-#define TRANSPARENTPIXEL 247
+#define TRANSPARENTPIXEL 0
 
 void R_Draw2sMultiPatchColumn_8(void)
 {

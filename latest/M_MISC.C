@@ -528,7 +528,6 @@ char*   va(char *format, ...)
     return string;
 }
 
-
 // creates a copy of a string, null-terminated
 // returns ptr to the new duplicate string
 //

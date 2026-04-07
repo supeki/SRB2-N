@@ -137,15 +137,14 @@ int W_LoadWadFile (char *filename)
 {
     int              handle;
     wadinfo_t        header;
-    int              numlumps;
+    struct stat      bufstat;
     filelump_t*      fileinfo;
     lumpinfo_t*      lump_p;
     lumpinfo_t*      lumpinfo;
     lumpcache_t*     lumpcache;
     wadfile_t*       wadfile;
-    int              length;
-    int              i;
-    struct stat      bufstat;
+    int              numlumps, i, length;
+	char filenamebuf[MAX_WADPATH];
 #ifdef HWRENDER    
     GlidePatch_t*    grPatch;
 #endif
@@ -158,6 +157,9 @@ int W_LoadWadFile (char *filename)
         CONS_Printf ("Maximum wad files reached\n");
         return -1;
     }
+
+	strncpy(filenamebuf, filename, MAX_WADPATH);
+	filename = filenamebuf;
 
     // open wad file
     if ( (handle = open (filename,O_RDONLY|O_BINARY,0666)) == -1)
@@ -173,7 +175,7 @@ int W_LoadWadFile (char *filename)
         }
         else
         {
-            CONS_Printf ("Couldn't open %s\n", filename);
+            CONS_Printf ("File %s not found.\n", filename);
             return -1;
         }
     }
@@ -228,7 +230,7 @@ int W_LoadWadFile (char *filename)
     //
     fstat(handle,&bufstat);
     wadfile = Z_Malloc (sizeof (wadfile_t),PU_STATIC,NULL);
-    strncpy (wadfile->filename, filename, MAX_WADPATH);
+    wadfile->filename = DupString(filename);
     wadfile->handle = handle;
     wadfile->numlumps = numlumps;
     wadfile->lumpinfo = lumpinfo;

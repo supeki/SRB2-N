@@ -108,6 +108,8 @@ typedef struct memblock_s
     struct memblock_s*  prev;
 } memblock_t;
 
+char* Z_Strdup(const char* s, int tag, void** user);
+
 //
 // This is used to get the local FILE:LINE info from CPP
 // prior to really call the function in question.

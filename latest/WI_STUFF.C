@@ -3232,7 +3232,7 @@ void WI_loadData(void)
     colon = W_CachePatchName("WICOLON", PU_STATIC);
 
     // "time"
-    time = W_CachePatchName("SBOARMOR", PU_STATIC); // Tails
+    time = W_CachePatchName("SBOTIME`j", PU_STATIC); // Tails
 
     // "sucks"
     sucks = W_CachePatchName("WISUCKS", PU_STATIC);

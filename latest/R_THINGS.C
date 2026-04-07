@@ -1028,7 +1028,7 @@ static void R_ProjectSprite (mobj_t* thing)
             index = xscale>>(LIGHTSCALESHIFT-detailshift);
 
 			if (thing->frame & FF_HALFBRIGHT)
-				index = (xscale*4)>>(LIGHTSCALESHIFT-detailshift);
+				index = (xscale*2)>>(LIGHTSCALESHIFT-detailshift);
 
             if (index >= MAXLIGHTSCALE)
                 index = MAXLIGHTSCALE-1;

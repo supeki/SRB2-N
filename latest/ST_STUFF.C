@@ -208,39 +208,6 @@ extern fixed_t waterheight;
 #define ST_MAXAMMO3X            314
 #define ST_MAXAMMO3Y            (ST_Y+17)
 
-//faB: unused stuff from the Doom alpha version ?
-// pistol
-//#define ST_WEAPON0X           110
-//#define ST_WEAPON0Y           (ST_Y+4)
-// shotgun
-//#define ST_WEAPON1X           122
-//#define ST_WEAPON1Y           (ST_Y+4)
-// chain gun
-//#define ST_WEAPON2X           134
-//#define ST_WEAPON2Y           (ST_Y+4)
-// missile launcher
-//#define ST_WEAPON3X           110
-//#define ST_WEAPON3Y           (ST_Y+13)
-// plasma gun
-//#define ST_WEAPON4X           122
-//#define ST_WEAPON4Y           (ST_Y+13)
-// bfg
-//#define ST_WEAPON5X           134
-//#define ST_WEAPON5Y           (ST_Y+13)
-
-// WPNS title
-//#define ST_WPNSX              109
-//#define ST_WPNSY              (ST_Y+23)
-
- // DETH title
-//#define ST_DETHX              109
-//#define ST_DETHY              (ST_Y+23)
-
-//Incoming messages window location
-// #define ST_MSGTEXTX     (viewwindowx)
-// #define ST_MSGTEXTY     (viewwindowy+viewheight-18)
-//#define ST_MSGTEXTX             0
-//#define ST_MSGTEXTY             0     //added:08-01-98:unused
 // Dimensions given in characters.
 #define ST_MSGWIDTH             52
 // Or shall I say, in lines?
@@ -399,7 +366,6 @@ static int      st_randomnumber;
 // icons for overlay
 static   patch_t*   sbohealth;
 static   patch_t*   sbofrags;
-static   patch_t*   sboarmor;
 //static   patch_t*   sboammo[NUMWEAPONS];
 static   patch_t*   sboover; // Tails 03-11-2000
 static   patch_t*   sboslife; // Tails 03-12-2000
@@ -1134,51 +1100,7 @@ static void ST_loadGraphics(void)
 // made separate so that skins code can reload custom face graphics
 void ST_loadFaceGraphics (char *facestr)
 {
-    int   i,j;
-    int   facenum;
-    char  namelump[9];
-    char* namebuf;
-
-    //hack: make sure base face name is no more than 3 chars
-    // bug: core dump fixed 19990220 by Kin
-    if(strlen(facestr)>3)
-    facestr[3]='\0';
-    strcpy (namelump, facestr);  // copy base name
-    namebuf = namelump;
-    while (*namebuf>' ') namebuf++;
-
-    // face states
-    facenum = 0;
-    for (i=0;i<ST_NUMPAINFACES;i++)
-    {
-        for (j=0;j<ST_NUMSTRAIGHTFACES;j++)
-        {
-            sprintf(namebuf, "ST%d%d", i, j);
-            faces[facenum++] = W_CachePatchName(namelump, PU_STATIC);
-        }
-        sprintf(namebuf, "TR%d0", i);        // turn right
-        faces[facenum++] = W_CachePatchName(namelump, PU_STATIC);
-        sprintf(namebuf, "TL%d0", i);        // turn left
-        faces[facenum++] = W_CachePatchName(namelump, PU_STATIC);
-        sprintf(namebuf, "OUCH%d", i);       // ouch!
-        faces[facenum++] = W_CachePatchName(namelump, PU_STATIC);
-        sprintf(namebuf, "EVL%d", i);        // evil grin ;)
-        faces[facenum++] = W_CachePatchName(namelump, PU_STATIC);
-        sprintf(namebuf, "KILL%d", i);       // pissed off
-        faces[facenum++] = W_CachePatchName(namelump, PU_STATIC);
-    }
-    strcpy (namebuf, "GOD0");
-    faces[facenum++] = W_CachePatchName(namelump, PU_STATIC);
-    strcpy (namebuf, "DEAD0");
-    faces[facenum++] = W_CachePatchName(namelump, PU_STATIC);
-
-    // face backgrounds for different player colors
-    //added:08-02-98: uses only STFB0, which is remapped to the right
-    //                colors using the player translation tables, so if
-    //                you add new player colors, it is automatically
-    //                used for the statusbar.
-    strcpy (namebuf, "B0");
-    faceback = (patch_t *) W_CachePatchName(namelump, PU_STATIC);
+	(void)*facestr;
 }
 
 
@@ -1228,19 +1150,7 @@ void ST_unloadGraphics(void)
 
 // made separate so that skins code can reload custom face graphics
 void ST_unloadFaceGraphics (void)
-{
-    int    i;
-
-    //faB: GlidePatch_t are always purgeable
-    if (rendermode==render_soft)
-    {
-    for (i=0;i<ST_NUMFACES;i++)
-        Z_ChangeTag(faces[i], PU_CACHE);
-
-    // face background
-    Z_ChangeTag(faceback, PU_CACHE);
-    }
-}
+{}
 
 
 void ST_unloadData(void)
@@ -1513,7 +1423,6 @@ void ST_Init (void)
     //
     sbohealth = W_CachePatchName ("SBOHEALT", PU_STATIC); // Tails
     sbofrags  = W_CachePatchName ("SBOFRAGS", PU_STATIC); // Tails
-    sboarmor  = W_CachePatchName ("SBOARMOR", PU_STATIC); // Tails
     sboover   = W_CachePatchName ("SBOOVER", PU_STATIC); // Tails 03-11-2000
     sboslife  = W_CachePatchName ("SBOSLIFE", PU_STATIC); // Tails 03-12-2000
     sbotlife  = W_CachePatchName ("SBOTLIFE", PU_STATIC); // Tails 03-12-2000
@@ -1523,8 +1432,7 @@ void ST_Init (void)
     sttails   = W_CachePatchName ("STTAILS", PU_STATIC); // Tails 03-12-2000
     stknux    = W_CachePatchName ("STKNUX", PU_STATIC); // Tails 03-12-2000
     stlivex   = W_CachePatchName ("STLIVEX", PU_STATIC); // Tails 03-12-2000
-    rrings    = W_CachePatchName ("SBORINGS", PU_STATIC); // Tails 03-14-2000
-//    colon     = W_CachePatchName ("WICOLON", PU_STATIC); // Tails 03-14-2000
+    rrings    = W_CachePatchName ("SBORINGS", PU_STATIC); // Tails 03-14-
     stuser    = W_CachePatchName ("STUSER", PU_STATIC); // Temorary User icon Tails 04-08-2000
     sboulife  = W_CachePatchName ("SBOULIFE", PU_STATIC); // Temorary User icon Tails 04-08-2000
     sbotime     = W_CachePatchName ("SBOTIME", PU_STATIC); // Time logo Tails 06-12-2000
@@ -1701,7 +1609,7 @@ void ST_overlayDrawer (int playernum)
 			hud_score = plyr->sp_score + (plyr->mo->health-1)*100;
 	
 		ST_drawOverlayNum(SCX(128), SCY(10), hud_score, tallnum, NULL); // Draw Score Num Nozomi 03-01-2026
-		V_DrawScaledPatch (SCX(16),SCY(10), FG | V_NOSCALESTART,sbofrags); // Draw SCORE Tails 03-01-2000
+		V_DrawScaledPatch (SCX(16),SCY(10), FG | V_NOSCALESTART, W_CachePatchName("SBOFRAGS", PU_CACHE)); // Draw SCORE Tails 03-01-2000
 	}
 
 	// Draw the Time HUD! Nozomi
@@ -1734,10 +1642,10 @@ void ST_overlayDrawer (int playernum)
 					 plyr->minutes,
 					 tallnum,NULL);
 
-			V_DrawScaledPatch (SCX(88),SCY(42)-(16*vid.dupy), FG | V_NOSCALESTART,sbocolon); // colon location Tails 02-29-2000
+			V_DrawScaledPatch (SCX(88),SCY(42)-(16*vid.dupy), FG | V_NOSCALESTART, W_CachePatchName("SBOCOLON", PU_CACHE)); // colon location Tails 02-29-2000
 		}
 
-	   V_DrawScaledPatch (SCX(17),SCY(26), FG | V_NOSCALESTART,sbotime); // TIME location Tails 02-29-2000
+	   V_DrawScaledPatch (SCX(17),SCY(26), FG | V_NOSCALESTART, W_CachePatchName("SBOTIME", PU_CACHE)); // TIME location Tails 02-29-2000
 	}
 
 	// Draw the Rings HUD! Nozomi
@@ -1759,9 +1667,9 @@ void ST_overlayDrawer (int playernum)
 		ST_drawOverlayNum(SCX(x_pos), SCY(y_pos)-(16*vid.dupy), hud_rings, tallnum, NULL);
 
 		if(plyr->health <= 1 && leveltime/5 & 1)
-			V_DrawScaledPatch (SCX(16),SCY(y_pos)-(16*vid.dupy), FG | V_NOSCALESTART,rrings); // Tails 03-14-2000
+			V_DrawScaledPatch (SCX(16),SCY(y_pos)-(16*vid.dupy), FG | V_NOSCALESTART, W_CachePatchName("SBORINGS", PU_CACHE)); // Tails 03-14-2000
 		else
-			V_DrawScaledPatch (SCX(16),SCY(y_pos)-(16*vid.dupy), FG | V_NOSCALESTART,sbohealth); // Was a number I forget and 198 =) Tails 10-31-99
+			V_DrawScaledPatch (SCX(16),SCY(y_pos)-(16*vid.dupy), FG | V_NOSCALESTART, W_CachePatchName("SBOHEALT", PU_CACHE)); // Was a number I forget and 198 =) Tails 10-31-99
 	}
 
 	// Draw the Lives HUD! Nozomi
@@ -2021,16 +1929,16 @@ static void ST_DrawTitleCard(int playernum) {
 		switch (mapheaders[gamemap].act) {
 			case 1:
 			default:
-				ttlnum = ttlone;
+				ttlnum = W_CachePatchName("ttlone", PU_CACHE);
 				break;
 			case 2:
-				ttlnum = ttltwo;
+				ttlnum = W_CachePatchName("ttltwo", PU_CACHE);
 				break;
 			case 3:
-				ttlnum = ttlthree;
+				ttlnum = W_CachePatchName("ttlthree", PU_CACHE);
 				break;
 			case 4:
-				ttlnum = ttlfour;
+				ttlnum = W_CachePatchName("ttlfour", PU_CACHE);
 				break;
 			case 5:
 				ttlnum = ttlfive;

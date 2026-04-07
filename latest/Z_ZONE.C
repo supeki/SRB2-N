@@ -154,30 +154,10 @@ void Z_Free (void* ptr)
     memblock_t*         block;
     memblock_t*         other;
 
+	if(!ptr || !mainzone)
+		return;
+
     block = (memblock_t *) ( (byte *)ptr - sizeof(memblock_t));
-#ifdef DEBUGMEMCLACH
-    if (block->user > (void **)0x100)
-        *block->user = 0;
-    free(block);
-    return;
-#endif
-
-
-#ifdef ZDEBUG
-   //BP: hardcore debuging
-   // check if there is not a user in this zone
-for (other = mainzone->blocklist.next ; other->next != &mainzone->blocklist; other = other->next)
-{
-   if((other!=block) &&
-      (other->user>(void **)0x100) &&
-      ((other->user)>=(void **)block) &&
-      ((other->user)<=(void **)((byte *)block)+block->size) )
-   {
-       //I_Error("Z_Free: Pointer in zone\n");
-       I_Error("Z_Free: Pointer %s:%d in zone at %s:%i",other->ownerfile,other->ownerline,file,line);
-   }
-}
-#endif
 
     if (block->id != ZONEID)
         I_Error ("Z_Free: freed a pointer without ZONEID");
@@ -193,8 +173,7 @@ for (other = mainzone->blocklist.next ; other->next != &mainzone->blocklist; oth
 
     // mark as free
     block->user = NULL;
-    block->tag = 0;
-    block->id = 0;
+    block->tag = block->id = 0;
 
     other = block->prev;
 
@@ -649,4 +628,12 @@ void Command_Memfree_f( void )
     CONS_Printf("largest free block : %7d kb\n", largefreeblock>>10);
     CONS_Printf("\2System Memory Info\n");
     I_GetFreeMem();
+}
+
+char* Z_Strdup(const char* s, int tag, void** user)
+{
+	if(mainzone)
+		return strcpy(Z_Malloc(strlen(s) + 1, tag, user), s);
+	else
+		return NULL;
 }
