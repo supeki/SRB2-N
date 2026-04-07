@@ -50,9 +50,9 @@
 
 // number of sprite lumps for spritewidth,offset,topoffset lookup tables
 // Fab: this is a hack : should allocate the lookup tables per sprite
-#define     MAXSPRITELUMPS     16384
+#define     MAXSPRITELUMPS     4096
 
-#define MAXVISSPRITES   1024 // added 2-2-98 was 128 added 3-7-26 was 384 added 3-13-26 i don't fucking know how much i need now lol
+#define MAXVISSPRITES   128 // added 2-2-98 was 128 added 3-7-26 was 384 added 3-13-26 i don't fucking know how much i need now lol
 
 // Constant arrays used for psprite clipping
 //  and initializing clipping.

@@ -1248,10 +1248,6 @@ void G_Ticker (void)
 	  case GS_NOZOMIPONG:
 		  T_PongTicker ();
 		  break;
-		  
-	  case GS_SRBNOZOMI:
-		  SRBN_GameplayLoop ();
-		  break;
     }
 }
 

@@ -1987,25 +1987,8 @@ void R_StoreWallRange( int   start, int   stop )
     }
 #endif
 
-#ifdef BORIS_FIX
-    if (linedef->splats && cv_splats.value)
-    {
-        memcpy(last_ceilingclip,ceilingclip,sizeof(ceilingclip));
-        memcpy(last_floorclip,floorclip,sizeof(ceilingclip));
-        R_RenderSegLoop ();
-        R_DrawWallSplats ();
-    }
-    else
-        R_RenderSegLoop ();
-#else
     R_RenderSegLoop ();
-#ifdef WALLSPLATS
-    if (linedef->splats)
-        R_DrawWallSplats ();
-#endif
-#endif
     colfunc = wallcolfunc;
-
 
     // save sprite clipping info
     if ( ((ds_p->silhouette & SIL_TOP) || maskedtexture)

@@ -1139,11 +1139,7 @@ void IdentifyVersion (void)
 	// Add the maps Nozomi 02-22-2026
 	D_AddFile("maps.wad");
 
-	if ( !access ("extdata.dat",R_OK) )
-    {
-		nozomi_extra = true;
-        D_AddFile ("extdata.dat");
-    }
+    D_AddFile ("extdata.dat");
 }
 
 
@@ -1586,11 +1582,10 @@ p = M_CheckParm ("-ctfteam"); // Tails 08-04-2001
     ST_Init ();
 
 	// Nozomi's secret Extra games :)
-	if (nozomi_extra) {
-		D_InitSRBNozomi(); // Sonic Robo-Blast! Nozomi
-		D_InitNozomiTetris(); // Nozomi Tetris
-        D_InitNozomiPong(); // Nozomi Pong
-	}
+	D_InitSRBNozomi(); // Sonic Robo-Blast! Nozomi
+	D_InitNozomiTetris(); // Nozomi Tetris
+	D_InitNozomiPong(); // Nozomi Pong
+
     // init all NETWORK
     CONS_Printf (text[D_CHECKNET_NUM]);
     D_CheckNetGame ();

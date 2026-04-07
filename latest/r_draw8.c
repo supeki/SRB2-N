@@ -89,11 +89,10 @@
 //
 #define USEBOOMFUNC
 
-#ifndef USEASM
 void R_DrawColumn_8(void)
 {
 	INT32 count;
-	register UINT8 *dest;
+	register byte *dest;
 	register fixed_t frac;
 	fixed_t fracstep;
 
@@ -119,12 +118,12 @@ void R_DrawColumn_8(void)
 	// Determine scaling, which is the only mapping to be done.
 	fracstep = dc_iscale;
 	//frac = dc_texturemid + (dc_yl - centery)*fracstep;
-	frac = (dc_texturemid + FixedMul((dc_yl << FRACBITS) - centeryfrac, fracstep))*(!dc_hires);
+	frac = (dc_texturemid + FixedMul((dc_yl << FRACBITS) - centeryfrac, fracstep));
 
 	// Inner loop that does the actual texture mapping, e.g. a DDA-like scaling.
 	// This is as fast as it gets.
 	{
-		register const UINT8 *source = dc_source;
+		register const byte *source = dc_source;
 		register const lighttable_t *colormap = dc_colormap;
 		register INT32 heightmask = dc_texheight-1;
 		if (dc_texheight & heightmask)   // not a power of 2 -- killough
@@ -172,9 +171,7 @@ void R_DrawColumn_8(void)
 		}
 	}
 }
-#endif
 
-#ifndef USEASM
 void R_DrawSkyColumn_8 (void)
 {
   int              count; 
@@ -253,12 +250,10 @@ void R_DrawSkyColumn_8 (void)
       }
   }
 }
-#endif
 
 //  The standard Doom 'fuzzy' (blur, shadow) effect
 //  originally used for spectres and when picking up the blur sphere
 //
-//#ifndef USEASM // NOT IN ASSEMBLER, TO DO.. IF WORTH IT
 void R_DrawFuzzColumn_8 (void)
 {
     register int     count;
@@ -315,7 +310,6 @@ void R_DrawFuzzColumn_8 (void)
         frac += fracstep;
     } while (count--);
 }
-//#endif
 
 void R_DrawWallColumn_8(void)
 {
@@ -494,7 +488,7 @@ void R_DrawSpanNoWrap (void)
 void R_DrawShadeColumn_8(void)
 {
 	register INT32 count;
-	register UINT8 *dest;
+	register byte *dest;
 	register fixed_t frac, fracstep;
 
 	// check out coords for src*
@@ -511,13 +505,13 @@ void R_DrawShadeColumn_8(void)
 #endif
 
 	// FIXME. As above.
-	//dest = ylookup[dc_yl] + columnofs[dc_x];
-	dest = &topleft[dc_yl*vid.width + dc_x];
+	dest = ylookup[dc_yl] + columnofs[dc_x];
+	//dest = &topleft[dc_yl*vid.width + dc_x];
 
 	// Looks familiar.
 	fracstep = dc_iscale;
 	//frac = dc_texturemid + (dc_yl - centery)*fracstep;
-	frac = (dc_texturemid + FixedMul((dc_yl << FRACBITS) - centeryfrac, fracstep))*(!dc_hires);
+	frac = (dc_texturemid + FixedMul((dc_yl << FRACBITS) - centeryfrac, fracstep));
 
 	// Here we do an additional index re-mapping.
 	do
@@ -535,7 +529,6 @@ void R_DrawShadeColumn_8(void)
 // a lot in 640x480 with big sprites (bfg on all screen, or transparent
 // walls on fullscreen)
 //
-#ifndef USEASM
 void R_DrawTranslucentColumn_8 (void)
 {
   register int     count; 
@@ -614,8 +607,6 @@ void R_DrawTranslucentColumn_8 (void)
       }
   }
 }
-#endif
-
 
 //
 //  Draw columns upto 128high but remap the green ramp to other colors

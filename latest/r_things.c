@@ -531,7 +531,7 @@ void R_InitSprites (char** namelist)
 	R_InitMapHeaders();
     for (i=0; i<numwadfiles; i++) {
         R_AddSkins (i);
-		//R_AddMapHeader (i);
+		R_AddMapHeader (i);
 	}
 
 

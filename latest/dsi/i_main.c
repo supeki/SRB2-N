@@ -20,7 +20,10 @@ int main(int argc, char **argv)
 	TIMER1_CR=TIMER_CASCADE | TIMER_ENABLE;
 
 	// start NitroFS
-	nitroFSInit(NULL);
+	if (!nitroFSInit(NULL)) {
+		I_Error("Couldn't init nitroFS.\n");
+	}
+		
     chdir("nitrofs:/");
 
 	// startup SRB2
