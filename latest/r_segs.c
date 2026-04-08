@@ -298,7 +298,11 @@ static void R_DrawWallSplats ()
         if( splat->yoffset )
             dc_texturemid += *splat->yoffset;
 
-        sprtopscreen = centeryfrac - FixedMul(dc_texturemid,spryscale);
+        {
+          INT64 t = ((INT64) centeryfrac << FRACBITS) -
+            (INT64) dc_texturemid * spryscale;
+          sprtopscreen = (long)(t >> FRACBITS);
+        }
 
         // set drawing mode
         switch (splat->flags & SPLATDRAWMODE_MASK)
@@ -333,8 +337,12 @@ static void R_DrawWallSplats ()
             if(frontsector->extra_colormap && !fixedcolormap)
               dc_colormap = frontsector->extra_colormap + (dc_colormap - colormaps);
 
-            sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
-            dc_iscale = 0xffffffffu / (unsigned)spryscale;
+            {
+			  INT64 t = ((INT64) centeryfrac << FRACBITS) -
+				(INT64) dc_texturemid * spryscale;
+			  sprtopscreen = (long)(t >> FRACBITS);
+			}
+			dc_iscale = 0xffffffffu / (unsigned)spryscale;
 
             // find column of patch, from perspective
             angle = (rw_centerangle + xtoviewangle[dc_x])>>ANGLETOFINESHIFT;
@@ -552,8 +560,12 @@ void R_RenderMaskedSegRange (drawseg_t* ds,
             lighttable_t** xwalllights;
 
             sprbotscreen = MAXINT;
-            sprtopscreen = windowtop = (centeryfrac - FixedMul(dc_texturemid, spryscale));
-            realbot = windowbottom = FixedMul(textureheight[texnum], spryscale) + sprtopscreen;
+            {
+			  INT64 t = ((INT64) centeryfrac << FRACBITS) -
+				(INT64) dc_texturemid * spryscale;
+			  sprtopscreen = windowtop = (long)(t >> FRACBITS);
+			}
+			realbot = windowbottom = FixedMul(textureheight[texnum], spryscale) + sprtopscreen;
             dc_iscale = 0xffffffffu / (unsigned)spryscale;
             
             // draw the texture
@@ -635,8 +647,12 @@ void R_RenderMaskedSegRange (drawseg_t* ds,
 
             if(frontsector->extra_colormap && !fixedcolormap)
               dc_colormap = frontsector->extra_colormap + (dc_colormap - colormaps);
-            sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
-            windowbottom = windowtop = sprbotscreen = MAXINT;
+            {
+			  INT64 t = ((INT64) centeryfrac << FRACBITS) -
+				(INT64) dc_texturemid * spryscale;
+			  sprtopscreen = (long)(t >> FRACBITS);
+			}
+			windowbottom = windowtop = sprbotscreen = MAXINT;
             dc_iscale = 0xffffffffu / (unsigned)spryscale;
             
             // draw the texture
@@ -686,7 +702,7 @@ void R_RenderThickSideRange (drawseg_t* ds,
 
     if(ffloor->flags & FF_TRANSLUCENT)
     {
-      dc_transmap = ((1)<<FF_TRANSSHIFT) - 0x10000 + transtables;
+      dc_transmap = (tr_translo<<FF_TRANSSHIFT) - 0x10000 + transtables;
       colfunc = fuzzcolfunc;
     }
 
@@ -780,8 +796,12 @@ void R_RenderThickSideRange (drawseg_t* ds,
           int            solid = 0;
           int            lighteffect = 0;
 
-          sprtopscreen = windowtop = (centeryfrac - FixedMul(dc_texturemid, spryscale));
-          sprbotscreen = windowbottom = FixedMul(*ffloor->topheight - *ffloor->bottomheight, spryscale) + sprtopscreen;
+          {
+			  INT64 t = ((INT64) centeryfrac << FRACBITS) -
+				(INT64) dc_texturemid * spryscale;
+			  sprtopscreen = windowtop = (long)(t >> FRACBITS);
+		  }
+		  sprbotscreen = windowbottom = FixedMul(*ffloor->topheight - *ffloor->bottomheight, spryscale) + sprtopscreen;
           dc_iscale = 0xffffffffu / (unsigned)spryscale;
             
           // draw the texture
@@ -884,8 +904,12 @@ void R_RenderThickSideRange (drawseg_t* ds,
                 dc_colormap = frontsector->extra_colormap + (dc_colormap - colormaps);
         }
 
-        sprtopscreen = windowtop = (centeryfrac - FixedMul(dc_texturemid, spryscale));
-        sprbotscreen = windowbottom = FixedMul(*ffloor->topheight - *ffloor->bottomheight, spryscale) + sprtopscreen;
+        {
+          INT64 t = ((INT64) centeryfrac << FRACBITS) -
+            (INT64) dc_texturemid * spryscale;
+          sprtopscreen = windowtop = (long)(t >> FRACBITS);
+        }
+		sprbotscreen = windowbottom = FixedMul(*ffloor->topheight - *ffloor->bottomheight, spryscale) + sprtopscreen;
         dc_iscale = 0xffffffffu / (unsigned)spryscale;
             
         // draw the texture

@@ -132,7 +132,7 @@ typedef struct
 
 
 
-#define MAXANIMS     32     //SoM: 3/7/2000: No longer a limit
+#define MAXANIMS     128     //SoM: 3/7/2000: No longer a limit
 
 
 //SoM: 3/7/2000: New sturcture without limits.
@@ -198,7 +198,7 @@ animdef_t               harddefs[] =
 //
 //      Animating line specials
 //
-#define MAXLINEANIMS            64
+#define MAXLINEANIMS            128
 
 short   numlinespecials;
 line_t* linespeciallist[MAXLINEANIMS];
@@ -3535,8 +3535,9 @@ void T_Friction(friction_t *f)
     // Be sure the special sector type is still turned on. If so, proceed.
     // Else, bail out; the sector type has been changed on us.
 
-    if (!(sec->special & FRICTION_MASK))
-        return;
+	// WHY. Nozomi
+    //if (!(sec->special & FRICTION_MASK))
+    //    return;
 
     // Assign the friction value to players on the floor, non-floating,
     // and clipped. Normally the object's friction value is kept at
@@ -3554,7 +3555,8 @@ void T_Friction(friction_t *f)
         thing = node->m_thing;
         if (thing->player &&
             !(thing->flags & (MF_NOGRAVITY | MF_NOCLIP)) &&
-            thing->z <= thing->floorz/*sec->floorheight*/)
+            thing->z <= thing->floorz/*sec->floorheight*/
+			&& !thing->player->mfspinning)
             {
             if ((thing->friction == ORIG_FRICTION) ||     // normal friction?
                 (f->friction < thing->friction))

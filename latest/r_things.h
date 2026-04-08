@@ -157,6 +157,7 @@ typedef struct
 	char picname[9];
 	int weather;
 	boolean corona;
+	boolean skipintermission;
 } mapheader_t;
 
 extern mapheader_t mapheaders[NUMMAPHEADERS+1];

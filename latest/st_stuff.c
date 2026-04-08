@@ -1609,7 +1609,7 @@ void ST_overlayDrawer (int playernum)
 			hud_score = plyr->sp_score + (plyr->mo->health-1)*100;
 	
 		ST_drawOverlayNum(SCX(128), SCY(10), hud_score, tallnum, NULL); // Draw Score Num Nozomi 03-01-2026
-		V_DrawScaledPatch (SCX(16),SCY(10), FG | V_NOSCALESTART, W_CachePatchName("SBOFRAGS", PU_CACHE)); // Draw SCORE Tails 03-01-2000
+		V_DrawScaledPatch (SCX(16),SCY(10), FG | V_NOSCALESTART, W_CachePatchName("SBOFRAGS", PU_STATIC)); // Draw SCORE Tails 03-01-2000
 	}
 
 	// Draw the Time HUD! Nozomi
@@ -1642,10 +1642,10 @@ void ST_overlayDrawer (int playernum)
 					 plyr->minutes,
 					 tallnum,NULL);
 
-			V_DrawScaledPatch (SCX(88),SCY(42)-(16*vid.dupy), FG | V_NOSCALESTART, W_CachePatchName("SBOCOLON", PU_CACHE)); // colon location Tails 02-29-2000
+			V_DrawScaledPatch (SCX(88),SCY(42)-(16*vid.dupy), FG | V_NOSCALESTART, W_CachePatchName("SBOCOLON", PU_STATIC)); // colon location Tails 02-29-2000
 		}
 
-	   V_DrawScaledPatch (SCX(17),SCY(26), FG | V_NOSCALESTART, W_CachePatchName("SBOTIME", PU_CACHE)); // TIME location Tails 02-29-2000
+	   V_DrawScaledPatch (SCX(17),SCY(26), FG | V_NOSCALESTART, W_CachePatchName("SBOTIME", PU_STATIC)); // TIME location Tails 02-29-2000
 	}
 
 	// Draw the Rings HUD! Nozomi
@@ -1667,9 +1667,9 @@ void ST_overlayDrawer (int playernum)
 		ST_drawOverlayNum(SCX(x_pos), SCY(y_pos)-(16*vid.dupy), hud_rings, tallnum, NULL);
 
 		if(plyr->health <= 1 && leveltime/5 & 1)
-			V_DrawScaledPatch (SCX(16),SCY(y_pos)-(16*vid.dupy), FG | V_NOSCALESTART, W_CachePatchName("SBORINGS", PU_CACHE)); // Tails 03-14-2000
+			V_DrawScaledPatch (SCX(16),SCY(y_pos)-(16*vid.dupy), FG | V_NOSCALESTART, W_CachePatchName("SBORINGS", PU_STATIC)); // Tails 03-14-2000
 		else
-			V_DrawScaledPatch (SCX(16),SCY(y_pos)-(16*vid.dupy), FG | V_NOSCALESTART, W_CachePatchName("SBOHEALT", PU_CACHE)); // Was a number I forget and 198 =) Tails 10-31-99
+			V_DrawScaledPatch (SCX(16),SCY(y_pos)-(16*vid.dupy), FG | V_NOSCALESTART, W_CachePatchName("SBOHEALT", PU_STATIC)); // Was a number I forget and 198 =) Tails 10-31-99
 	}
 
 	// Draw the Lives HUD! Nozomi
@@ -1929,16 +1929,16 @@ static void ST_DrawTitleCard(int playernum) {
 		switch (mapheaders[gamemap].act) {
 			case 1:
 			default:
-				ttlnum = W_CachePatchName("ttlone", PU_CACHE);
+				ttlnum = W_CachePatchName("ttlone", PU_STATIC);
 				break;
 			case 2:
-				ttlnum = W_CachePatchName("ttltwo", PU_CACHE);
+				ttlnum = W_CachePatchName("ttltwo", PU_STATIC);
 				break;
 			case 3:
-				ttlnum = W_CachePatchName("ttlthree", PU_CACHE);
+				ttlnum = W_CachePatchName("ttlthree", PU_STATIC);
 				break;
 			case 4:
-				ttlnum = W_CachePatchName("ttlfour", PU_CACHE);
+				ttlnum = W_CachePatchName("ttlfour", PU_STATIC);
 				break;
 			case 5:
 				ttlnum = ttlfive;

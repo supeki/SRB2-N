@@ -2457,6 +2457,12 @@ void R_AddMapHeader (int wadnum)
 				mapheaders[levelnum].corona = atoi(value) > 0 ? true : false;
 			}
 
+			if (!stricmp(token,"skip_inter"))
+			{
+				// Skip level intermissions? e.g. MFZ2 -> BMZ
+				mapheaders[levelnum].skipintermission = atoi(value) > 0 ? true : false;
+			}
+
 			if (!stricmp(token,"next"))
 			{
 				// map/level number
