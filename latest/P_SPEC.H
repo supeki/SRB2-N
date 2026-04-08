@@ -290,11 +290,11 @@ typedef struct
 
 
  // max # of wall switches in a level
-#define MAXSWITCHES             50
+#define MAXSWITCHES             128
 
  // 4 players, 4 buttons each at once, max.
  // added 19-1-98 16->MAXPLAYERS*4
-#define MAXBUTTONS           (MAXPLAYERS*4) //16
+#define MAXBUTTONS           (MAXPLAYERS*4) //128
 
  // 1 second, in ticks.
 #define BUTTONTIME      35
@@ -389,7 +389,7 @@ void P_RemoveAllActivePlats(void); //SoM: 3/9/2000
 
 #define PLATWAIT                3
 #define PLATSPEED               FRACUNIT
-#define MAXPLATS                50 // was 30 Tails
+#define MAXPLATS                128 // was 30 Tails
 
 
 extern platlist_t  *activeplats;
@@ -641,7 +641,7 @@ void P_RemoveAllActiveCeilings(void); //SoM: 3/9/2000
 
 #define CEILSPEED               FRACUNIT
 #define CEILWAIT                150
-#define MAXCEILINGS             50 // was 30 Tails
+#define MAXCEILINGS             128 // was 30 Tails
 
 extern ceilinglist_t *activeceilings;  //SoM: 3/6/2000: New improved boom code.
 

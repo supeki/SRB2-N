@@ -91,7 +91,7 @@ visplane_t*             visplanes;
 visplane_t*             lastvisplane;*/
 
 //SoM: 3/23/2000: Use Boom visplane hashing.
-#define           MAXVISPLANES      128
+#define           MAXVISPLANES      512
 
 static visplane_t *visplanes[MAXVISPLANES];
 static visplane_t *freetail;

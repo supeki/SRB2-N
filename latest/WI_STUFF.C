@@ -1369,9 +1369,12 @@ void WI_updateNetgameStats(void)
 			players[i].lives++;
 			if(&players[i]==&players[consoleplayer])
 			{
-			S_StopMusic();
-			S_ChangeMusic(mus_xtlife, false);
-			I_PlayCD(37, false);
+			if (!mapheaders[gamemap].skipintermission)
+			{
+				S_StopMusic();
+				S_ChangeMusic(mus_xtlife, false);
+				I_PlayCD(37, false);
+			}
 			}
 			players[i].xtralife2 += 50000;
 		}
@@ -1380,7 +1383,8 @@ void WI_updateNetgameStats(void)
             if (dofrags)
                 cnt_frags[i] = ST_PlayerFrags(i);
         }
-        S_StartSound(0, sfx_chchng); // Tails
+		if (!mapheaders[gamemap].skipintermission)
+			S_StartSound(0, sfx_chchng); // Tails
         ng_state = 10;
     }
 
@@ -1425,9 +1429,12 @@ void WI_updateNetgameStats(void)
 			players[i].lives++;
 			if(&players[i]==&players[consoleplayer])
 			{
-			S_StopMusic();
-			S_ChangeMusic(mus_xtlife, false);
-			I_PlayCD(37, false);
+			if (!mapheaders[gamemap].skipintermission)
+			{
+				S_StopMusic();
+				S_ChangeMusic(mus_xtlife, false);
+				I_PlayCD(37, false);
+			}
 			}
 			players[i].xtralife2 += 50000;
 		}
@@ -1503,9 +1510,12 @@ void WI_updateNetgameStats(void)
 			players[i].lives++;
 			if(&players[i]==&players[consoleplayer])
 			{
-			S_StopMusic();
-			S_ChangeMusic(mus_xtlife, false);
-			I_PlayCD(37, false);
+			if (!mapheaders[gamemap].skipintermission)
+			{
+				S_StopMusic();
+				S_ChangeMusic(mus_xtlife, false);
+				I_PlayCD(37, false);
+			}
 			}
 			players[i].xtralife2 += 50000;
 		}
@@ -2595,14 +2605,18 @@ void WI_updateStats(void)
 		if(cnt_fscore[me] >= 50000+players[me].xtralife2)
 		{
 			players[me].lives++;
-			S_StopMusic();
-			S_ChangeMusic(mus_xtlife, false);
-			I_PlayCD(37, false);
+			if (!mapheaders[gamemap].skipintermission)
+			{
+				S_StopMusic();
+				S_ChangeMusic(mus_xtlife, false);
+				I_PlayCD(37, false);
+			}
 			players[me].xtralife2 += 50000;
 		}
 // End score Tails 04-11-2001
 //        cnt_par = wbs->partime / TICRATE;
-        S_StartSound(0, sfx_chchng); // Tails
+		if (!mapheaders[gamemap].skipintermission)
+			S_StartSound(0, sfx_chchng); // Tails
         sp_state = 10;
     }
 
@@ -2631,9 +2645,12 @@ void WI_updateStats(void)
 		if(cnt_fscore[me] >= 50000+players[me].xtralife2)
 		{
 			players[me].lives++;
-			S_StopMusic();
-			S_ChangeMusic(mus_xtlife, false);
-			I_PlayCD(37, false);
+			if (!mapheaders[gamemap].skipintermission)
+			{
+				S_StopMusic();
+				S_ChangeMusic(mus_xtlife, false);
+				I_PlayCD(37, false);
+			}
 			players[me].xtralife2 += 50000;
 		}
 // End score Tails 04-11-2001			  
@@ -2677,9 +2694,12 @@ void WI_updateStats(void)
 		if(cnt_fscore[me] >= 50000+players[me].xtralife2)
 		{
 			players[me].lives++;
-			S_StopMusic();
-			S_ChangeMusic(mus_xtlife, false);
-			I_PlayCD(37, false);
+			if (!mapheaders[gamemap].skipintermission)
+			{
+				S_StopMusic();
+				S_ChangeMusic(mus_xtlife, false);
+				I_PlayCD(37, false);
+			}
 			players[me].xtralife2 += 50000;
 		}
 // End score Tails 04-11-2001			  
@@ -2992,6 +3012,9 @@ void WI_checkForAccelerate(void)
     int   i;
     player_t  *player;
 
+	if (mapheaders[gamemap].skipintermission)
+		acceleratestage = 1;
+
     // check for button presses to skip delays
     for (i=0, player = players ; i<MAXPLAYERS ; i++, player++)
     {
@@ -3027,14 +3050,17 @@ void WI_Ticker(void)
 
     if (bcnt == 1)
     {
-        // intermission music
-        if ( gamemode == commercial )
-        {
-          S_ChangeMusic(mus_dm2int, false); // Tails 03-14-2000
-          I_PlayCD(39, false);
-        }
-        else
-          S_ChangeMusic(mus_inter, true);
+		if (!mapheaders[gamemap].skipintermission)
+			// intermission music
+			if ( gamemode == commercial )
+			{
+			  S_ChangeMusic(mus_dm2int, false); // Tails 03-14-2000
+			  I_PlayCD(39, false);
+			}
+			else
+			  S_ChangeMusic(mus_inter, true);
+		else
+			S_StopMusic();
     }
 
     WI_checkForAccelerate();
@@ -3232,7 +3258,7 @@ void WI_loadData(void)
     colon = W_CachePatchName("WICOLON", PU_STATIC);
 
     // "time"
-    time = W_CachePatchName("SBOTIME`j", PU_STATIC); // Tails
+    time = W_CachePatchName("SBOTIME", PU_STATIC); // Nozomi
 
     // "sucks"
     sucks = W_CachePatchName("WISUCKS", PU_STATIC);
@@ -3369,6 +3395,12 @@ void WI_unloadData(void)
 
 void WI_Drawer (void)
 {
+	if (mapheaders[gamemap].skipintermission)
+	{
+		V_DrawFill(0, 0, vid.width, vid.height, 0);
+		return;
+	}
+
     switch (state)
     {
       case StatCount:

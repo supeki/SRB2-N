@@ -214,7 +214,7 @@ void P_SetHyperColor(mobj_t* mo);
 //
 
 // when pushing a line 
-//#define MAXSPECIALCROSS 16
+//#define MAXSPECIALCROSS 128
 
 extern  int     *spechit;                //SoM: 3/15/2000: Limit removal
 extern  int     numspechit;
