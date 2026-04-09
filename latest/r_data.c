@@ -682,8 +682,10 @@ int R_GetFlatNumForName(char *name)
     // BP: don't work with gothic2.wad
     //R_CheckNumForNameList(name, flats, numflatlists);
   int lump = W_CheckNumForName(name); 
-  if(lump == -1)
-    I_Error("R_GetFlatNumForName: Could not find flat %.8s\n", name);
+  if(lump == -1) {
+    CONS_Printf("R_GetFlatNumForName: Could not find flat %.8s\n", name);
+	int lump = W_CheckNumForName("FLOOR0_6"); 
+  }
 
   return lump;
 }
