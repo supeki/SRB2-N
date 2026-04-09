@@ -16,7 +16,7 @@
 #include "srb.h"
 
 #define NOZOMI_DSI_XOFF 32
-#define NOZOMI_DSI_YOFF 4
+#define NOZOMI_DSI_YOFF 8
 
 typedef struct
 {
@@ -475,12 +475,12 @@ static void SRBN_DrawSonikku(void)
 		byte* sonikku_colormap = translationtables - 256 + (cv_playercolor.value<<8);
 
 		if (srbn_sonic_dir > 0)
-			V_DrawScaledTranslationPatch(srbn_sonic_x, srbn_sonic_y - srbn_sonic_momy, 0, srbn_earless[earless_patch], sonikku_colormap);
+			V_DrawScaledTranslationPatch(srbn_sonic_x - srbn_camera.x, srbn_sonic_y - srbn_sonic_momy - srbn_camera.y, 0, srbn_earless[earless_patch], sonikku_colormap);
 		else
-			V_DrawScaledTranslationPatchFlipped(srbn_sonic_x, srbn_sonic_y - srbn_sonic_momy, 0, srbn_earless[earless_patch], sonikku_colormap);
+			V_DrawScaledTranslationPatchFlipped(srbn_sonic_x - srbn_camera.x, srbn_sonic_y - srbn_sonic_momy - srbn_camera.y, 0, srbn_earless[earless_patch], sonikku_colormap);
 	}
 
-	V_DrawStringWhite(NOZOMI_DSI_XOFF, NOZOMI_DSI_YOFF, va("%d,%d", srbn_sonic_x, srbn_sonic_y));
+	V_DrawStringWhite(0, 0, va("%d,%d", srbn_sonic_x, srbn_sonic_y));
 }
 
 static void SRBN_DrawPlatforms(void)
@@ -503,7 +503,8 @@ static void SRBN_DrawPlatforms(void)
 		{
 			for (k=0; k<platform.w; k++)
 			{
-				V_DrawScaledPatch(platform.x + (w*k) + NOZOMI_DSI_XOFF - srbn_camera.x, platform.y + (h*j) + NOZOMI_DSI_YOFF - srbn_camera.y, 0, patch);
+				if (platform.x + (w*k) - srbn_camera.x < BASEVIDWIDTH)
+					V_DrawScaledPatch(platform.x + (w*k) - srbn_camera.x, platform.y + (h*j) - srbn_camera.y, 0, patch);
 			}
 		}
 	}

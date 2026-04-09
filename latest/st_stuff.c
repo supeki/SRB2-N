@@ -1912,9 +1912,9 @@ static void ST_DrawTitleCard(int playernum) {
 
 	int start_ttl_posy = 0;
 	int end_ttl_posy = 80;
-	int end_ttl_posy2 = 200;
+	int end_ttl_posy2 = BASEVIDHEIGHT;
 
-	int start_zone_posy = 200;
+	int start_zone_posy = BASEVIDHEIGHT;
 	int end_zone_posy = 104;
 	int end_zone_posy2 = 0;
 
@@ -1954,9 +1954,9 @@ static void ST_DrawTitleCard(int playernum) {
 				break;
 		}
 
-	lvlttlxpos = 160 - (lvlttl->width/2);
-	ttlnumxpos = 160 + (ttlzone->width/3*2);
-	zonexpos = 160 - (ttlzone->width/2);
+	lvlttlxpos = BASEVIDWIDTH/2 - (lvlttl->width/2);
+	ttlnumxpos = BASEVIDWIDTH/2 + (ttlzone->width/3*2);
+	zonexpos = BASEVIDWIDTH/2 - (ttlzone->width/2);
 
 	// Smooth Animation - Jisk 03-19-26
 #define anim1end 40 // OLD: 7

@@ -101,10 +101,8 @@ void R_DrawColumn_8(void)
 	if (count < 0) // Zero length, column does not exceed a pixel.
 		return;
 
-#ifdef RANGECHECK
 	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height)
 		return;
-#endif
 
 	// Framebuffer destination address.
 	// Use ylookup LUT to avoid multiply with ScreenWidth.
@@ -183,13 +181,11 @@ void R_DrawSkyColumn_8 (void)
 
   if (count <= 0)    // Zero length, column does not exceed a pixel.
     return; 
-                                 
-#ifdef RANGECHECK 
+                  
   if ((unsigned)dc_x >= vid.width
       || dc_yl < 0
       || dc_yh >= vid.height) 
-    I_Error ("R_DrawColumn: %i to %i at %i", dc_yl, dc_yh, dc_x); 
-#endif 
+    return;
 
   // Framebuffer destination address.
   // Use ylookup LUT to avoid multiply with ScreenWidth.
@@ -275,15 +271,11 @@ void R_DrawFuzzColumn_8 (void)
     if (count < 0)
         return;
 
-
-#ifdef RANGECHECK
     if ((unsigned)dc_x >= vid.width
         || dc_yl < 0 || dc_yh >= vid.height)
     {
-        I_Error ("R_DrawFuzzColumn: %i to %i at %i",
-                 dc_yl, dc_yh, dc_x);
+        return;
     }
-#endif
 
 
     // Does not work with blocky mode.
@@ -323,10 +315,8 @@ void R_DrawWallColumn_8(void)
 	if (count < 0) // Zero length, column does not exceed a pixel.
 		return;
 
-#ifdef RANGECHECK
 	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height)
 		return;
-#endif
 
 	// Framebuffer destination address.
 	// Use ylookup LUT to avoid multiply with ScreenWidth.
@@ -401,10 +391,8 @@ void R_Draw2sMultiPatchColumn_8(void)
 	if (count < 0) // Zero length, column does not exceed a pixel.
 		return;
 
-#ifdef RANGECHECK
 	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height)
 		return;
-#endif
 
 	// Framebuffer destination address.
 	// Use ylookup LUT to avoid multiply with ScreenWidth.
@@ -499,10 +487,8 @@ void R_DrawShadeColumn_8(void)
 	if (count < 0)
 		return;
 
-#ifdef RANGECHECK
 	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height)
-		I_Error("R_DrawShadeColumn_8: %d to %d at %d", dc_yl, dc_yh, dc_x);
-#endif
+		return;
 
 	// FIXME. As above.
 	dest = ylookup[dc_yl] + columnofs[dc_x];
@@ -540,13 +526,11 @@ void R_DrawTranslucentColumn_8 (void)
 
   if (count <= 0)    // Zero length, column does not exceed a pixel.
     return; 
-                                 
-#ifdef RANGECHECK 
+                  
   if ((unsigned)dc_x >= vid.width
       || dc_yl < 0
       || dc_yh >= vid.height) 
-    I_Error ("R_DrawColumn: %i to %i at %i", dc_yl, dc_yh, dc_x); 
-#endif 
+    return;
 
   // Framebuffer destination address.
   // Use ylookup LUT to avoid multiply with ScreenWidth.
@@ -622,10 +606,8 @@ void R_DrawTranslatedColumn_8(void)
 	if (count < 0)
 		return;
 
-#ifdef RANGECHECK
 	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height)
-		I_Error("R_DrawTranslatedColumn_8: %d to %d at %d", dc_yl, dc_yh, dc_x);
-#endif
+		return;
 
 	// FIXME. As above.
 	dest = ylookup[dc_yl] + columnofs[dc_x];
@@ -890,8 +872,6 @@ void R_DrawTranslucentSpan_8 (void)
 	}
 }
 
-
-
 //SoM: Fog wall.
 void R_DrawFogColumn_8(void)
 {
@@ -904,10 +884,8 @@ void R_DrawFogColumn_8(void)
 	if (count < 0)
 		return;
 
-#ifdef RANGECHECK
 	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height)
-		I_Error("R_DrawFogColumn_8: %d to %d at %d", dc_yl, dc_yh, dc_x);
-#endif
+		return;
 
 	// Framebuffer destination address.
 	// Use ylookup LUT to avoid multiply with ScreenWidth.
@@ -924,9 +902,6 @@ void R_DrawFogColumn_8(void)
 	} while (count--);
 }
 
-
-
-
 // SoM: This is for 3D floors that cast shadows on walls.
 // This function just cuts the column up into sections and calls
 // R_DrawColumn_8
@@ -942,10 +917,8 @@ void R_DrawColumnShadowed_8(void)
 	if (count < 0)
 		return;
 
-#ifdef RANGECHECK
 	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height)
-		I_Error("R_DrawColumnShadowed_8: %d to %d at %d", dc_yl, dc_yh, dc_x);
-#endif
+		return;
 
 	// This runs through the lightlist from top to bottom and cuts up the column accordingly.
 	for (i = 0; i < dc_numlights; i++)

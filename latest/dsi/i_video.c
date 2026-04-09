@@ -33,9 +33,9 @@ vmode_t window_modes[NUM_SDLMODES] = {
 		// Fallback mode, 320x200 is gross
 		{
 			NULL,
-			"320x200", //faB: W to make sure it's the windowed mode
-			320, 200,   //(200.0/320.0)*(320.0/240.0),
-			320, 1,     // rowbytes, bytes per pixel
+			"256x192", //faB: W to make sure it's the windowed mode
+			256, 192,   //(192.0/256.0)*(256.0/240.0),
+			256, 1,     // rowbytes, bytes per pixel
 			1, 2,       // windowed (TRUE), numpages
 			NULL,
 			NULL,
@@ -44,9 +44,9 @@ vmode_t window_modes[NUM_SDLMODES] = {
 		// Non-fallback copy of 320x200W, if you WANT to use 320x200W for some reason
 		{
 			NULL,
-			"320x200", //faB: W to make sure it's the windowed mode
-			320, 200,   //(200.0/320.0)*(320.0/240.0),
-			320, 1,     // rowbytes, bytes per pixel
+			"256x192", //faB: W to make sure it's the windowed mode
+			256, 192,   //(192.0/256.0)*(256.0/240.0),
+			256, 1,     // rowbytes, bytes per pixel
 			1, 2,       // windowed (TRUE), numpages
 			NULL,
 			NULL,
@@ -55,8 +55,8 @@ vmode_t window_modes[NUM_SDLMODES] = {
 		{
 			NULL,
 			"320x240", //faB: W to make sure it's the windowed mode
-			320, 240,   //(200.0/320.0)*(320.0/240.0),
-			320, 1,     // rowbytes, bytes per pixel
+			256, 240,   //(192.0/256.0)*(256.0/240.0),
+			256, 1,     // rowbytes, bytes per pixel
 			1, 2,       // windowed (TRUE), numpages
 			NULL,
 			NULL,
@@ -65,7 +65,7 @@ vmode_t window_modes[NUM_SDLMODES] = {
 		{
 			NULL,
 			"640x400", //faB: W to make sure it's the windowed mode
-			640, 400,   //(200.0/320.0)*(320.0/240.0),
+			640, 400,   //(192.0/256.0)*(256.0/240.0),
 			640, 1,     // rowbytes, bytes per pixel
 			1, 2,       // windowed (TRUE), numpages
 			NULL,
@@ -75,7 +75,7 @@ vmode_t window_modes[NUM_SDLMODES] = {
 		{
 			NULL,
 			"640x480", //faB: W to make sure it's the windowed mode
-			640, 480,   //(200.0/320.0)*(320.0/240.0),
+			640, 480,   //(192.0/256.0)*(256.0/240.0),
 			640, 1,     // rowbytes, bytes per pixel
 			1, 2,       // windowed (TRUE), numpages
 			NULL,
@@ -85,7 +85,7 @@ vmode_t window_modes[NUM_SDLMODES] = {
 		{
 			NULL,
 			"800x600", //faB: W to make sure it's the windowed mode
-			800, 600,   //(200.0/320.0)*(320.0/240.0),
+			800, 600,   //(192.0/256.0)*(256.0/240.0),
 			800, 1,     // rowbytes, bytes per pixel
 			1, 2,       // windowed (TRUE), numpages
 			NULL,
@@ -95,7 +95,7 @@ vmode_t window_modes[NUM_SDLMODES] = {
 		{
 			NULL,
 			"1024x768", //faB: W to make sure it's the windowed mode
-			1024, 768,   //(200.0/320.0)*(320.0/240.0),
+			1024, 768,   //(192.0/256.0)*(256.0/240.0),
 			1024, 1,     // rowbytes, bytes per pixel
 			1, 2,       // windowed (TRUE), numpages
 			NULL,
@@ -105,7 +105,7 @@ vmode_t window_modes[NUM_SDLMODES] = {
 		{
 			NULL,
 			"1280x720", //faB: W to make sure it's the windowed mode
-			1280, 720,   //(200.0/320.0)*(320.0/240.0),
+			1280, 720,   //(192.0/256.0)*(256.0/240.0),
 			1280, 1,     // rowbytes, bytes per pixel
 			1, 2,       // windowed (TRUE), numpages
 			NULL,
@@ -115,7 +115,7 @@ vmode_t window_modes[NUM_SDLMODES] = {
 		{
 			NULL,
 			"1280x800", //faB: W to make sure it's the windowed mode
-			1280, 800,   //(200.0/320.0)*(320.0/240.0),
+			1280, 800,   //(192.0/256.0)*(256.0/240.0),
 			1280, 1,     // rowbytes, bytes per pixel
 			1, 2,       // windowed (TRUE), numpages
 			NULL,
@@ -125,7 +125,7 @@ vmode_t window_modes[NUM_SDLMODES] = {
 		{
 			NULL,
 			"1920x1080", //faB: W to make sure it's the windowed mode
-			1920, 1080,   //(200.0/320.0)*(320.0/240.0),
+			1920, 1080,   //(192.0/256.0)*(256.0/240.0),
 			1920, 1,     // rowbytes, bytes per pixel
 			1, 2,       // windowed (TRUE), numpages
 			NULL,
@@ -135,7 +135,7 @@ vmode_t window_modes[NUM_SDLMODES] = {
 		{
 			NULL,
 			"1920x1200", //faB: W to make sure it's the windowed mode
-			1920, 1200,   //(200.0/320.0)*(320.0/240.0),
+			1920, 1200,   //(192.0/256.0)*(256.0/240.0),
 			1920, 1,     // rowbytes, bytes per pixel
 			1, 2,       // windowed (TRUE), numpages
 			NULL,
@@ -229,8 +229,8 @@ int VID_SetMode(int modenum)
 	vid.buffer = NULL;
 	
 	vid.modenum = 0; 
-    vid.width = 320;
-    vid.height = 200;
+    vid.width = 256;
+    vid.height = 192;
     vid.bpp = 1; // 8-bit buffer
     vid.rowbytes = vid.width;
     vid.dupx = 1;
@@ -250,7 +250,7 @@ int VID_SetMode(int modenum)
 }
 
 void I_StartupGraphics(void) {
-    VID_SetMode(3);
+    VID_SetMode(0);
 
 	VID_InitConsole();
 }
@@ -266,19 +266,19 @@ void I_FinishUpdate(void)
 {
     u16* framebuffer = (u16*)VRAM_A;
 
-    int x_offset = ((320-256)/2); // 32
-    int y_offset = ((200-192)/2); // 4
+//    int x_offset = ((256-256)/2); // 32
+//    int y_offset = ((192-192)/2); // 4
 
 	// copy to VRAM A
-    for (int y = 0; y < 192; y++)
+    for (int y = 0; y < BASEVIDHEIGHT; y++)
     {
-        for (int x = 0; x < 256; x++)
+        for (int x = 0; x < BASEVIDWIDTH; x++)
         {
-            int src_x = x+x_offset;
-            int src_y = y+y_offset;
+            int src_x = x;
+            int src_y = y;
 
-            framebuffer[(y*256)+x] =
-                ds_palette[vid.buffer[(src_y*320)+src_x]];
+            framebuffer[(y*BASEVIDWIDTH)+x] =
+                ds_palette[vid.buffer[(src_y*BASEVIDWIDTH)+src_x]];
         }
     }
 }

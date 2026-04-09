@@ -191,8 +191,6 @@ void R_DrawColumnInCache ( column_t*     patch,
     byte*       source;
     byte*       dest;
 
-    dest = (byte *)cache;// + 3;
-
     while (patch->topdelta != 0xff)
     {
         source = (byte *)patch + 3;
@@ -241,6 +239,7 @@ byte* R_GenerateTexture (int texnum)
     column_t*           patchcol;
     unsigned int*       colofs;
     int                 blocksize;
+	byte* source;
 
     texture = textures[texnum];
 
@@ -252,18 +251,13 @@ byte* R_GenerateTexture (int texnum)
     {
         patch = texture->patches;
         blocksize = W_LumpLength (patch->patch);
-#if 1
         realpatch = W_CacheLumpNum (patch->patch, PU_CACHE);
 
         block = Z_Malloc (blocksize,
                           PU_STATIC,         // will change tag at end of this function
                           &texturecache[texnum]);
         memcpy (block, realpatch, blocksize);
-#else
-        // FIXME: this version don't put the user z_block
-        texturecache[texnum] = block = W_CacheLumpNum (patch->patch, PU_STATIC);
-#endif
-        //CONS_Printf ("R_GenTex SINGLE %.8s size: %d\n",texture->name,blocksize);
+
         texturememory+=blocksize;
 
         // use the patch's column lookup
@@ -366,55 +360,6 @@ byte* R_GetColumn ( int           tex,
 byte* R_GetFlat (int  flatlumpnum)
 {
     return W_CacheLumpNum (flatlumpnum, PU_CACHE);
-
-/*  // this code work but is useless
-    byte*    data;
-    short*   wput;
-    int      i,j;
-
-    //FIXME: work with run time pwads, flats may be added
-    // lumpnum to flatnum in flatcache
-    if ((data = flatcache[flatlumpnum-firstflat])!=0)
-                return data;
-
-    data = W_CacheLumpNum (flatlumpnum, PU_CACHE);
-    i=W_LumpLength(flatlumpnum);
-
-    Z_Malloc (i,PU_STATIC,&flatcache[flatlumpnum-firstflat]);
-    memcpy (flatcache[flatlumpnum-firstflat], data, i);
-
-    return flatcache[flatlumpnum-firstflat];
-*/
-
-/*  // this code don't work because it don't put a proper user in the z_block
-    if ((data = flatcache[flatlumpnum-firstflat])!=0)
-       return data;
-
-    data = (byte *) W_CacheLumpNum(flatlumpnum,PU_LEVEL);
-    flatcache[flatlumpnum-firstflat] = data;
-    return data;
-
-    flatlumpnum -= firstflat;
-
-    if (scr_bpp==1)
-    {
-                flatcache[flatlumpnum] = data;
-                return data;
-    }
-
-    // allocate and convert to high color
-
-    wput = (short*) Z_Malloc (64*64*2,PU_STATIC,&flatcache[flatlumpnum]);
-    //flatcache[flatlumpnum] =(byte*) wput;
-
-    for (i=0; i<64; i++)
-       for (j=0; j<64; j++)
-                        wput[i*64+j] = ((color8to16[*data++]&0x7bde) + ((i<<9|j<<4)&0x7bde))>>1;
-
-                //Z_ChangeTag (data, PU_CACHE);
-
-                return (byte*) wput;
-*/
 }
 
 //
@@ -817,8 +762,10 @@ int R_ColormapNumForName(char *name)
     I_Error("R_ColormapNumForName: Too many colormaps!\n");
 
   lump = R_CheckNumForNameList(name, colormaplumps, numcolormaplumps);
-  if(lump == -1)
-    I_Error("R_ColormapNumForName: Cannot find colormap lump %s\n", name);
+  if(lump == -1) {
+    CONS_Printf("R_ColormapNumForName: Cannot find colormap lump %s\n", name);
+	lump = W_CheckNumForName("COLORMAP");
+  }
 
   for(i = 0; i < num_extra_colormaps; i++)
     if(lump == foundcolormaps[i])

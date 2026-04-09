@@ -773,19 +773,6 @@ void R_InitViewBuffer ( int   width,
         ylookup[i] = ylookup1[i] = vid.buffer + (i+viewwindowy)*vid.width*bytesperpixel;
                      ylookup2[i] = vid.buffer + (i+(vid.height>>1))*vid.width*bytesperpixel;
     }
-        
-
-#ifdef HORIZONTALDRAW
-    //Fab 17-06-98
-    // create similar lookup tables for horizontal column draw optimisation
-
-    // (the first column is the bottom line)
-    for (i=0; i<width; i++)
-        yhlookup[i] = screens[2] + ((width-i-1) * bytesperpixel * height);
-
-    for (i=0; i<height; i++)
-        hcolumnofs[i] = i * bytesperpixel;
-#endif
 }
 
 

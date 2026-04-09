@@ -42,6 +42,7 @@
 #include "doomdef.h"
 #include "doomtype.h"
 #include "r_defs.h"
+#include "screen.h"
 
 
 //
@@ -59,7 +60,7 @@ extern  int     scaledofs;
 // Screen 0 is the screen updated by I_Update screen.
 // Screen 1 is an extra buffer.
 
-extern  byte*   screens[5];
+extern  byte*   screens[NUMSCREENS+1];
 
 extern  int     dirtybox[4];
 

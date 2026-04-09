@@ -411,7 +411,7 @@ menu_t  MainDef =
     NULL,
     MainMenu,
     M_DrawGenericMenu,
-    124,64, // Tails
+    100,48, // Tails
     0
 };
 
@@ -457,7 +457,7 @@ menu_t  SinglePlayerDef =
     NULL,
     SinglePlayerMenu,
     M_DrawGenericMenu,
-    130,64, // Tails 11-30-2000
+    100,48, // Tails 11-30-2000
     0
 };
 
@@ -550,17 +550,17 @@ boolean M_QuitMutliPlayerMenu(void);
 
 menuitem_t SetupMultiPlayerMenu[] =
 {
-    {IT_KEYHANDLER | IT_STRING          ,"Your name" ,M_HandleSetupMultiPlayer,0},
-    {IT_CVAR | IT_STRING | IT_CV_NOPRINT,"Your color",&cv_playercolor         ,16},
-    {IT_KEYHANDLER | IT_STRING          ,"Your player" ,M_HandleSetupMultiPlayer,96}, // changed to player Tails 11-09-99
+    //{IT_KEYHANDLER | IT_STRING          ,"Your name" ,M_HandleSetupMultiPlayer,0},
+    {IT_CVAR | IT_STRING | IT_CV_NOPRINT,"Your color",&cv_playercolor         ,0},
+    {IT_KEYHANDLER | IT_STRING          ,"Your player" ,M_HandleSetupMultiPlayer,80}, // changed to player Tails 11-09-99
     /* this line calls the setup controls for secondary player, only if numitems is > 3 */
     {IT_CALL | IT_WHITESTRING, "Setup Controls...", M_SetupControlsMenu, 120},
     {IT_SUBMENU | IT_WHITESTRING, "Second Mouse config...", &SecondMouseCfgdef, 130}
 };
 
 enum {
-    setupmultiplayer_name = 0,
-    setupmultiplayer_color,
+    //setupmultiplayer_name = 0,
+    setupmultiplayer_color = 0,
     setupmultiplayer_skin,
     setupmultiplayer_controls,
     setupmultiplayer_mouse2,
@@ -574,7 +574,7 @@ menu_t  SetupMultiPlayerDef =
     &SinglePlayerDef,
     SetupMultiPlayerMenu,
     M_DrawSetupMultiPlayerMenu,
-    27,40,
+    44,40,
     0,
     M_QuitMutliPlayerMenu
 };
@@ -598,7 +598,7 @@ void M_SetupMultiPlayer (int choice)
 {
 //	if(!cv_gametype.value) // Don't change if in single player Tails 03-25-2001
 //		return;
-    multi_state = &states[mobjinfo[MT_PLAYER].seestate];
+    multi_state = &states[S_PLAY_SPD1];
     multi_tics = multi_state->tics;
     strcpy(setupm_name, cv_playername.string);
 
@@ -675,10 +675,6 @@ void M_DrawSetupMultiPlayerMenu(void)
     // use generic drawer for cursor, items and title
     M_DrawGenericMenu();
 
-    // draw name string
-    M_DrawTextBox(mx+90,my-8,MAXPLAYERNAME,1);
-    V_DrawString (mx+98,my,setupm_name);
-
 	// draw color string
 	{
 		int i;
@@ -688,27 +684,21 @@ void M_DrawSetupMultiPlayerMenu(void)
 		for (i=0; i<((int)strlen(colorname)); i++)
 			if (colorname[i] == '_')
 				colorname[i] = '\n'; // pulling this from the DSi port
-		V_DrawString (mx+90+PLBOXW*8+16, my+16, colorname);
+		V_DrawString (mx, my+16, colorname);
 	}
 
     // draw skin string
-    V_DrawString (mx+90, my+96, setupm_cvskin->string);
-
-    // draw text cursor for name
-    if (itemOn==0 &&
-        skullAnimCounter<4)   //blink cursor
-        V_DrawScaledPatch (mx+98+V_StringWidth(setupm_name),my,0,
-                           W_CachePatchName("STCFN095",PU_CACHE)); // Tails 11-30-2000
+    V_DrawString (mx+90, my+80, setupm_cvskin->string);
 
     // anim the player in the box
-    if (--multi_tics<=0)
+    if ((multi_tics-=2)<=0)
     {
         st = multi_state->nextstate;
         if (st!=S_NULL)
             multi_state = &states[st];
         multi_tics = multi_state->tics;
-        if (multi_tics==-1)
-            multi_tics=15;
+        if (multi_tics<=-1)
+            multi_tics=7;
     }
 
     // skin 0 is default player sprite
@@ -718,9 +708,7 @@ void M_DrawSetupMultiPlayerMenu(void)
     patch = W_CachePatchNum (lump, PU_CACHE);
 
     // draw box around guy
-    M_DrawTextBox(mx+90,my+8, PLBOXW, PLBOXH);
-
-
+    M_DrawTextBox(mx+90,my-8, PLBOXW, PLBOXH);
 
     if (setupm_cvcolor->value==0)
         colormap = colormaps;
@@ -735,7 +723,7 @@ void M_DrawSetupMultiPlayerMenu(void)
 			scale = FRACUNIT;
 
 		x = scalex(mx+95);
-		y = scaley(my+16);
+		y = scaley(my);
 		offx = (scalex(patch->leftoffset)*scale)>>FRACBITS;
 		offy = (scaley(patch->topoffset)*scale)>>FRACBITS;
 
@@ -784,12 +772,12 @@ void M_HandleSetupMultiPlayer (int choice)
         break;
 
       case KEY_LEFTARROW:
-        if (itemOn==2)       //player skin
+        if (itemOn==1)       //player skin
         {
             S_StartSound(NULL,sfx_menu1); // Tails
             myskin--;
         }
-		if (itemOn==1)       //player color
+		if (itemOn==0)       //player color
         {
             S_StartSound(NULL,sfx_menu1); // Nozomi
             mycolor--;
@@ -797,12 +785,12 @@ void M_HandleSetupMultiPlayer (int choice)
         break;
 
       case KEY_RIGHTARROW:
-        if (itemOn==2)       //player skin
+        if (itemOn==1)       //player skin
         {
             S_StartSound(NULL,sfx_menu1); // Tails
             myskin++;
         }
-		if (itemOn==1)       //player color
+		if (itemOn==0)       //player color
         {
             S_StartSound(NULL,sfx_menu1); // Nozomi
             mycolor++;
@@ -819,24 +807,7 @@ void M_HandleSetupMultiPlayer (int choice)
         exitmenu = true;
         break;
 
-      case KEY_BACKSPACE:
-        if ( (l=strlen(setupm_name))!=0 && itemOn==0)
-        {
-            S_StartSound(NULL,sfx_stnmov);
-            setupm_name[l-1]=0;
-        }
-        break;
-
       default:
-        if (choice < 32 || choice > 127 || itemOn!=0)
-            break;
-        l = strlen(setupm_name);
-        if (l<MAXPLAYERNAME-1)
-        {
-            S_StartSound(NULL,sfx_stnmov);
-            setupm_name[l]=choice;
-            setupm_name[l+1]=0;
-        }
         break;
     }
 
@@ -922,7 +893,6 @@ void M_Episode(int choice)
     M_SetupNextMenu(&ModeDef);
 }
 
-
 //===========================================================================
 //                           NEW GAME FOR SINGLE PLAYER
 //===========================================================================
@@ -968,11 +938,11 @@ menu_t  ModeDef =
 
 menuitem_t NewGameMenu[]=
 {
-    {IT_CALL | IT_STRING,"Cakewalk",M_ChooseSkill, 80},
-    {IT_CALL | IT_STRING,"Easy",M_ChooseSkill, 90},
-    {IT_CALL | IT_STRING,"Normal",M_ChooseSkill, 100},
-    {IT_CALL | IT_STRING,"Hard",M_ChooseSkill, 110},
-    {IT_CALL | IT_STRING,"Very Hard",M_ChooseSkill, 120}
+    {IT_CALL | IT_STRING,"Cakewalk",M_ChooseSkill, 70},
+    {IT_CALL | IT_STRING,"Easy",M_ChooseSkill, 80},
+    {IT_CALL | IT_STRING,"Normal",M_ChooseSkill, 90},
+    {IT_CALL | IT_STRING,"Hard",M_ChooseSkill, 100},
+    {IT_CALL | IT_STRING,"Very Hard",M_ChooseSkill, 110}
 /*    {IT_CALL | IT_PATCH,"M_JKILL",M_ChooseSkill, 'i'},
     {IT_CALL | IT_PATCH,"M_ROUGH",M_ChooseSkill, 'h'},
     {IT_CALL | IT_PATCH,"M_HURT" ,M_ChooseSkill, 'h'},
@@ -993,20 +963,13 @@ menu_t  NewDef =
 
 void M_DrawNewGameMode(void)
 {
-	V_DrawString(160-strlen("Choose Gamemode")*4,128, "Choose Gamemode");
+	V_DrawString((BASEVIDWIDTH/2)-V_StringWidth("Choose Gamemode")/2,128, "Choose Gamemode");
     M_DrawGenericMenu();
 }
 
 void M_DrawNewGame(void)
 {
-//    patch_t* p;
-
-    //faB: testing with glide
-//    p = W_CachePatchName("M_SKILL",PU_CACHE);
-//    V_DrawScaledPatch ((BASEVIDWIDTH-p->width)/2,38,0,p);
-	V_DrawString(96,128, "Choose Skill Level");
-
-    //    V_DrawScaledPatch (54,38,0,W_CachePatchName("M_SKILL",PU_CACHE));
+	V_DrawString((BASEVIDWIDTH/2)-V_StringWidth("Choose Skill Level")/2,120, "Choose Skill Level");
     M_DrawGenericMenu();
 }
 
@@ -1091,7 +1054,7 @@ menu_t  TimeAttackDef =
     &ModeDef,            // previous menu
     TimeAttackMenu,        // menuitem_t ->
     M_DrawTimeAttack,      // drawing routine ->
-    48,8,              // x,y
+    32,4,              // x,y
     ta_map            // lastOn
 };
 
@@ -1124,13 +1087,13 @@ void M_DrawTimeAttack(void)
     seconds = (mapheaders[cv_nozotimeattacklevel.value].ta_time/TICRATE) % 60;
 	centiseconds = (int)((mapheaders[cv_nozotimeattacklevel.value].ta_time % TICRATE) * (100.00f/TICRATE));
 
-	V_DrawString(96, 18, levelname);
-	V_DrawString(48, 28, va("Best Time: %s %d:%02d.%02d", mapheaders[cv_nozotimeattacklevel.value].ta_name, minutes, seconds, centiseconds));
+	V_DrawString(64, 14, levelname);
+	V_DrawString(32, 24, va("Best Time: %s %d:%02d.%02d", mapheaders[cv_nozotimeattacklevel.value].ta_name, minutes, seconds, centiseconds));
 
 	if (strlen(mapheaders[cv_nozotimeattacklevel.value].picname) > 0)
 		lvlcard = W_CachePatchName(mapheaders[cv_nozotimeattacklevel.value].picname,PU_CACHE);
 
-	V_DrawScaledPatch(160-(lvlcard->width/2), 100-(lvlcard->height/2), 0, lvlcard);
+	V_DrawScaledPatch((BASEVIDWIDTH/2)-(lvlcard->width/2), (BASEVIDHEIGHT/2)-(lvlcard->height/2), 0, lvlcard);
 
     M_DrawGenericMenu();
 }
@@ -1243,16 +1206,12 @@ void M_HandleTimeAttack (int choice)
 //added:10-02-98: note: alphaKey member is the y offset
 menuitem_t OptionsMenu[]=
 {
-//    {IT_STRING | IT_CVAR,"Messages:"       ,&cv_showmessages    ,0},
-//    {IT_STRING | IT_CVAR,"Always Run"      ,&cv_autorun         ,10},
-//    {IT_STRING | IT_CVAR,"Crosshair"       ,&cv_crosshair       ,20},
-//    {IT_STRING | IT_CVAR,"Autoaim"         ,&cv_autoaim         ,30},
-	{IT_CALL    | IT_STRING,"Setup Controls...",M_SetupControlsMenu,10},
-	{IT_STRING | IT_CVAR,"Control per key" ,&cv_controlperkey   ,20},
-	{IT_SUBMENU | IT_STRING,"Mouse Options..." ,&MouseOptionsDef,40},
-    {IT_CALL    | IT_STRING,"Game Options..."  ,M_GameOption,50},
-    {IT_SUBMENU | IT_STRING,"Video Options..." ,&VideoOptionsDef,60},
-	{IT_SUBMENU | IT_STRING,"Sound Options..." ,&SoundOptionsDef,70},
+	//{IT_CALL    | IT_STRING,"Setup Controls...",M_SetupControlsMenu,10},
+	//{IT_STRING | IT_CVAR,"Control per key" ,&cv_controlperkey   ,20},
+	//{IT_SUBMENU | IT_STRING,"Mouse Options..." ,&MouseOptionsDef,40},
+    {IT_CALL    | IT_STRING,"Game Options..."  ,M_GameOption,10},
+    {IT_SUBMENU | IT_STRING,"Video Options..." ,&VideoOptionsDef,30},
+	{IT_SUBMENU | IT_STRING,"Sound Options..." ,&SoundOptionsDef,40},
 };
 
 menu_t  OptionsDef =
@@ -1262,7 +1221,7 @@ menu_t  OptionsDef =
     &MainDef,
     OptionsMenu,
     M_DrawGenericMenu,
-    60,40,
+    44,40,
     0
 };
 
@@ -1300,12 +1259,12 @@ void M_DrawSlider (int x, int y, int range)
 //added:10-02-98: note: alphaKey member is the y offset
 menuitem_t VideoOptionsMenu[]=
 {
-    {IT_STRING | IT_SUBMENU,             "Video Modes...",      &VidModeDef,     0}, 
-    {IT_STRING | IT_CVAR | IT_CV_SLIDER, "Brightness",          &cv_usegamma,    20},
-    {IT_STRING | IT_CVAR,                "Fullscreen",          &cv_fullscreen,  40},
-	{IT_STRING | IT_CVAR,                "Snow Density",        &cv_numsnow,     70}, // Changed all to normal string Tails 11-30-2000
-	{IT_STRING | IT_CVAR,                "Rain Density",        &cv_raindensity, 80}, // Changed all to normal string Tails 11-30-2000
-	{IT_STRING | IT_CVAR,                "Rain/Snow Draw Dist", &cv_precipdist,  90}, // Changed all to normal string Tails 11-30-2000
+    //{IT_STRING | IT_SUBMENU,             "Video Modes...",      &VidModeDef,     0}, 
+    {IT_STRING | IT_CVAR | IT_CV_SLIDER, "Brightness",          &cv_usegamma,    0},
+    {IT_STRING | IT_CVAR,                "Fullscreen",          &cv_fullscreen,  20},
+	{IT_STRING | IT_CVAR,                "Snow Density",        &cv_numsnow,     50}, // Changed all to normal string Tails 11-30-2000
+	{IT_STRING | IT_CVAR,                "Rain Density",        &cv_raindensity, 60}, // Changed all to normal string Tails 11-30-2000
+	{IT_STRING | IT_CVAR,                "Rain/Snow Draw Dist", &cv_precipdist,  70}, // Changed all to normal string Tails 11-30-2000
 };
 
 menu_t  VideoOptionsDef =
@@ -1315,7 +1274,7 @@ menu_t  VideoOptionsDef =
     &OptionsDef,
     VideoOptionsMenu,
     M_DrawGenericMenu,
-    60,40,
+    44,40,
     0
 };
 
@@ -1344,7 +1303,7 @@ menu_t  MouseOptionsDef =
     &OptionsDef,
     MouseOptionsMenu,
     M_DrawGenericMenu,
-    60,40,
+    44,40,
     0
 };
 
@@ -1372,7 +1331,7 @@ menu_t  GameOptionDef =
     &OptionsDef,
     GameOptionsMenu,
     M_DrawGenericMenu,
-    60,40,
+    44,40,
     0
 };
 
@@ -1415,7 +1374,7 @@ menu_t  NetOptionDef =
     &MultiPlayerDef,
     NetOptionsMenu,
     M_DrawGenericMenu,
-    60,40,
+    44,40,
     0
 };
 
@@ -1587,7 +1546,7 @@ menu_t  SoundOptionsDef =
     &OptionsDef,
     SoundOptionsMenu,
     M_DrawGenericMenu,
-    60,40,
+    44,40,
     0
 };
 
@@ -1598,7 +1557,7 @@ menu_t  PitchOptionsDef =
     &SoundOptionsDef,
     PitchOptionsMenu,
     M_DrawGenericMenu,
-    60,40,
+    44,40,
     0
 };
 
@@ -1609,7 +1568,7 @@ menu_t  MusicTogglesDef =
     &SoundOptionsDef,
     MusicTogglesMenu,
     M_DrawGenericMenu,
-    60,40,
+    44,40,
     0
 };
 
@@ -1620,7 +1579,7 @@ menu_t  SoundDef =
     &SoundOptionsDef,
     SoundMenu,
     M_DrawSound,
-    80,50,
+    56,50,
     0
 };
 
@@ -2534,7 +2493,7 @@ void M_HostSERVER(int choice)
 	netgame = true;
     multiplayer = true;*/
 	menuactive = false;
-    COM_BufAddText ("pong\n");
+    COM_BufAddText ("srbnozomi\n"); // i am not fixing ur pong xdf,,, Nozomi
 }
 
 

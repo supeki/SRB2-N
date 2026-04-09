@@ -68,7 +68,7 @@
 #endif
 
 // Each screen is [vid.width*vid.height];
-byte*      screens[5];
+byte*      screens[NUMSCREENS+1];
 
 consvar_t cv_ticrate={"vid_ticrate","0",0,CV_OnOff,NULL};
 

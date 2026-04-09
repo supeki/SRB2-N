@@ -563,13 +563,6 @@ void D_Display (void)
         {
             V_DrawTiltView (screens[0]);
         }
-#ifdef PERSPCORRECT
-        else if (gamestate == GS_LEVEL &&
-                 cv_perspcorr.value )
-        {
-            V_DrawPerspView (screens[0], players[displayplayer].aiming);
-        }
-#endif
         else
         {
             //I_BeginProfile();

@@ -551,7 +551,7 @@ typedef post_t  column_t;
 
 
 #ifndef MAXFFLOORS
-#define MAXFFLOORS    128
+#define MAXFFLOORS    64
 #endif
 
 //
