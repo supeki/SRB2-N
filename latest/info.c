@@ -72,7 +72,7 @@ char *sprnames[NUMSPRITES+1] = {
 	"RRNG","TTAG","STEM","RFLG","BFLG","GFLG","TOKE","CEMG","CEMO","CEMP",
 	"CEMB","CEMR","CEML","CEMY","JETB","JETG","JBUL","MOUS","DETN","XPLD",
 	"REDX","CHAN","CAPE","SNO1","SANT","EMER","EMES","EMET","SBLL","SPIK",
-	"CCOM","MARL","RAIN","NSPR","SUPR","CRUK","CORN",
+	"CCOM","MARL","RAIN","NSPR","SUPR","CRUK","CORN","BEEC",
     NULL
 };
 
@@ -1301,7 +1301,8 @@ state_t states[NUMSTATES] = {
     {SPR_NSPR, 15,  1, {NULL},   S_SPRING_HORIZ8}, // S_SPRING_HORIZ7
     {SPR_NSPR, 14,  1, {NULL},   S_SPRING_HORIZ},  // S_SPRING_HORIZ8
 	{SPR_CRUK,  0, -1, {NULL},   S_CRUCKS}, // S_CRUCKS
-	{SPR_CORN,  FF_HALFBRIGHT, 1, {A_Corona},   S_CORONA}, // S_CORONA
+	{SPR_CORN, FF_HALFBRIGHT, 1, {A_Corona}, S_CORONA}, // S_CORONA
+	{SPR_BEEC,  0, -1, {NULL},   S_NULL} // S_BEECAT :3
 };
 
 mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
@@ -6486,7 +6487,33 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 		sfx_None,
 		MF_NOGRAVITY|MF_NOCLIP|MF_TRANSLATION,
 		S_CORONA
-	}
+	},
+	{           // MT_BEECAT // sam is going to kill me mrow :3
+        3015,             // doomednum
+        S_BEECAT,           // spawnstate Tails 9-30-99
+        1000,           // spawnhealth Tails 9-30-99
+        S_NULL,         // seestate
+        sfx_None,               // seesound
+        8,              // reactiontime
+        sfx_None,               // attacksound
+        S_NULL,         // painstate Tails 9-30-99
+        0,              // painchance
+        sfx_None,               // painsound
+        S_NULL,         // meleestate
+        S_NULL,         // missilestate
+        S_NULL,         // deathstate Tails 9-30-99
+        S_NULL,         // xdeathstate
+        sfx_None,               // deathsound
+        0,              // speed
+        16*FRACUNIT,            // radius
+        36*FRACUNIT,            // height Tails 9-30-99
+        100,            // mass
+        1,              // damage
+        sfx_None,               // activesound
+        MF_SOLID,   // flags  Tails 9-30-99
+        S_NULL,          // raisestate
+		MF2_PUSHABLE // pushable flag2 for gargoyle :3 Nozomi 03-09-2026
+    }
 // end new springs Nozomi 03-28-2026
 };
 
