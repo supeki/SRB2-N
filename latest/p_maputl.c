@@ -611,8 +611,8 @@ void P_SetPrecipitationThingPosition (precipmobj_t* thing)
 // to P_BlockLinesIterator, then make one or more calls
 // to it.
 //
-boolean P_BlockLinesIterator (INT32       x,
-                              INT32       y,
+boolean P_BlockLinesIterator (int       x,
+                              int       y,
                               boolean   (*func)(line_t*) )
 {
     int               offset;
