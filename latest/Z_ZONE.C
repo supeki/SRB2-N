@@ -377,7 +377,21 @@ void* Z_MallocAlign(int size, int tag, void* user, int alignbits)
 	return (void*)((byte*)base + sizeof(memblock_t));
 }
 
-
+#ifdef ZDEBUG
+void *Z_Calloc2(size_t size, INT32 tag, void *user, INT32 alignbits, const char *file, INT32 line)
+#else
+void *Z_CallocAlign(size_t size, INT32 tag, void *user, INT32 alignbits)
+#endif
+{
+#ifdef VALGRIND_MEMPOOL_ALLOC
+	Z_calloc = true;
+#endif
+#ifdef ZDEBUG
+	return memset(Z_Malloc2    (size, tag, user, alignbits, file, line), 0, size);
+#else
+	return memset(Z_MallocAlign(size, tag, user, alignbits            ), 0, size);
+#endif
+}
 
 //
 // Z_FreeTags
