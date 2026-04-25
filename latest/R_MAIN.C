@@ -194,7 +194,7 @@ int                     extralight;
 
 consvar_t cv_chasecam = {"chasecam","1",0,CV_OnOff}; // Tails
 consvar_t cv_homing = {"homing","0",CV_NETVAR,CV_OnOff}; // Tails 07-02-2001
-consvar_t cv_numsnow = {"numsnow","16",CV_SAVE,CV_Unsigned}; // Tails 12-25-2001
+consvar_t cv_numsnow = {"numsnow","Heavy",CV_SAVE,precipdensity_cons_t}; // Tails 12-25-2001
 consvar_t cv_raindensity = {"raindensity", "Heavy", CV_SAVE, precipdensity_cons_t};
 consvar_t cv_storm = {"storm", "Off", 0, CV_OnOff};
 consvar_t cv_rain = {"rain", "Off", 0, CV_OnOff};

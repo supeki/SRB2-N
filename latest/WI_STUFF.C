@@ -3433,7 +3433,7 @@ void WI_initVariables(wbstartstruct_t* wbstartstruct)
 
     wbs = wbstartstruct;
 
-#ifdef RANGECHECKING
+/*#ifdef RANGECHECKING
     if (gamemode != commercial)
     {
       if ( gamemode == retail )
@@ -3448,7 +3448,7 @@ void WI_initVariables(wbstartstruct_t* wbstartstruct)
     }
     RNGCHECK(wbs->pnum, 0, MAXPLAYERS);
     RNGCHECK(wbs->pnum, 0, MAXPLAYERS);
-#endif
+#endif*/
 
     acceleratestage = 0;
     cnt = bcnt = 0;

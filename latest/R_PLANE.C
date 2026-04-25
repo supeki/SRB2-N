@@ -784,7 +784,7 @@ void R_DrawSinglePlane(visplane_t* pl, boolean handlesource)
 			nflatyshift = 12;
 			nflatshiftup = 6;
 			break;
-		case 262144:// 512x512 lump'
+		case 262144:// 512x512 lump
 			nflatmask = 0x3FE00;
 			nflatxshift = 23;
 			nflatyshift = 14;

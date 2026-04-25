@@ -179,8 +179,10 @@ void R_DrawSkyColumn_8 (void)
 #ifdef RANGECHECK 
   if ((unsigned)dc_x >= vid.width
       || dc_yl < 0
-      || dc_yh >= vid.height) 
-    I_Error ("R_DrawColumn: %i to %i at %i", dc_yl, dc_yh, dc_x); 
+      || dc_yh >= vid.height) {
+    CONS_Printf ("R_DrawColumn: %i to %i at %i", dc_yl, dc_yh, dc_x); 
+	return;
+	}
 #endif 
 
   // Framebuffer destination address.
@@ -274,8 +276,9 @@ void R_DrawFuzzColumn_8 (void)
     if ((unsigned)dc_x >= vid.width
         || dc_yl < 0 || dc_yh >= vid.height)
     {
-        I_Error ("R_DrawFuzzColumn: %i to %i at %i",
+        CONS_Printf ("R_DrawFuzzColumn: %i to %i at %i",
                  dc_yl, dc_yh, dc_x);
+		return;
     }
 #endif
 
@@ -495,8 +498,10 @@ void R_DrawShadeColumn_8(void)
 		return;
 
 #ifdef RANGECHECK
-	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height)
-		I_Error("R_DrawShadeColumn_8: %d to %d at %d", dc_yl, dc_yh, dc_x);
+	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height) {
+		CONS_Printf("R_DrawShadeColumn_8: %d to %d at %d", dc_yl, dc_yh, dc_x);
+		return;
+	}
 #endif
 
 	// FIXME. As above.
@@ -540,8 +545,10 @@ void R_DrawTranslucentColumn_8 (void)
 #ifdef RANGECHECK 
   if ((unsigned)dc_x >= vid.width
       || dc_yl < 0
-      || dc_yh >= vid.height) 
-    I_Error ("R_DrawColumn: %i to %i at %i", dc_yl, dc_yh, dc_x); 
+      || dc_yh >= vid.height) {
+    CONS_Printf ("R_DrawColumn: %i to %i at %i", dc_yl, dc_yh, dc_x); 
+  return;
+	}
 #endif 
 
   // Framebuffer destination address.
@@ -621,8 +628,10 @@ void R_DrawTranslatedColumn_8(void)
 		return;
 
 #ifdef RANGECHECK
-	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height)
-		I_Error("R_DrawTranslatedColumn_8: %d to %d at %d", dc_yl, dc_yh, dc_x);
+	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height) {
+		CONS_Printf("R_DrawTranslatedColumn_8: %d to %d at %d", dc_yl, dc_yh, dc_x);
+		return;
+	}
 #endif
 
 	// FIXME. As above.
@@ -903,8 +912,10 @@ void R_DrawFogColumn_8(void)
 		return;
 
 #ifdef RANGECHECK
-	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height)
-		I_Error("R_DrawFogColumn_8: %d to %d at %d", dc_yl, dc_yh, dc_x);
+	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height) {
+		CONS_Printf("R_DrawFogColumn_8: %d to %d at %d", dc_yl, dc_yh, dc_x);
+		return;
+	}
 #endif
 
 	// Framebuffer destination address.
@@ -941,8 +952,10 @@ void R_DrawColumnShadowed_8(void)
 		return;
 
 #ifdef RANGECHECK
-	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height)
-		I_Error("R_DrawColumnShadowed_8: %d to %d at %d", dc_yl, dc_yh, dc_x);
+	if ((unsigned)dc_x >= (unsigned)vid.width || dc_yl < 0 || dc_yh >= vid.height) {
+		CONS_Printf("R_DrawColumnShadowed_8: %d to %d at %d", dc_yl, dc_yh, dc_x);
+		return;
+	}
 #endif
 
 	// This runs through the lightlist from top to bottom and cuts up the column accordingly.

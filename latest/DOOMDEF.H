@@ -102,7 +102,7 @@
 #endif
 
 // Uncheck this to compile debugging code
-//#define RANGECHECK
+#define RANGECHECK
 //#define PARANOIA                // do some test that never happens but maybe
 //#define LOGMESSAGES             // write message in log.txt (win32 only for the moment)
 #define VERSION        150      // Game version
