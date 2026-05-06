@@ -109,8 +109,8 @@
 //#define RANGECHECK
 //#define PARANOIA                // do some test that never happens but maybe
 //#define LOGMESSAGES             // write message in log.txt (win32 only for the moment)
-#define VERSION        140      // Game version
-#define VERSIONSTRING  "v1.4 indev"
+#define VERSION        150      // Game version
+#define VERSIONSTRING  "v1.5 indev"
 
 // some tests, enable or disable it if it run or not
 //#define HORIZONTALDRAW        // abandoned : too slow
@@ -161,7 +161,6 @@ extern byte     demoversion;
 #define MAXSKINS                MAXPLAYERS
 #define PLAYERSMASK             (MAXPLAYERS-1)
 #define MAXPLAYERNAME           21
-#define MAXSKINCOLORS           32
 
 #define SAVESTRINGSIZE          24
 
@@ -170,8 +169,8 @@ extern byte     demoversion;
 #define TICRATE         35
 
 // Special Stage level # definitions Tails 08-11-2001
-extern int SSSTAGE1;
-#define NUMMAPHEADERS                999
+int SSSTAGE1;
+#define NUMMAPHEADERS                1035
 
 #define RING_DIST	512*FRACUNIT	// Used for ring shield. Change this to affect
 									// how close you need to be to a ring to attract

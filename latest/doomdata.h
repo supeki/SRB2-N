@@ -228,8 +228,4 @@ typedef struct
     short               options;
 } mapthing_t;
 
-
-extern char *Color_Names[MAXSKINCOLORS];
-
-
 #endif                  // __DOOMDATA__

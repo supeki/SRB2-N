@@ -83,7 +83,8 @@ void D_StartTitle (void);
 // So we're not updating it constantly... Nozomi 03-26-2026
 void D_UpdateWindowTitle(void);
 
-// Sonic Robo-Blast! Nozomi
-void D_InitSRBPatches(void);
+// for... purposes... Nozomi
+extern boolean title_demo;
+extern gamestate_t  wipegamestate;
 
 #endif //__D_MAIN__

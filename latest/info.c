@@ -45,7 +45,6 @@
 #include "doomdef.h"
 #include "sounds.h"
 #include "m_fixed.h"
-
 #include "p_mobj.h"
 
 char *sprnames[NUMSPRITES+1] = {
@@ -66,13 +65,13 @@ char *sprnames[NUMSPRITES+1] = {
     "TNT1","BIRD","SQRL","BORB","YORB","GORB","KORB","SPRK","IVSP", //SoM: 4/8/2000: INVISIBLE SPRITE!
 	"IVSQ","DISS","BUBP","BUBO","BUBN","BUBM","CNTA","CNTB",
 	"CNTC","CNTD","CNTE","CNTF","POPP","PRUP","BKTV","SCRA","SCRB","SCRC",
-	"SCRD","SSPK","GRAS","YSPR","WTRA","WTRB","WTRC","WTRD","WTRE","WTRF",
+	"SCRD","SSPK","GRAS","YSPR","RSPR","BSPR","WTRA","WTRB","WTRC","WTRD","WTRE","WTRF",
 	"WTRG","WTRH","SKIM","MINE","FISH","GARG","SPLH","GTHO","GRTH","PCTH",
 	"DRTH","STHO","OTHO","RTHO","BTHO","PTHO","DBTH","BGTH","THZP","SIGN",// Tails 10-20-99
 	"RRNG","TTAG","STEM","RFLG","BFLG","GFLG","TOKE","CEMG","CEMO","CEMP",
 	"CEMB","CEMR","CEML","CEMY","JETB","JETG","JBUL","MOUS","DETN","XPLD",
 	"REDX","CHAN","CAPE","SNO1","SANT","EMER","EMES","EMET","SBLL","SPIK",
-	"CCOM","MARL","RAIN",// Tails 03-13-2001
+	"CCOM","MARL","RAIN","NSPR",// Tails 03-13-2001
     NULL /* shit! 19990907 by Kin */
 };
 
@@ -1273,6 +1272,32 @@ state_t states[NUMSTATES] = {
 	{SPR_RAIN, 32768, -1, {NULL}, S_NULL}, // S_RAIN1
 	{SPR_RAIN, 32768, 1, {NULL}, S_RAIN1}, // S_RAINRETURN
 
+	{SPR_NSPR, 0, -1, {NULL},   S_NULL},          // S_SPRING_VERTI
+	{SPR_NSPR, 1,  1, {A_Pain}, S_SPRING_VERTI3}, // S_SPRING_VERTI2
+    {SPR_NSPR, 2,  1, {NULL},   S_SPRING_VERTI4}, // S_SPRING_VERTI3
+    {SPR_NSPR, 3,  1, {NULL},   S_SPRING_VERTI5}, // S_SPRING_VERTI4
+    {SPR_NSPR, 4,  1, {NULL},   S_SPRING_VERTI6}, // S_SPRING_VERTI5
+    {SPR_NSPR, 5,  1, {NULL},   S_SPRING_VERTI7}, // S_SPRING_VERTI6
+    {SPR_NSPR, 6,  1, {NULL},   S_SPRING_VERTI8}, // S_SPRING_VERTI7
+    {SPR_NSPR, 7,  1, {NULL},   S_SPRING_VERTI},  // S_SPRING_VERTI8
+
+	{SPR_NSPR, 8,  -1, {NULL},   S_NULL},         // S_SPRING_DIAG
+	{SPR_NSPR, 9,   1, {A_Pain}, S_SPRING_DIAG3}, // S_SPRING_DIAG2
+    {SPR_NSPR, 10,  1, {NULL},   S_SPRING_DIAG4}, // S_SPRING_DIAG3
+    {SPR_NSPR, 11,  1, {NULL},   S_SPRING_DIAG5}, // S_SPRING_DIAG4
+    {SPR_NSPR, 12,  1, {NULL},   S_SPRING_DIAG6}, // S_SPRING_DIAG5
+    {SPR_NSPR, 11,  1, {NULL},   S_SPRING_DIAG7}, // S_SPRING_DIAG6
+    {SPR_NSPR, 10,  1, {NULL},   S_SPRING_DIAG8}, // S_SPRING_DIAG7
+    {SPR_NSPR, 9,  1, {NULL},   S_SPRING_DIAG},  // S_SPRING_DIAG8
+
+	{SPR_NSPR, 13, -1, {NULL},   S_NULL},          // S_SPRING_HORIZ
+	{SPR_NSPR, 14,  1, {A_Pain}, S_SPRING_HORIZ3}, // S_SPRING_HORIZ2
+    {SPR_NSPR, 15,  1, {NULL},   S_SPRING_HORIZ4}, // S_SPRING_HORIZ3
+    {SPR_NSPR, 16,  1, {NULL},   S_SPRING_HORIZ5}, // S_SPRING_HORIZ4
+    {SPR_NSPR, 17,  1, {NULL},   S_SPRING_HORIZ6}, // S_SPRING_HORIZ5
+    {SPR_NSPR, 18,  1, {NULL},   S_SPRING_HORIZ7}, // S_SPRING_HORIZ6
+    {SPR_NSPR, 19,  1, {NULL},   S_SPRING_HORIZ8}, // S_SPRING_HORIZ7
+    {SPR_NSPR, 20,  1, {NULL},   S_SPRING_HORIZ},  // S_SPRING_HORIZ8
 };
 
 mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
@@ -3340,7 +3365,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
         28,             // doomednum
         S_HEADSONSTICK,         // spawnstate
         1000,           // spawnhealth
-        S_NULL,         // seestate
+        S_HEADSONSTICK2,         // seestate
         sfx_None,               // seesound
         8,              // reactiontime
         sfx_None,               // attacksound
@@ -3680,7 +3705,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
         79,             // doomednum
         S_COLONGIBS,            // spawnstate
         1000,           // spawnhealth
-        S_NULL,         // seestate
+        S_COLONGIBS2,         // seestate
         sfx_None,               // seesound
         8,              // reactiontime
         sfx_None,               // attacksound
@@ -4701,7 +4726,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
         2015,             // doomednum
         S_YDIAG1,           // spawnstate Tails 9-30-99
         1,           // spawnhealth Tails 9-30-99
-        S_NULL,         // seestate
+        S_YDIAG2,         // seestate
         sfx_None,               // seesound
         8,              // reactiontime
         sfx_None,               // attacksound
@@ -6018,10 +6043,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
         MF_SHOOTABLE|MF_COUNTKILL|MF_FLOAT|MF_DROPOFF|MF_ENEMY|MF_SPECIAL,             // flags
         S_NULL           // raisestate
     },
-
-	
 // start air particles Nozomi 03-13-2026
-
 	{ // MT_AIRPARTICLE
 		-1,           // doomednum
         S_AIRPARTICLE,         // spawnstate
@@ -6125,7 +6147,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
         MF_NOCLIP|MF_FLOAT|MF_NOGRAVITY,                // flags //Tails 12-05-99
         S_NULL          // raisestate
 	},
-
+// end air particles Nozomi 03-13-2026
 	{ // MT_MARILUNFINISHED
 		9999,           // doomednum
         S_MARILUNFINISHED,         // spawnstate
@@ -6175,17 +6197,249 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 		sfx_None,       // activesound
 		MF_NOBLOCKMAP,  // flags
 		S_NULL          // raisestate
-	}
-
-// end air particles Nozomi 03-13-2026
+	},
+// start new springs Nozomi 03-28-2026
+	{   // MT_NOZOMI_YSPRING
+        3006,             // doomednum
+        S_SPRING_VERTI,         // spawnstate
+        1000,           // spawnhealth
+        S_SPRING_VERTI2,         // seestate
+        sfx_None,               // seesound
+        8,              // reactiontime
+        sfx_None,               // attacksound
+        S_NULL,         // painstate
+        0,              // painchance
+        sfx_spring,               // painsound
+        S_NULL,         // meleestate
+        S_NULL,         // missilestate
+        S_NULL,         // deathstate
+        S_NULL,         // xdeathstate
+        sfx_None,               // deathsound
+        SKINCOLOR_LEMON,              // speed
+        20*FRACUNIT,            // radius
+        16*FRACUNIT,            // height
+        18*FRACUNIT,            // mass
+        0,              // damage
+        sfx_None,               // activesound
+        MF_SOLID|MF_TRANSLATION,               // flags
+        S_NULL,          // raisestate
+		MF2_SPRING
+    },
+	{   // MT_NOZOMI_RSPRING
+        3007,             // doomednum
+        S_SPRING_VERTI,         // spawnstate
+        1000,           // spawnhealth
+        S_SPRING_VERTI2,         // seestate
+        sfx_None,               // seesound
+        8,              // reactiontime
+        sfx_None,               // attacksound
+        S_NULL,         // painstate
+        0,              // painchance
+        sfx_spring,               // painsound
+        S_NULL,         // meleestate
+        S_NULL,         // missilestate
+        S_NULL,         // deathstate
+        S_NULL,         // xdeathstate
+        sfx_None,               // deathsound
+        SKINCOLOR_RED,              // speed
+        20*FRACUNIT,            // radius
+        16*FRACUNIT,            // height
+        30*FRACUNIT,            // mass
+        0,              // damage
+        sfx_None,               // activesound
+        MF_SOLID|MF_TRANSLATION,               // flags
+        S_NULL,          // raisestate
+		MF2_SPRING
+    },
+	{   // MT_NOZOMI_BSPRING
+        3008,             // doomednum
+        S_SPRING_VERTI,         // spawnstate
+        1000,           // spawnhealth
+        S_SPRING_VERTI2,         // seestate
+        sfx_None,               // seesound
+        8,              // reactiontime
+        sfx_None,               // attacksound
+        S_NULL,         // painstate
+        0,              // painchance
+        sfx_spring,               // painsound
+        S_NULL,         // meleestate
+        S_NULL,         // missilestate
+        S_NULL,         // deathstate
+        S_NULL,         // xdeathstate
+        sfx_None,               // deathsound
+        SKINCOLOR_LIGHTBLUE,              // speed
+        20*FRACUNIT,            // radius
+        16*FRACUNIT,            // height
+        10*FRACUNIT,            // mass
+        0,              // damage
+        sfx_None,               // activesound
+        MF_SOLID|MF_TRANSLATION,               // flags
+        S_NULL,          // raisestate
+		MF2_SPRING
+    },
+	{   // MT_NOZOMI_YDIAGSPRING
+        3009,             // doomednum
+        S_SPRING_DIAG,         // spawnstate
+        1000,           // spawnhealth
+        S_SPRING_DIAG2,         // seestate
+        sfx_None,               // seesound
+        8,              // reactiontime
+        sfx_None,               // attacksound
+        S_NULL,         // painstate
+        0,              // painchance
+        sfx_spring,               // painsound
+        S_NULL,         // meleestate
+        S_NULL,         // missilestate
+        S_NULL,         // deathstate
+        S_NULL,         // xdeathstate
+        sfx_None,               // deathsound
+        SKINCOLOR_LEMON,              // speed
+        16*FRACUNIT,            // radius
+        16*FRACUNIT,            // height
+        18*FRACUNIT,            // mass
+        30*FRACUNIT,              // damage
+        sfx_None,               // activesound
+        MF_SOLID|MF_TRANSLATION|MF_NOGRAVITY,               // flags
+        S_NULL,          // raisestate
+		MF2_SPRING
+    },
+	{   // MT_NOZOMI_RDIAGSPRING
+        3010,             // doomednum
+        S_SPRING_DIAG,         // spawnstate
+        1000,           // spawnhealth
+        S_SPRING_DIAG2,         // seestate
+        sfx_None,               // seesound
+        8,              // reactiontime
+        sfx_None,               // attacksound
+        S_NULL,         // painstate
+        0,              // painchance
+        sfx_spring,               // painsound
+        S_NULL,         // meleestate
+        S_NULL,         // missilestate
+        S_NULL,         // deathstate
+        S_NULL,         // xdeathstate
+        sfx_None,               // deathsound
+        SKINCOLOR_RED,              // speed
+        16*FRACUNIT,            // radius
+        16*FRACUNIT,            // height
+        30*FRACUNIT,            // mass
+        50*FRACUNIT,              // damage
+        sfx_None,               // activesound
+        MF_SOLID|MF_TRANSLATION|MF_NOGRAVITY,               // flags
+        S_NULL,          // raisestate
+		MF2_SPRING
+    },
+	{   // MT_NOZOMI_BDIAGSPRING
+        3011,             // doomednum
+        S_SPRING_DIAG,         // spawnstate
+        1000,           // spawnhealth
+        S_SPRING_DIAG2,         // seestate
+        sfx_None,               // seesound
+        8,              // reactiontime
+        sfx_None,               // attacksound
+        S_NULL,         // painstate
+        0,              // painchance
+        sfx_spring,               // painsound
+        S_NULL,         // meleestate
+        S_NULL,         // missilestate
+        S_NULL,         // deathstate
+        S_NULL,         // xdeathstate
+        sfx_None,               // deathsound
+        SKINCOLOR_LIGHTBLUE,              // speed
+        16*FRACUNIT,            // radius
+        16*FRACUNIT,            // height
+        10*FRACUNIT,            // mass
+        16*FRACUNIT + 3*FRACUNIT/2,              // damage
+        sfx_None,               // activesound
+        MF_SOLID|MF_TRANSLATION|MF_NOGRAVITY,               // flags
+        S_NULL,          // raisestate
+		MF2_SPRING
+    },
+	{   // MT_NOZOMI_YHORIZSPRING
+        3012,             // doomednum
+        S_SPRING_HORIZ,         // spawnstate
+        1000,           // spawnhealth
+        S_SPRING_HORIZ2,         // seestate
+        sfx_None,               // seesound
+        8,              // reactiontime
+        sfx_None,               // attacksound
+        S_NULL,         // painstate
+        0,              // painchance
+        sfx_spring,               // painsound
+        S_NULL,         // meleestate
+        S_NULL,         // missilestate
+        S_NULL,         // deathstate
+        S_NULL,         // xdeathstate
+        sfx_None,               // deathsound
+        SKINCOLOR_LEMON,              // speed
+        16*FRACUNIT,            // radius
+        32*FRACUNIT,            // height
+        0,            // mass
+        18*FRACUNIT,              // damage
+        sfx_None,               // activesound
+        MF_SOLID|MF_TRANSLATION|MF_NOGRAVITY,               // flags
+        S_NULL,          // raisestate
+		MF2_SPRING
+    },
+	{   // MT_NOZOMI_RHORIZSPRING
+        3013,             // doomednum
+        S_SPRING_HORIZ,         // spawnstate
+        1000,           // spawnhealth
+        S_SPRING_HORIZ2,         // seestate
+        sfx_None,               // seesound
+        8,              // reactiontime
+        sfx_None,               // attacksound
+        S_NULL,         // painstate
+        0,              // painchance
+        sfx_spring,               // painsound
+        S_NULL,         // meleestate
+        S_NULL,         // missilestate
+        S_NULL,         // deathstate
+        S_NULL,         // xdeathstate
+        sfx_None,               // deathsound
+        SKINCOLOR_RED,              // speed
+        16*FRACUNIT,            // radius
+        32*FRACUNIT,            // height
+        0,            // mass
+        30*FRACUNIT,              // damage
+        sfx_None,               // activesound
+        MF_SOLID|MF_TRANSLATION|MF_NOGRAVITY,               // flags
+        S_NULL,          // raisestate
+		MF2_SPRING
+    },
+	{   // MT_NOZOMI_BHORIZSPRING
+        3014,             // doomednum
+        S_SPRING_HORIZ,         // spawnstate
+        1000,           // spawnhealth
+        S_SPRING_HORIZ2,         // seestate
+        sfx_None,               // seesound
+        8,              // reactiontime
+        sfx_None,               // attacksound
+        S_NULL,         // painstate
+        0,              // painchance
+        sfx_spring,               // painsound
+        S_NULL,         // meleestate
+        S_NULL,         // missilestate
+        S_NULL,         // deathstate
+        S_NULL,         // xdeathstate
+        sfx_None,               // deathsound
+        SKINCOLOR_LIGHTBLUE,              // speed
+        16*FRACUNIT,            // radius
+        32*FRACUNIT,            // height
+        0,            // mass
+        10*FRACUNIT,              // damage
+        sfx_None,               // activesound
+        MF_SOLID|MF_TRANSLATION|MF_NOGRAVITY,               // flags
+        S_NULL,          // raisestate
+		MF2_SPRING
+    }
+// end new springs Nozomi 03-28-2026
 };
 
 /*		  20,			  // doomednum */
 /*		  65,			  // doomednum */
-/*		3006,			  // doomednum */
 /*		  23,			  // doomednum */
 /*		  68,			  // doomednum */
 /*		  66,			  // doomednum */
 /*		  69,			  // doomednum */
-/*		3003,			  // doomednum */
 /*		  67,			  // doomednum */

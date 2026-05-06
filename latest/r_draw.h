@@ -118,12 +118,6 @@ extern byte*            ds_source;      // start of a 64*64 tile image
 
 extern int viewborderlump[8];
 
-// srb2-nozomi color consts
-#define SKINCOLOR_RED        6
-#define SKINCOLOR_FOREST     12
-#define SKINCOLOR_LIGHT_BLUE 13
-#define SKINCOLOR_PURPLE     16
-
 // ------------------------------------------------
 // r_draw.c COMMON ROUTINES FOR BOTH 8bpp and 16bpp
 // ------------------------------------------------

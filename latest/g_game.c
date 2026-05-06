@@ -122,8 +122,10 @@
 #include "byteptr.h"
 
 #include "i_joy.h"
+#include "info.h"
 
-#include "srb-nozomi/srb.h"
+#include "EXTRAS/srb.h"
+#include "EXTRAS/tetris.h"
 
 // added 8-3-98 increse savegame size from 0x2c000 (180kb) to 512*1024
 #define SAVEGAMESIZE    (512*1024)
@@ -224,7 +226,7 @@ consvar_t cv_showmessages   = {"showmessages","1",CV_SAVE | CV_CALL | CV_NOINIT,
 consvar_t cv_mousemove      = {"mousemove"   ,"1",CV_SAVE,CV_OnOff};
 consvar_t cv_mousemove2     = {"mousemove2"  ,"1",CV_SAVE,CV_OnOff};
 consvar_t cv_analog			= {"analog"		 ,"0",CV_NETVAR | CV_CALL,CV_OnOff, Analog_OnChange}; // Analog Test Tails 06-10-2001
-
+consvar_t cv_bosslockon	    = {"bosslockon"  ,"0",CV_SAVE,CV_OnOff};
 
 #if MAXPLAYERS>32
 #error please update "player_name" table using the new value for MAXPLAYERS
@@ -1233,6 +1235,14 @@ void G_Ticker (void)
 
 	  case GS_NOZOMITITLE:
 		  D_PageTicker ();
+		  break;
+
+	  case GS_NOZOMITETRIS:
+		  T_TetrisTicker();
+		  break;
+
+	  case GS_SRBNOZOMI:
+		  SRBN_GameplayLoop();
 		  break;
     }
 }

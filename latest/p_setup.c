@@ -200,6 +200,8 @@ mapthing_t      redctfstarts[MAXPLAYERS]; // CTF Tails 08-04-2001
 mapthing_t*     redctfstarts_p; // CTF Tails 08-04-2001
 mapthing_t*     bluectfstarts_p; // CTF Tails 08-04-2001
 
+boolean			level_has_bosses;
+
 //
 // P_LoadVertexes
 //
@@ -344,7 +346,7 @@ void P_LoadSubsectors (int lump)
 //
 // levelflats
 //
-#define MAXLEVELFLATS   256
+#define MAXLEVELFLATS   1024 // was 256, upped this incase our levels get complex :3 Nozomi
 
 int                     numlevelflats;
 levelflat_t*            levelflats;
@@ -995,6 +997,8 @@ boolean P_SetupLevel (int           episode,
 
     totalkills = totalitems = totalsecret = totalrings = wminfo.maxfrags = numplayers = 0; // Tails 08-11-2001
     wminfo.partime = 180;
+
+	level_has_bosses = false;
 
 	for(i=0; i<MAXPLAYERS; i++) // Find number of players Tails 08-11-2001
 	{

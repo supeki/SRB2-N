@@ -54,7 +54,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo /o"..\..\objs\Release\DoomLegacy.bsc"
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
-# ADD LINK32 dxguid.lib dinput.lib dsound.lib ddraw.lib winmm.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /out:"Z:\assets\srb2win.exe"
+# ADD LINK32 dxguid.lib dinput.lib dsound.lib ddraw.lib winmm.lib wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:I386 /out:"C:\Users\eBay Sale\Documents\GitHub\SRB2-N\assets\srb2-nozomi.exe"
 # SUBTRACT LINK32 /pdb:none /incremental:yes
 
 !ELSEIF  "$(CFG)" == "DoomLegacy - Win32 Debug"
@@ -835,14 +835,6 @@ SOURCE=..\Sounds.h
 # End Source File
 # Begin Source File
 
-SOURCE="..\srb-nozomi\srb.c"
-# End Source File
-# Begin Source File
-
-SOURCE="..\srb-nozomi\srb.h"
-# End Source File
-# Begin Source File
-
 SOURCE=..\St_lib.c
 # End Source File
 # Begin Source File
@@ -1019,6 +1011,26 @@ SOURCE=..\_logs\todolauncher.txt
 # Begin Source File
 
 SOURCE=..\_logs\Todola~1.txt
+# End Source File
+# End Group
+# Begin Group "EXTRA"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\EXTRAS\srb.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\EXTRAS\srb.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\EXTRAS\tetris.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\EXTRAS\tetris.h
 # End Source File
 # End Group
 # Begin Source File

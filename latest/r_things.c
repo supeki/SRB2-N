@@ -2196,12 +2196,14 @@ next_token:
 
 mapheader_t mapheaders[NUMMAPHEADERS+1];
 char custom_ttlmusic[9]; 
+char custom_supermusic[9];
 
 void R_InitMapHeaders (void)
 {
     int i;
 
 	strncpy (custom_ttlmusic, "D_DM2TTL", 8);
+	strncpy (custom_supermusic, "D_SUPERS", 8);
 
     for(i=0;i<=NUMMAPHEADERS;i++)
     {
@@ -2309,6 +2311,11 @@ void R_AddMapHeader (int wadnum)
 			if (!stricmp(token, "title_music")) {
 				strncpy(custom_ttlmusic, value, 8);
 				strupr (custom_ttlmusic);
+			}
+
+			if (!stricmp(token, "super_music")) {
+				strncpy(custom_supermusic, value, 8);
+				strupr (custom_supermusic);
 			}
 
 			if (!stricmp(token,"map"))

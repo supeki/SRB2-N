@@ -80,11 +80,13 @@ extern consvar_t   cv_splitscreen;
 
 // 02-08-98      : r_things.c
 extern consvar_t   cv_skin;
+extern consvar_t   cv_playerautobrake;
 
 // secondary splitscreen player
 extern consvar_t   cv_playername2;
 extern consvar_t   cv_playercolor2;
 extern consvar_t   cv_skin2;
+extern consvar_t   cv_playerautobrake2;
 
 extern consvar_t   cv_teamplay;
 extern consvar_t   cv_teamdamage;
@@ -94,6 +96,7 @@ extern consvar_t   cv_timelimit;
 extern consvar_t   cv_allowexitlevel;
 
 extern consvar_t   cv_analog; // Analog Test Tails 06-10-2001
+extern consvar_t   cv_bosslockon;
 extern consvar_t   cv_preferredteam; // Tails 07-22-2001
 
 extern consvar_t   cv_netstat;

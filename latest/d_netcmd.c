@@ -84,6 +84,7 @@
 #include "p_spec.h"
 #include "m_cheat.h"
 #include "d_clisrv.h"
+#include "info.h"
 
 // ------
 // protos
@@ -352,6 +353,7 @@ void D_RegisterClientCommands (void)
     CV_RegisterVar (&cv_allowexitlevel);
 
 	CV_RegisterVar (&cv_analog); // Analog Test Tails 06-10-2001
+	CV_RegisterVar (&cv_bosslockon);
 
     //s_sound.c
     CV_RegisterVar (&cv_soundvolume);
@@ -442,13 +444,16 @@ void D_RegisterClientCommands (void)
 //
 void SendNameAndColor(void)
 {
-    char     buf[MAXPLAYERNAME+1+SKINNAMESIZE+1+1],*p;
+    char     buf[MAXPLAYERNAME+1+SKINNAMESIZE+1+4],*p;
 	int team; // Tails 07-31-2001
 	int y; // Tails 07-31-2001
 	int z; // Tails 07-31-2001
 	int i; // Tails 07-31-2001
 
     p=buf;
+
+	if (cv_playercolor.value > MAXSKINCOLORS-1)
+		CV_SetValue(&cv_playercolor, 1);
 
 	if (!cv_playercolor.value) {
 		for (i=MAXSKINCOLORS-1;i>1;i--)
@@ -525,9 +530,9 @@ void SendNameAndColor(void)
 		{
 			CV_SetValue(&cv_playercolor, SKINCOLOR_RED);
 		}
-		else if(players[consoleplayer].ctfteam == 2 && cv_playercolor.value != SKINCOLOR_LIGHT_BLUE)
+		else if(players[consoleplayer].ctfteam == 2 && cv_playercolor.value != SKINCOLOR_LIGHTBLUE)
 		{
-			CV_SetValue(&cv_playercolor, SKINCOLOR_LIGHT_BLUE);
+			CV_SetValue(&cv_playercolor, SKINCOLOR_LIGHTBLUE);
 		}
 	}
 }
@@ -535,7 +540,7 @@ void SendNameAndColor(void)
 // splitscreen
 void SendNameAndColor2(void)
 {
-    char     buf[MAXPLAYERNAME+1+SKINNAMESIZE+1],*p;
+    char     buf[MAXPLAYERNAME+1+SKINNAMESIZE+1+4],*p;
 
     p=buf;
     WRITEBYTE(p,cv_playercolor2.value);

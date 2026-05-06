@@ -2966,7 +2966,6 @@ static void HWR_RenderBackToFront (void)
 #endif
 
 //25/08/99: added by Hurdler for splitscreen correct palette changes and overlay
-extern player_t *plyr;
 void ST_doPaletteStuff( void );
 void ST_overlayDrawer(int playernum );
 
