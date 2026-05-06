@@ -79,14 +79,14 @@ typedef struct
 //
 typedef struct
 {
-    char                name[8];
-    boolean             masked;
-    short               width;
-    short               height;
-    void                **columndirectory;      // OBSOLETE
-    short               patchcount;
-    mappatch_t  patches[1];
-} maptexture_t;
+	char name[8];
+	INT32 masked;
+	INT16 width;
+	INT16 height;
+	INT32 columndirectory; // FIXTHIS: OBSOLETE
+	INT16 patchcount;
+	mappatch_t patches[1];
+} __attribute__((packed)) maptexture_t;
 
 
 // A single patch from a texture definition,
