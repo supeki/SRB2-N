@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.10)
 
 project(srb2-nozomi C)
 
-add_subdirectory(web)
-
 # "SDL2" - The SDL2 backend, newer but more experimental and incomplete
 # "Win32" - The Win32/DD backend, tried and true however its support for many things is not the greatest and it's from 1998
 set(BACKEND "SDL2")
@@ -174,55 +172,9 @@ add_executable(${PROJECT_NAME}
 	${SOURCES}
 )
 
+add_subdirectory(web)
 
-add_link_options("SHELL: -lidbfs.js")
-add_link_options("SHELL: -s EXPORTED_RUNTIME_METHODS=ccall,cwrap,HEAP8")
-add_link_options(
-  "SHELL: -s EXPORTED_FUNCTIONS=_main,_main_program,_P_AddWadFile"
-)
-add_link_options("SHELL: -sASYNCIFY")
-add_link_options("SHELL: -sUSE_SDL=2")
-add_link_options("SHELL: -sUSE_ZLIB=1")
-add_link_options("SHELL: -sUSE_SDL_MIXER=2")
-add_link_options("SHELL: -s ALLOW_MEMORY_GROWTH=1")
-add_link_options("SHELL: -s INITIAL_MEMORY=655360000")
-add_link_options("SHELL: -s STACK_SIZE=65536000")
-add_link_options("--preload-file=${PROJECT_SOURCE_DIR}/../assets@/")
-add_link_options("SHELL: --use-preload-plugins")
-add_link_options("SHELL: -s NO_EXIT_RUNTIME")
-#add_link_options("SHELL: --shell-file ${CMAKE_SOURCE_DIR}/sdl/emscripten/srb2retro.html")
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE -DHAVE_MIXER -DSOUND=SOUND_MIXER -D__EMSCRIPTEN__)
-target_link_options(
-  ${PROJECT_NAME}
-  PRIVATE
-  -sUSE_SDL=2
-  -sUSE_SDL_MIXER=2
-  -sUSE_ZLIB
-  -sUSE_LIBPNG
-  -lidbfs.js
-  -sEXPORTED_RUNTIME_METHODS=ccall,cwrap,HEAP8
-  -sEXPORTED_FUNCTIONS=_main,_main_program,_P_AddWadFile
-  -sASYNCIFY
-  -sNO_EXIT_RUNTIME 
-  -sALLOW_MEMORY_GROWTH=1
-  -sINITIAL_MEMORY=983040000
-  -sSTACK_SIZE=655360000
-  -gsource-map
-  -gsource-map-base
-  -fexceptions
-  -sSTACK_OVERFLOW_CHECK=2
-  -sMALLOC=emmalloc-memvalidate
-  -fsantize=address
-  --preload-file=${PROJECT_SOURCE_DIR}/../assets@/
-  --use-preload-plugins 
-  --use-preload-cache
-  #--shell-file ${PROJECT_SOURCE_DIR}/src/sdl/emscripten/srb2retro.html
-)
-target_compile_options(${PROJECT_NAME} PRIVATE -sUSE_SDL=2 -sUSE_SDL_MIXER=2
-                                        -sUSE_ZLIB -sUSE_LIBPNG)
-
-set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "lsdl2srb2" SUFFIX ".js")
+set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "index" SUFFIX ".html")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
 	${LIBRARIES}

@@ -1664,8 +1664,10 @@ p = M_CheckParm ("-ctfteam"); // Tails 08-04-2001
             singledemo = true;              // quit after one demo
             G_DeferedPlayDemo (tmp);
         }
+#ifndef __EMSCRIPTEN__
         else
             G_TimeDemo (tmp);
+#endif
         gamestate = wipegamestate = GS_NULL;
 
         return;         
