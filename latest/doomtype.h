@@ -51,6 +51,7 @@ typedef unsigned short USHORT;
 #include <stdint.h>
 #define UINT32 uint32_t
 #define UINT64 uint64_t
+#define INT16 int16_t
 #define INT32 int32_t
 #endif
 
