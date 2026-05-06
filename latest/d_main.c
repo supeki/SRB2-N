@@ -862,7 +862,7 @@ void D_PageDrawer (char* lumpname)
 					// Sonic Robo-Blast! Nozomi
                     boolean play_srb_nozomi;
 					if (play_srb_nozomi)
-						//SRBN_Draw();
+						SRBN_Draw();
 					else
 						V_DrawString(160-strlen("Press JUMP to play a game!")*4, 100-4, "Press JUMP to play a game!");
 
@@ -1159,9 +1159,9 @@ void IdentifyVersion (void)
     }
 
 	// Add the players Tails 12-24-2001
-	D_AddFile("sonic.plr");
-	D_AddFile("tails.plr");
-	D_AddFile("knux.plr");
+	D_AddFile("Sonic.plr");
+	D_AddFile("Tails.plr");
+	D_AddFile("Knux.plr");
 
 	// Add the maps Nozomi 02-22-2026
 	D_AddFile("maps.wad");

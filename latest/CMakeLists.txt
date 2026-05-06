@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.10)
 
 project(srb2-nozomi C)
 
-include(cmake/CPM.cmake)
-add_subdirectory(thirdparty)
 add_subdirectory(web)
 
 # "SDL2" - The SDL2 backend, newer but more experimental and incomplete
@@ -83,6 +81,12 @@ list(APPEND SOURCES
     wi_stuff.c
     w_wad.c
     z_zone.c
+)
+
+# Extra games
+list(APPEND SOURCES
+	EXTRAS/tetris.c 
+	EXTRAS/srb.c
 )
 
 # Add the backend's files
