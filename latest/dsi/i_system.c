@@ -17,7 +17,7 @@
 byte graphics_started = 0;
 
 byte keyboard_started = 0;
-byte mb_used = 12;
+byte mb_used = 8;
 
 JoyType_t   Joystick;
 
@@ -372,15 +372,18 @@ int I_PutEnv(char *variable)
 byte* I_ZoneBase(int* size)
 {
 	void* pmem;
+	
+	if (isDSiMode())
+		*size = mb_used * 1024 * 1024;
+	else
+		*size = 2 * 1024 * 1024;
 
-	// do it the old way
-	*size = mb_used * 1024 * 1024;
 	pmem = malloc(*size);
 
 	if (!pmem)
 	{
 		I_Error("Could not allocate %d megabytes.\n"
-			"Please use -mb parameter and specify a lower value.\n", mb_used);
+			"Please use -mb parameter and specify a lower value.\n", *size / 1024 / 1024);
 	}
 
 	//TODO: lock the memory

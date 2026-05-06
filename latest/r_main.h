@@ -173,7 +173,7 @@ extern consvar_t cv_perspcorr;
 extern consvar_t cv_tiltview;
 extern consvar_t cv_splitscreen;
 extern consvar_t cv_numsnow;
-extern consvar_t cv_snow, cv_storm, cv_rain, cv_raindensity, cv_precipdist;
+extern consvar_t cv_snow, cv_storm, cv_rain, cv_raindensity, cv_precipdist, cv_renderdist;
 
 // Called by startup code.
 void R_Init (void);

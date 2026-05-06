@@ -895,6 +895,19 @@ void P_MobjThinker (mobj_t* mobj)
 
 // End Level end sign stuff Tails 01-14-2001
 
+	if (!mobj->player) {
+		int dist = 0;
+		
+		if (!players[0].mo)
+			return;
+	
+		dist = R_PointToDist2(mobj->x, mobj->y, players[0].mo->x, players[0].mo->y);
+
+		if (dist > 1024*FRACUNIT) {
+			return;
+		}
+	}
+
 // Fans spawn bubbles underwater Tails 02-28-2001
 // ONLY with MF_AMBUSH! Nozomi 03-13-2026
 	if((mobj->type == MT_MISC34 || mobj->type == MT_REDFAN) && mobj->flags & MF_AMBUSH)

@@ -1214,8 +1214,21 @@ void R_AddSprites (sector_t* sec, int lightlevel)
 
     // Handle all things in sector.
     for (thing = sec->thinglist ; thing ; thing = thing->snext)
+	{
+		if(!thing)
+			continue;
+
+		adx = abs(players[0].mo->x - thing->x);
+		ady = abs(players[0].mo->y - thing->y);
+
+		// From _GG1_ p.428. Approx. eucledian distance fast.
+		approx_dist = adx + ady - ((adx < ady ? adx : ady)>>1);
+
+		// Only draw the precipitation oh-so-far from the player.
+		if(approx_dist < (1024 * FRACUNIT))
         if((thing->eflags & MF_INVISIBLE)==0)
             R_ProjectSprite (thing);
+	}
 
 	// Special function for precipitation Tails 08-18-2002
 	for(precipthing = sec->preciplist; precipthing; precipthing = precipthing->snext)
@@ -1223,26 +1236,15 @@ void R_AddSprites (sector_t* sec, int lightlevel)
 		if(!precipthing)
 			continue;
 
-		adx = abs(players[displayplayer].mo->x - precipthing->x);
-		ady = abs(players[displayplayer].mo->y - precipthing->y);
+		adx = abs(players[0].mo->x - precipthing->x);
+		ady = abs(players[0].mo->y - precipthing->y);
 
 		// From _GG1_ p.428. Approx. eucledian distance fast.
 		approx_dist = adx + ady - ((adx < ady ? adx : ady)>>1);
 
 		// Only draw the precipitation oh-so-far from the player.
-		if(approx_dist < (cv_precipdist.value << FRACBITS))
+		if(approx_dist < (256 * FRACUNIT))
 			R_ProjectPrecipitationSprite(precipthing);
-		else if(cv_splitscreen.value && players[secondarydisplayplayer].mo)
-		{
-			adx = abs(players[secondarydisplayplayer].mo->x - precipthing->x);
-			ady = abs(players[secondarydisplayplayer].mo->y - precipthing->y);
-
-			// From _GG1_ p.428. Approx. eucledian distance fast.
-			approx_dist = adx + ady - ((adx < ady ? adx : ady)>>1);
-
-			if(approx_dist < (cv_precipdist.value << FRACBITS))
-				R_ProjectPrecipitationSprite (precipthing);
-		}
 	}
 }
 

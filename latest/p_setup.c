@@ -1254,12 +1254,12 @@ boolean P_SetupLevel (int           episode,
 
     // note: most of this ordering is important
     //P_LoadBlockMap (lastloadedmaplumpnum+ML_BLOCKMAP);
-	P_CreateBlockMap();
     P_LoadVertexes (lastloadedmaplumpnum+ML_VERTEXES);
     P_LoadSectors  (lastloadedmaplumpnum+ML_SECTORS);
     P_LoadSideDefs (lastloadedmaplumpnum+ML_SIDEDEFS);
 
     P_LoadLineDefs (lastloadedmaplumpnum+ML_LINEDEFS);
+	P_CreateBlockMap();
     P_LoadSideDefs2(lastloadedmaplumpnum+ML_SIDEDEFS);
     P_LoadLineDefs2();
     P_LoadSubsectors (lastloadedmaplumpnum+ML_SSECTORS);

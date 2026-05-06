@@ -33,6 +33,10 @@
 #include "i_system.h"
 #include "m_fixed.h"
 
+#if defined(NOZOMI_DSI)
+#include <nds.h>
+#endif
+
 // Fixme. __USE_C_FIXED__ or something.
 #ifndef USEASM
 fixed_t FixedMul (fixed_t a, fixed_t b)
@@ -49,7 +53,11 @@ fixed_t FixedDiv2 (fixed_t a, fixed_t b)
 
     double c;
 
+#if defined(NOZOMI_DSI)
+	c = f32tofloat(divf32(floattof32(FIXED_TO_FLOAT(a)), floattof32(FIXED_TO_FLOAT(b))))*FRACUNIT;
+#else
     c = ((double)a) / ((double)b) * FRACUNIT;
+#endif
 
     if (c >= 2147483648.0 || c < -2147483648.0)
         I_Error("FixedDiv: divide by zero");
@@ -77,10 +85,14 @@ fixed_t FixedSqrt(fixed_t x)
 #ifdef HAVE_SQRT
 	const float fx = FIXED_TO_FLOAT(x);
 	float fr;
+#if defined(NOZOMI_DSI)
+	fr = hw_sqrtf(fx);
+#else
 #ifdef HAVE_SQRTF
 	fr = sqrtf(fx);
 #else
 	fr = (float)sqrt(fx);
+#endif
 #endif
 	return (fixed_t)(fr * FRACUNIT);
 #else

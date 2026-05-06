@@ -1195,6 +1195,9 @@ void R_StoreWallRange( int   start, int   stop )
     ds_p->scale1 = rw_scale =
         R_ScaleFromGlobalAngle (viewangle + xtoviewangle[start]);
 
+	if (rw_scale < FRACUNIT/32)
+		return;
+
     if (stop > start)
     {
         ds_p->scale2 = R_ScaleFromGlobalAngle (viewangle + xtoviewangle[stop]);

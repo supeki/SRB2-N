@@ -203,7 +203,8 @@ consvar_t cv_snow = {"snow", "Off", 0, CV_OnOff};
 consvar_t cv_nights = {"nights","0",0,CV_OnOff}; // Tails 07-02-2001
 consvar_t cv_allowmlook = {"allowmlook","1",CV_NETVAR,CV_YesNo};
 
-consvar_t cv_precipdist = {"precipdist", "1024", CV_SAVE, CV_Unsigned};
+consvar_t cv_precipdist = {"precipdist", "256", CV_SAVE, CV_Unsigned};
+consvar_t cv_renderdist = {"renderdist", "2048", CV_SAVE, CV_Unsigned};
 consvar_t cv_psprites = {"playersprites","0",0,CV_OnOff}; // Tails
 consvar_t cv_perspcorr = {"perspectivecrunch","0",0,CV_OnOff};
 consvar_t cv_tiltview = {"tiltview","0",0,CV_OnOff};

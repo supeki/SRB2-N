@@ -266,8 +266,8 @@ void I_FinishUpdate(void)
 {
     u16* framebuffer = (u16*)VRAM_A;
 
-//    int x_offset = ((256-256)/2); // 32
-//    int y_offset = ((192-192)/2); // 4
+//    int x_offset = ((320-256)/2); // 32
+//    int y_offset = ((200-192)/2); // 4
 
 	// copy to VRAM A
     for (int y = 0; y < BASEVIDHEIGHT; y++)
