@@ -164,7 +164,7 @@ void SCR_SetMode (void)
 		transtransfunc = R_DrawTranslatedTranslucentColumn_8;
         shadecolfunc = R_DrawShadeColumn_8;  //R_DrawColumn_8;
         spanfunc = basespanfunc = R_DrawSpan_8;
-		walldrawerfunc = R_DrawWallColumn_8;
+		walldrawerfunc = R_DrawColumn_8;
     }
     else
     if (vid.bpp>1)

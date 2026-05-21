@@ -975,9 +975,6 @@ static void R_ProjectSprite (mobj_t* thing)
 
 		if (vis->mobj->skin) {
 			skin_t* visskin = (skin_t*)vis->mobj->skin;
-			char* skinname = "";
-
-			strcpy(skinname, visskin->name);
 			scale = visskin->spritescale;
 		}
 
