@@ -47,6 +47,7 @@ typedef enum
 	SKINCOLOR_WHITE,
 	SKINCOLOR_SILVER,
 	SKINCOLOR_GREY,
+	SKINCOLOR_CARBON,
 	SKINCOLOR_PINK,
 	SKINCOLOR_CHERRYBLOSSOM,
 	SKINCOLOR_BRIGHTRED,
@@ -285,6 +286,7 @@ typedef enum
 	SPR_SUPR, // super sprites! Nozomi
 	SPR_CRUK, // omg is that crucks mark the beige banana hedgehog
 	SPR_CORN, // Corn? Don't you mean Coronas! Nozomi
+	SPR_BEEC,
 	NUMSPRITES
 
 } spritenum_t;
@@ -1273,6 +1275,7 @@ typedef enum
 	S_SPRING_HORIZ8,
 	S_CRUCKS,
 	S_CORONA,
+	S_BEECAT,
     NUMSTATES
 } statenum_t;
 
@@ -1493,6 +1496,7 @@ typedef enum {
 	MT_NOZOMI_BHORIZSPRING,
 	MT_CRUCKS,
 	MT_CORONA,
+	MT_BEECAT,
     NUMMOBJTYPES
 
 } mobjtype_t;

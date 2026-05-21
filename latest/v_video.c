@@ -251,7 +251,8 @@ void V_CopyRect
         || (unsigned)srcscrn>4
         || (unsigned)destscrn>4)
     {
-        I_Error ("Bad V_CopyRect");
+        CONS_Printf ("Bad V_CopyRect");
+		return;
     }
 #endif
     V_MarkRect (destx, desty, width, height);
@@ -1011,7 +1012,8 @@ V_DrawPatchFlipped
         || (unsigned)scrn>4)
     {
       fprintf( stderr, "Patch origin %d,%d exceeds LFB\n", x,y );
-      I_Error ("Bad V_DrawPatch in V_DrawPatchFlipped");
+      CONS_Printf ("Bad V_DrawPatch in V_DrawPatchFlipped");
+	  return;
     }
 #endif
 
@@ -1135,7 +1137,8 @@ void V_DrawBlock ( int           x,
         || y+height>vid.height
         || (unsigned)scrn>4 )
     {
-        I_Error ("Bad V_DrawBlock");
+        CONS_Printf ("Bad V_DrawBlock");
+		return;
     }
 #endif
 
@@ -1178,7 +1181,8 @@ V_GetBlock
         || y+height>vid.height
         || (unsigned)scrn>4 )
     {
-        I_Error ("Bad V_GetBlock");
+        CONS_Printf ("Bad V_GetBlock");
+		return;
     }
 #endif
 

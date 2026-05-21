@@ -91,7 +91,7 @@ visplane_t*             visplanes;
 visplane_t*             lastvisplane;*/
 
 //SoM: 3/23/2000: Use Boom visplane hashing.
-#define           MAXVISPLANES      128
+#define           MAXVISPLANES      512
 
 static visplane_t *visplanes[MAXVISPLANES];
 static visplane_t *freetail;
@@ -784,7 +784,7 @@ void R_DrawSinglePlane(visplane_t* pl, boolean handlesource)
 			nflatyshift = 12;
 			nflatshiftup = 6;
 			break;
-		case 262144:// 512x512 lump'
+		case 262144:// 512x512 lump
 			nflatmask = 0x3FE00;
 			nflatxshift = 23;
 			nflatyshift = 14;

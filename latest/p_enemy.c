@@ -3023,12 +3023,10 @@ void A_CrawlaCommanderThink(mobj_t* actor)
 	if(actor->reactiontime > 0)
 		actor->reactiontime--;
 
-		if(actor->z < actor->floorz + 16*FRACUNIT)
-			actor->momz += FRACUNIT;
-		else if(actor->z < actor->floorz + 32*FRACUNIT)
-			actor->momz += FRACUNIT/2;
-
-		CONS_Printf("Putz");
+	if(actor->z < actor->floorz + 16*FRACUNIT)
+		actor->momz += FRACUNIT;
+	else if(actor->z < actor->floorz + 32*FRACUNIT)
+		actor->momz += FRACUNIT/2;
 			
 	if (!actor->target
         || !(actor->target->flags&MF_SHOOTABLE))
@@ -3044,11 +3042,10 @@ void A_CrawlaCommanderThink(mobj_t* actor)
 	dist = P_AproxDistance(actor->x - actor->target->x, actor->y - actor->target->y);
 
 	// Roam around, somewhat in the player's direction.
-	actor->angle += ANG45/9;/* = R_PointToAngle2(actor->x, actor->y, actor->target->x, actor->target->y);
+	actor->angle = R_PointToAngle2(actor->x, actor->y, actor->target->x, actor->target->y);
 	actor->angle += (P_Random()<<10);
-	actor->angle -= (P_Random()<<10);*/
+	actor->angle -= (P_Random()<<10);
 	P_Thrust(actor, actor->angle, 2048 * 20);
-	CONS_Printf("Putz...\n");
 
 	if(!actor->reactiontime)
 	{
@@ -3059,7 +3056,6 @@ void A_CrawlaCommanderThink(mobj_t* actor)
 				actor->angle = R_PointToAngle2(actor->x, actor->y, actor->target->x, actor->target->y);
 				P_Thrust(actor, actor->angle, 25*FRACUNIT);
 				actor->reactiontime = 2*TICRATE + P_Random()/2;
-				CONS_Printf("Dist is less than 512!");
 			}
 		}
 		else // Pogo Mode

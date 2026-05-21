@@ -214,7 +214,7 @@ void P_SetHyperColor(mobj_t* mo);
 //
 
 // when pushing a line 
-//#define MAXSPECIALCROSS 16
+//#define MAXSPECIALCROSS 128
 
 extern  int     *spechit;                //SoM: 3/15/2000: Limit removal
 extern  int     numspechit;
@@ -311,14 +311,14 @@ P_RadiusAttack
 // P_SETUP
 //
 extern byte*            rejectmatrix;   // for fast sight rejection
-extern short*           blockmaplump;   // offsets in blockmap are from here
-extern short*           blockmap;
-extern int              bmapwidth;
-extern int              bmapheight;     // in mapblocks
+extern int*           blockmaplump;   // offsets in blockmap are from here
+extern int*           blockmap;
+extern int            bmapwidth;
+extern int            bmapheight;     // in mapblocks
 extern fixed_t          bmaporgx;
 extern fixed_t          bmaporgy;       // origin of block map
 extern mobj_t**         blocklinks;     // for thing chains
-extern boolean			level_has_bosses;
+extern boolean			level_has_bosses; // dumb nozomi analog check
 
 
 //

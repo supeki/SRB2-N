@@ -93,6 +93,15 @@ void*   Z_MallocAlign(int size,int tag,void* user,int alignbits);
 #define Z_Malloc(s,t,p) Z_MallocAlign(s,t,p,0)
 #endif
 
+#ifdef ZDEBUG
+void *Z_Calloc2(size_t size, INT32 tag, void *user, INT32 alignbits, const char *file, INT32 line);
+#define Z_Calloc(s,t,u) Z_Calloc2(s, t, u, 0, __FILE__, __LINE__)
+#define Z_CallocAlign(s,t,u,a) Z_Calloc2(s, t, u, a, __FILE__, __LINE__)
+#else
+void *Z_CallocAlign(size_t size, INT32 tag, void *user, INT32 alignbits);
+#define Z_Calloc(s,t,u) Z_CallocAlign(s, t, u, 0)
+#endif
+
 
 typedef struct memblock_s
 {
@@ -107,6 +116,8 @@ typedef struct memblock_s
     struct memblock_s*  next;
     struct memblock_s*  prev;
 } memblock_t;
+
+char* Z_Strdup(const char* s, int tag, void** user);
 
 //
 // This is used to get the local FILE:LINE info from CPP

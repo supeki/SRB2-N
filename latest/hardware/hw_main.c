@@ -2446,9 +2446,11 @@ static void HWR_ProjectSprite (mobj_t* thing)
 
     // decide which patch to use for sprite relative to player
 #ifdef RANGECHECK
-    if ((unsigned)thing->sprite >= numsprites)
-        I_Error ("HWR_ProjectSprite: invalid sprite number %i ",
+    if (thing->sprite >= numsprites) {
+        CONS_Printf ("HWR_ProjectSprite: invalid sprite number %i ",
                  thing->sprite );
+		return;
+	}
 #endif
 
     //Fab:02-08-98: 'skin' override spritedef currently used for skin
@@ -2458,9 +2460,11 @@ static void HWR_ProjectSprite (mobj_t* thing)
         sprdef = &sprites[thing->sprite];
 
 #ifdef RANGECHECK
-    if ( (thing->frame&FF_FRAMEMASK) >= sprdef->numframes )
-        I_Error ("HWR_ProjectSprite: invalid sprite frame %i : %i ",
+    if ( (thing->frame&FF_FRAMEMASK) >= sprdef->numframes ) {
+        CONS_Printf ("HWR_ProjectSprite: invalid sprite frame %i : %i ",
                  thing->sprite, thing->frame );
+		return;
+	}
 #endif
     sprframe = &sprdef->spriteframes[ thing->frame & FF_FRAMEMASK];
 
@@ -2594,15 +2598,19 @@ void HWR_DrawPSprite( pspdef_t* psp, int lightlevel)
 
     // decide which patch to use
 #ifdef RANGECHECK
-    if ( (unsigned)psp->state->sprite >= numsprites)
-        I_Error ("HWR_ProjectSprite: invalid sprite number %i ",
+    if (psp->state->sprite >= numsprites) {
+        CONS_Printf ("HWR_ProjectSprite: invalid sprite number %i ",
                  psp->state->sprite );
+		return;
+	}
 #endif
     sprdef = &sprites[psp->state->sprite];
 #ifdef RANGECHECK
-    if ( (psp->state->frame & FF_FRAMEMASK)  >= sprdef->numframes)
-        I_Error ("HWR_ProjectSprite: invalid sprite frame %i : %i ",
+    if ( (psp->state->frame & FF_FRAMEMASK)  >= sprdef->numframes) {
+        CONS_Printf ("HWR_ProjectSprite: invalid sprite frame %i : %i ",
                  psp->state->sprite, psp->state->frame );
+		return;
+	}
 #endif
     sprframe = &sprdef->spriteframes[ psp->state->frame & FF_FRAMEMASK ];
 

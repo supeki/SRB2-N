@@ -43,6 +43,7 @@
 #include "g_game.h"
 #include "hu_stuff.h"
 #include "m_easing.h"
+#include "m_random.h"
 #include "p_tick.h"
 #include "r_local.h"
 #include "s_sound.h"
@@ -503,15 +504,40 @@ static void F_StartMADventure(void)
 	madcredits = W_CachePatchName("MADCREDI", PU_LEVEL);
 }
 
+static boolean draw_sonic = true;
+static boolean draw_tails = true;
+static boolean draw_knux = true;
+static boolean draw_amy = true;
+static boolean draw_redxvi = true;
+
+static int MADrandom(INT32 a)
+{
+	return (INT32)((rand()/((unsigned)RAND_MAX+1.0f))*a);
+}
+
 static void MADventure_Drawer(void)
 {
 	V_DrawScaledPatch(0, 0, 0, madtitle);
 
-	V_DrawScaledPatch(6, 200 - (26+madknux->height), 0, madknux);
-	V_DrawScaledPatch(320 - (6+madamy->width), 200 - (26+madamy->height), 0, madamy);
-	V_DrawScaledPatch(70, 200 - (17+madredxvi->height), 0, madredxvi);
-	V_DrawScaledPatch(320 - (70+madtails->width), 200 - (17+madtails->height), 0, madtails);
-	V_DrawScaledPatch(160 - (madsonic->width/2), 200 - (9+madsonic->height), 0, madsonic);
+	if (MADrandom(100) == 2)
+		draw_amy = (!draw_amy);
+	if (MADrandom(100) == 4)
+		draw_knux = (!draw_knux);
+	if (MADrandom(100) == 6)
+		draw_redxvi = (!draw_redxvi);
+	if (MADrandom(100) == 8)
+		draw_tails = (!draw_tails);
+
+	if (draw_knux)
+		V_DrawScaledPatch(6, 200 - (26+madknux->height), 0, madknux);
+	if (draw_amy)
+		V_DrawScaledPatch(320 - (6+madamy->width), 200 - (26+madamy->height), 0, madamy);
+	if (draw_redxvi)
+		V_DrawScaledPatch(70, 200 - (17+madredxvi->height), 0, madredxvi);
+	if (draw_tails)
+		V_DrawScaledPatch(320 - (70+madtails->width), 200 - (17+madtails->height), 0, madtails);
+	if (draw_sonic)
+		V_DrawScaledPatch(160 - (madsonic->width/2), 200 - (9+madsonic->height), 0, madsonic);
 
 	V_DrawScaledPatch(160 - (madcredits->width/2), 200 - (madcredits->height) - 1, 0, madcredits);
 }

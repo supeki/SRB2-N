@@ -611,12 +611,12 @@ void P_SetPrecipitationThingPosition (precipmobj_t* thing)
 // to P_BlockLinesIterator, then make one or more calls
 // to it.
 //
-boolean P_BlockLinesIterator (int       x,
-                              int       y,
+boolean P_BlockLinesIterator (INT32       x,
+                              INT32       y,
                               boolean   (*func)(line_t*) )
 {
-    int                 offset;
-    short*              list;
+    int               offset;
+    int               *list;
     line_t*             ld;
 
     if (x<0
@@ -628,10 +628,9 @@ boolean P_BlockLinesIterator (int       x,
     }
 
     offset = y*bmapwidth+x;
-
     offset = *(blockmap+offset);
 
-    for ( list = blockmaplump+offset ; *list != -1 ; list++)
+    for ( list = blockmaplump+offset + 1 ; *list != -1 ; list++)
     {
         ld = &lines[*list];
 

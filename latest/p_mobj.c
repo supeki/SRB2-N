@@ -1578,7 +1578,7 @@ void P_SpawnPrecipitation(void)
 		subsector_t* snowsector;
 		z = 0;
 
-		for(i = 0; i < 1048576 / cv_numsnow.value; i++)
+		for(i = 0; i < 1048576 / (cv_numsnow.value*5 - 4); i++)
 		{
 			x = ((rand() * (65536 / (int)RAND_MAX)) - 32768) << FRACBITS;
 			y = ((rand() * (65536 / (int)RAND_MAX)) - 32768) << FRACBITS;
@@ -1614,7 +1614,7 @@ void P_SpawnPrecipitation(void)
 
 		subsector_t* rainsector;
 
-		for(i = 0; i < 1048576 / cv_raindensity.value; i++)
+		for(i = 0; i < 1048576 / (cv_raindensity.value*2 - 1); i++)
 		{
 			x = ((rand() * (65536 / (int)RAND_MAX)) - 32768) << FRACBITS;
 			y = ((rand() * (65536 / (int)RAND_MAX)) - 32768) << FRACBITS;
