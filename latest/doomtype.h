@@ -110,6 +110,10 @@ typedef unsigned short USHORT;
 #include <values.h>
 #endif
 
+#ifndef UINT8
+#define UINT8 byte
+#endif
+
 #ifndef MAXCHAR
 #define MAXCHAR   ((char)0x7f)
 #endif

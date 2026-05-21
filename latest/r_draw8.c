@@ -119,7 +119,7 @@ void R_DrawColumn_8(void)
 	// Determine scaling, which is the only mapping to be done.
 	fracstep = dc_iscale;
 	//frac = dc_texturemid + (dc_yl - centery)*fracstep;
-	frac = (dc_texturemid + FixedMul((dc_yl << FRACBITS) - centeryfrac, fracstep))*(!dc_hires);
+	frac = (dc_texturemid + FixedMul((dc_yl << FRACBITS) - centeryfrac, fracstep));
 
 	// Inner loop that does the actual texture mapping, e.g. a DDA-like scaling.
 	// This is as fast as it gets.
@@ -516,13 +516,13 @@ void R_DrawShadeColumn_8(void)
 #endif
 
 	// FIXME. As above.
-	//dest = ylookup[dc_yl] + columnofs[dc_x];
-	dest = &topleft[dc_yl*vid.width + dc_x];
+	dest = ylookup[dc_yl] + columnofs[dc_x];
+	//dest = &topleft[dc_yl*vid.width + dc_x];
 
 	// Looks familiar.
 	fracstep = dc_iscale;
 	//frac = dc_texturemid + (dc_yl - centery)*fracstep;
-	frac = (dc_texturemid + FixedMul((dc_yl << FRACBITS) - centeryfrac, fracstep))*(!dc_hires);
+	frac = (dc_texturemid + FixedMul((dc_yl << FRACBITS) - centeryfrac, fracstep));
 
 	// Here we do an additional index re-mapping.
 	do
